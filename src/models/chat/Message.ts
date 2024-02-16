@@ -3,15 +3,15 @@ import mongoose from "../../database";
 const { Schema } = mongoose;
 
 const messageSchema = new Schema({
-    origin: {
+    name: {
+        type: String,
+        required: true,
+    },
+    chatId: {
         type: String,
         required: true,
     },
     message: {
-        type: String,
-        required: true,
-    },
-    dest: {
         type: String,
         required: true,
     },
