@@ -1,0 +1,358 @@
+{
+  "settings": {
+    "languages": [
+      "pt"
+    ],
+    "forceNER": true,
+    "tag": "nlp",
+    "threshold": 0.5,
+    "autoLoad": true,
+    "autoSave": true,
+    "modelFileName": "model.nlp",
+    "executeActionsBeforeAnswers": false,
+    "calculateSentiment": true
+  },
+  "nluManager": {
+    "settings": {
+      "tag": "nlu-manager"
+    },
+    "locales": [
+      "pt"
+    ],
+    "languageNames": {},
+    "domainManagers": {
+      "pt": {
+        "settings": {
+          "locale": "pt",
+          "trainByDomain": false,
+          "tag": "domain-manager-pt",
+          "nluByDomain": {
+            "default": {
+              "className": "NeuralNlu",
+              "settings": {}
+            }
+          },
+          "useStemDict": true
+        },
+        "stemDict": {
+          "e,enquant,isso,por,tchau": {
+            "intent": "greetings.bye",
+            "domain": "default"
+          },
+          "cuid,se,tchau": {
+            "intent": "greetings.bye",
+            "domain": "default"
+          },
+          "ate,bem,log,tud": {
+            "intent": "greetings.bye",
+            "domain": "default"
+          },
+          "e,isso,tchau": {
+            "intent": "greetings.bye",
+            "domain": "default"
+          },
+          "ir,precis": {
+            "intent": "greetings.bye",
+            "domain": "default"
+          },
+          "ola": {
+            "intent": "greetings.hello",
+            "domain": "default"
+          },
+          "oi": {
+            "intent": "greetings.hello",
+            "domain": "default"
+          }
+        },
+        "intentDict": {
+          "greetings.bye": "default",
+          "greetings.hello": "default"
+        },
+        "sentences": [
+          {
+            "domain": "default",
+            "utterance": "por enquanto é isso, tchau",
+            "intent": "greetings.bye"
+          },
+          {
+            "domain": "default",
+            "utterance": "tchau tchau se cuida",
+            "intent": "greetings.bye"
+          },
+          {
+            "domain": "default",
+            "utterance": "tudo bem, até logo",
+            "intent": "greetings.bye"
+          },
+          {
+            "domain": "default",
+            "utterance": "é isso, tchau",
+            "intent": "greetings.bye"
+          },
+          {
+            "domain": "default",
+            "utterance": "preciso ir",
+            "intent": "greetings.bye"
+          },
+          {
+            "domain": "default",
+            "utterance": "ola",
+            "intent": "greetings.hello"
+          },
+          {
+            "domain": "default",
+            "utterance": "oi",
+            "intent": "greetings.hello"
+          }
+        ],
+        "domains": {
+          "master_domain": {
+            "settings": {
+              "locale": "pt",
+              "tag": "nlu-pt",
+              "keepStopwords": true,
+              "nonefeatureValue": 1,
+              "nonedeltaMultiplier": 1.2,
+              "spellCheck": false,
+              "spellCheckDistance": 1,
+              "filterZeros": true,
+              "log": true
+            },
+            "features": {
+              "por": 1,
+              "enquant": 1,
+              "e": 1,
+              "isso": 1,
+              "tchau": 1,
+              "se": 1,
+              "cuid": 1,
+              "tud": 1,
+              "bem": 1,
+              "ate": 1,
+              "log": 1,
+              "precis": 1,
+              "ir": 1,
+              "ola": 1,
+              "oi": 1
+            },
+            "intents": {
+              "greetings.bye": 1,
+              "greetings.hello": 1
+            },
+            "intentFeatures": {
+              "greetings.bye": {
+                "por": 1,
+                "enquant": 1,
+                "e": 1,
+                "isso": 1,
+                "tchau": 1,
+                "se": 1,
+                "cuid": 1,
+                "tud": 1,
+                "bem": 1,
+                "ate": 1,
+                "log": 1,
+                "precis": 1,
+                "ir": 1
+              },
+              "greetings.hello": {
+                "ola": 1,
+                "oi": 1
+              }
+            },
+            "featuresToIntent": {
+              "por": [
+                "greetings.bye"
+              ],
+              "enquant": [
+                "greetings.bye"
+              ],
+              "e": [
+                "greetings.bye"
+              ],
+              "isso": [
+                "greetings.bye"
+              ],
+              "tchau": [
+                "greetings.bye"
+              ],
+              "se": [
+                "greetings.bye"
+              ],
+              "cuid": [
+                "greetings.bye"
+              ],
+              "tud": [
+                "greetings.bye"
+              ],
+              "bem": [
+                "greetings.bye"
+              ],
+              "ate": [
+                "greetings.bye"
+              ],
+              "log": [
+                "greetings.bye"
+              ],
+              "precis": [
+                "greetings.bye"
+              ],
+              "ir": [
+                "greetings.bye"
+              ],
+              "ola": [
+                "greetings.hello"
+              ],
+              "oi": [
+                "greetings.hello"
+              ]
+            },
+            "neuralNetwork": {
+              "settings": {
+                "locale": "pt",
+                "tag": "nlu-pt",
+                "keepStopwords": true,
+                "nonefeatureValue": 1,
+                "nonedeltaMultiplier": 1.2,
+                "spellCheck": false,
+                "spellCheckDistance": 1,
+                "filterZeros": true,
+                "log": true
+              },
+              "features": [
+                "por",
+                "enquant",
+                "e",
+                "isso",
+                "tchau",
+                "se",
+                "cuid",
+                "tud",
+                "bem",
+                "ate",
+                "log",
+                "precis",
+                "ir",
+                "ola",
+                "oi"
+              ],
+              "intents": [
+                "greetings.bye",
+                "greetings.hello"
+              ],
+              "perceptrons": [
+                [
+                  0.12045615911483765,
+                  0.12045615911483765,
+                  2.6622750759124756,
+                  2.6622750759124756,
+                  5.402011871337891,
+                  2.7405283451080322,
+                  2.7405283451080322,
+                  2.716050148010254,
+                  2.716050148010254,
+                  2.716050148010254,
+                  2.716050148010254,
+                  5.410403251647949,
+                  5.410403251647949,
+                  -3.35599946975708,
+                  -3.3327298164367676,
+                  3.417578438184687
+                ],
+                [
+                  -0.42776647210121155,
+                  -0.42776647210121155,
+                  -1.33927583694458,
+                  -1.33927583694458,
+                  -2.6880135536193848,
+                  -1.3457297086715698,
+                  -1.3457297086715698,
+                  -1.3441119194030762,
+                  -1.3441119194030762,
+                  -1.3441119194030762,
+                  -1.3441119194030762,
+                  -2.6460928916931152,
+                  -2.6460928916931152,
+                  8.7207612991333,
+                  8.739422798156738,
+                  5.400303715711029
+                ]
+              ]
+            }
+          }
+        }
+      }
+    },
+    "intentDomains": {},
+    "extraSentences": [
+      [
+        "pt",
+        "por enquanto é isso, tchau"
+      ],
+      [
+        "pt",
+        "tchau tchau se cuida"
+      ],
+      [
+        "pt",
+        "tudo bem, até logo"
+      ],
+      [
+        "pt",
+        "é isso, tchau"
+      ],
+      [
+        "pt",
+        "preciso ir"
+      ],
+      [
+        "pt",
+        "ola"
+      ],
+      [
+        "pt",
+        "oi"
+      ]
+    ]
+  },
+  "ner": {
+    "settings": {
+      "tag": "ner",
+      "entityPreffix": "%",
+      "entitySuffix": "%"
+    },
+    "rules": {}
+  },
+  "nlgManager": {
+    "settings": {
+      "tag": "nlg-manager"
+    },
+    "responses": {
+      "pt": {
+        "greetings.bye": [
+          {
+            "answer": "Até a próxima."
+          },
+          {
+            "answer": "Vejo você logo!"
+          }
+        ],
+        "greetings.hello": [
+          {
+            "answer": "Olá!"
+          },
+          {
+            "answer": "Oi, como posso ajudar?"
+          }
+        ]
+      }
+    }
+  },
+  "actionManager": {
+    "settings": {
+      "tag": "action-manager"
+    },
+    "actions": {}
+  },
+  "slotManager": {}
+}
