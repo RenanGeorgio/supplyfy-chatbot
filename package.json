@@ -2,7 +2,7 @@
   "name": "supplyfy-chatbot",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
     "dev": "ts-node-dev --inspect --transpile-only --ignore-watch node_modules ./src/index.ts",
     "build": "tsc"

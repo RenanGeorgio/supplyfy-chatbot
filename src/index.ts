@@ -1,6 +1,8 @@
 import "express-async-errors";
 import * as dotenv from "dotenv";
+
 dotenv.config();
+
 import app from "./server";
 import { Server } from "socket.io";
 import http from "http";
