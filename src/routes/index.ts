@@ -12,7 +12,7 @@ routes
     .get("/test", serverController.test)
 
     // chat test
-    .post("/chat", chatController.message);
+    .post("/chat", chatController.message)
 
 
 export default routes;

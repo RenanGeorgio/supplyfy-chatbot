@@ -8,8 +8,10 @@ export const message = async (
     next: NextFunction
 ) => {
     try {
-        const { question } = req.body;  
+        const { question } = req.body;
+
         let response = await processQuestion(question);
+        
         return res.status(200).send(response);
     } catch (error) {
         next(error);
