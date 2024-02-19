@@ -16,4 +16,3 @@ export const io = new Server(serverHttp);
 serverHttp.listen(PORT, () => {
     console.log(`Server running on ${HOST}:${PORT}`);
 });
-
