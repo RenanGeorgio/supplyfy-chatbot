@@ -6,6 +6,7 @@ dotenv.config();
 import app from "./server";
 import { Server } from "socket.io";
 import http from "http";
+import "./services";
 
 const PORT = process.env.PORT || 8000;
 const HOST = process.env.HOST || "http://localhost";
