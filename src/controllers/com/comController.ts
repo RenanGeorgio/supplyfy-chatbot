@@ -240,11 +240,27 @@ export const uploadMedia = async (
     next: NextFunction
 ) => {
     try {
-        const { question } = req.body;
+        const { filePath } = req.body;
 
-        let response = await processQuestion(question);
-        
-        return res.status(200).send(response);
+        const data = new FormData();
+        data.append("messaging_product", this.messagingProduct);
+        data.append("file", fs.createReadStream(filePath));
+
+        const response = await whatsappCloudAp("/messages", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${this.bearerToken}`,
+                ...data.getHeaders()
+            },
+            data: data
+        });
+
+        if (response.status === 200) {
+            return res.status(200).send({ message: response.data.id });
+        }
+
+        return res.status(501).send({ message: "Server problem" });
     } catch (error) {
         next(error);
     }           
@@ -256,27 +272,34 @@ export const sendDocumentMessage = async (
     next: NextFunction
 ) => {
     try {
-        const { question } = req.body;
+        const { documentPath, caption } = req.body;
 
-        let response = await processQuestion(question);
-        
-        return res.status(200).send(response);
-    } catch (error) {
-        next(error);
-    }           
-};
+        const docId = await this.uploadMedia(documentPath);
 
-export const sendLocation = async (
-    req: CustomRequest,
-    res: Response,
-    next: NextFunction
-) => {
-    try {
-        const { question } = req.body;
+        const response = await whatsappCloudAp("/messages", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${this.bearerToken}`
+            },
+            data: {
+                messaging_product: this.messagingProduct,
+                recipient_type: "individual",
+                to: this.recipientPhoneNumber,
+                type: "document",
+                document: {
+                    caption: caption,
+                    filename: documentPath.split('./')[1],
+                    id: docId
+                }
+            },
+        });
 
-        let response = await processQuestion(question);
-        
-        return res.status(200).send(response);
+        if (response.status === 200) {
+            return res.status(200).send(response);
+        }
+
+        return res.status(501).send({ message: "Server problem" });
     } catch (error) {
         next(error);
     }           
