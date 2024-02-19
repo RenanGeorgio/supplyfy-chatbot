@@ -40,11 +40,31 @@ export const sendTextMessage = async (
     next: NextFunction
 ) => {
     try {
-        const { question } = req.body;
+        const { messageText } = req.body;
 
-        let response = await processQuestion(question);
-        
-        return res.status(200).send(response);
+        const response = await whatsappCloudAp("/messages", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${this.bearerToken}`
+            },
+            data: {
+                messaging_product: this.messagingProduct,
+                recipient_type: "individual",
+                to: this.recipientPhoneNumber,
+                type: "text",
+                text: {
+                    preview_url: false,
+                    body: messageText
+                },
+            },
+        });
+
+        if (response.status === 200) {
+            return res.status(200).send(response);
+        }
+
+        return res.status(501).send({ message: "Server problem" });
     } catch (error) {
         next(error);
     }           
@@ -56,11 +76,42 @@ export const sendButtonsMessage = async (
     next: NextFunction
 ) => {
     try {
-        const { question } = req.body;
+        const { messageText, buttonsList } = req.body;
 
-        let response = await processQuestion(question);
-        
-        return res.status(200).send(response);
+        const response = await whatsappCloudAp("/messages", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${this.bearerToken}`
+            },
+            data: {
+                messaging_product: this.messagingProduct,
+                recipient_type: "individual",
+                to: this.recipientPhoneNumber,
+                type: "interactive",
+                interactive: {
+                    type: "button",
+                    body: {
+                        text: messageText
+                    },
+                    action: {
+                        buttons: buttonsList.map(button => ({
+                            type: "reply",
+                            reply: {
+                                id: button.id,
+                                title: button.title,
+                            }
+                        }))
+                    }
+                }
+            },
+        });
+
+        if (response.status === 200) {
+            return res.status(200).send(response);
+        }
+
+        return res.status(501).send({ message: "Server problem" });
     } catch (error) {
         next(error);
     }           
@@ -72,11 +123,27 @@ export const sendContacts = async (
     next: NextFunction
 ) => {
     try {
-        const { question } = req.body;
+        const { contactsList } = req.body;
 
-        let response = await processQuestion(question);
-        
-        return res.status(200).send(response);
+        const response = await whatsappCloudAp("/messages", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${this.bearerToken}`
+            },
+            data: {
+                messaging_product: this.messagingProduct,
+                to: this.recipientPhoneNumber,
+                type: "contacts",
+                contacts: contactsList
+            }
+        });
+
+        if (response.status === 200) {
+            return res.status(200).send(response);
+        }
+
+        return res.status(501).send({ message: "Server problem" });
     } catch (error) {
         next(error);
     }           
@@ -88,11 +155,44 @@ export const sendRadioButtons = async (
     next: NextFunction
 ) => {
     try {
-        const { question } = req.body;
+        const { headerText, bodyText, footerText, sectionsList } = req.body;
 
-        let response = await processQuestion(question);
-        
-        return res.status(200).send(response);
+        const response = await whatsappCloudAp("/messages", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${this.bearerToken}`
+            },
+            data: {
+                messaging_product: this.messagingProduct,
+                recipient_type: "individual",
+                to: this.recipientPhoneNumber,
+                type: "interactive",
+                interactive: {
+                    type: "list",
+                    header: {
+                        type: "text",
+                        text: headerText
+                    },
+                    body: {
+                        text: bodyText
+                    },
+                    footer: {
+                        text: footerText
+                    },
+                    action: {
+                        button: "Select from the list",
+                        sections: sectionsList
+                    }
+                }
+            }
+        });
+
+        if (response.status === 200) {
+            return res.status(200).send(response);
+        }
+
+        return res.status(501).send({ message: "Server problem" });
     } catch (error) {
         next(error);
     }           
@@ -104,11 +204,31 @@ export const sendImageByLink = async (
     next: NextFunction
 ) => {
     try {
-        const { question } = req.body;
+        const { imageLink, caption } = req.body;
 
-        let response = await processQuestion(question);
-        
-        return res.status(200).send(response);
+        const response = await whatsappCloudAp("/messages", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${this.bearerToken}`
+            },
+            data: {
+                messaging_product: this.messagingProduct,
+                recipient_type: "individual",
+                to: this.recipientPhoneNumber,
+                type: "image",
+                image: {
+                    link: imageLink,
+                    caption: caption
+                }
+            },
+        });
+
+        if (response.status === 200) {
+            return res.status(200).send(response);
+        }
+
+        return res.status(501).send({ message: "Server problem" });
     } catch (error) {
         next(error);
     }           
