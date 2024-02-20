@@ -10,7 +10,7 @@ export const markMessageAsRead = async (
     try {
         const { messageId } = req.body;
 
-        const response = await whatsappCloudAp("/messages", {
+        const response = await whatsappCloudApi("/messages", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
