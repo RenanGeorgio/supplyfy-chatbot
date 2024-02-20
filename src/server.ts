@@ -12,7 +12,8 @@ const app = express();
 
 app.use(cors());
 
-app.use(bodyParser.json());
+// Copia raw body buffer para req["rawBody"] gerando a x-hub signature: necessaria para whatsapp cloud api
+app.use(bodyParser.json({ verify: function (req, res, buf) { req.rawBody = buf; } }));
 app.use(bodyParser.urlencoded( { extended : false }));
 
 app.use(express.json());
