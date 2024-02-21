@@ -4,12 +4,12 @@ async function processMessage(message) {
   
     if (messageType === "text") {
       const textMessage = message.text.body;
-      console.log( textMessage );
+      console.log(textMessage);
 
         try {
             let replyButtonMessage = interactiveReplyButton;
             replyButtonMessage.to = process.env.RECIPIENT_PHONE_NUMBER;
-            
+
             const replyButtonSent = await sendWhatsAppMessage(replyButtonMessage);
             console.log(replyButtonSent);
         } catch (error) {

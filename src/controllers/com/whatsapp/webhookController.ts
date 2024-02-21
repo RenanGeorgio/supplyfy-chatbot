@@ -3,6 +3,7 @@ import XHubSignature from "x-hub-signature";
 import { CustomRequest } from "../../helpers/customRequest";
 import { messageStatuses, statUses } from "../../helpers/messageStatuses";
 import { processMessage } from "../processMessage";
+import { msgStatusChange } from "./service";
 
 const verificationToken = process.env.WEBHOOK_VERIFICATION_TOKEN;
 const appSecret = process.env.APP_SECRET;
@@ -42,16 +43,9 @@ export const incomingWb = (req: CustomRequest, res: Response, next: NextFunction
         if (body.changes[0].value.hasOwnProperty("messages")) {
             try { // Marca msg como lida
                 let sendReadStatus: statUses = messageStatuses?.read;
-                sendReadStatus.message_id = body.value.messages[0].id;
+                sendReadStatus?.message_id = body.value.messages[0].id;
 
-                const response = await whatsappCloudAp("/messages", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${this.bearerToken}`
-                    },
-                    data: sendReadStatus
-                });
+                const response = await msgStatusChange(sendReadStatus?.message_id);
 
                 console.log(response);
             } catch (error) {

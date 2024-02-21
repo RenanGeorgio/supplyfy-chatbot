@@ -1,6 +1,7 @@
 import { Response, NextFunction } from "express";
 import { CustomRequest } from "../../helpers/customRequest";
 import { processQuestion } from "../../helpers/trainModel";
+import { msgStatusChange } from "./service";
 
 export const markMessageAsRead = async (
     req: CustomRequest,
@@ -10,19 +11,7 @@ export const markMessageAsRead = async (
     try {
         const { messageId } = req.body;
 
-        const response = await whatsappCloudApi("/messages", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${this.bearerToken}`
-            },
-            data: {
-                messaging_product: this.messagingProduct,
-                status: 'read',
-                //to: this.recipientPhoneNumber,
-                message_id: messageId
-            },
-        });
+        const response = await msgStatusChange(messageId);
 
         if (response.status === 200) {
             return res.status(200).send(response);
