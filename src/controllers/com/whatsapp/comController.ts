@@ -1,7 +1,7 @@
 import { Response, NextFunction } from "express";
 import { CustomRequest } from "../../helpers/customRequest";
 import { processQuestion } from "../../helpers/trainModel";
-import { msgStatusChange } from "./service";
+import { msgStatusChange, sendMsg } from "./service";
 
 export const markMessageAsRead = async (
     req: CustomRequest,
@@ -31,23 +31,18 @@ export const sendTextMessage = async (
     try {
         const { messageText } = req.body;
 
-        const response = await whatsappCloudAp("/messages", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${this.bearerToken}`
-            },
-            data: {
-                messaging_product: this.messagingProduct,
-                recipient_type: "individual",
-                to: this.recipientPhoneNumber,
-                type: "text",
-                text: {
-                    preview_url: false,
-                    body: messageText
-                },
-            },
-        });
+        const data = {
+            messaging_product: this.messagingProduct,
+            recipient_type: "individual",
+            to: this.recipientPhoneNumber,
+            type: "text",
+            text: {
+                preview_url: false,
+                body: messageText
+            }
+        }
+
+        const response = await sendMsg(data);
 
         if (response.status === 200) {
             return res.status(200).send(response);
@@ -67,34 +62,29 @@ export const sendButtonsMessage = async (
     try {
         const { messageText, buttonsList } = req.body;
 
-        const response = await whatsappCloudAp("/messages", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${this.bearerToken}`
-            },
-            data: {
-                messaging_product: this.messagingProduct,
-                recipient_type: "individual",
-                to: this.recipientPhoneNumber,
-                type: "interactive",
-                interactive: {
-                    type: "button",
-                    body: {
-                        text: messageText
-                    },
-                    action: {
-                        buttons: buttonsList.map(button => ({
-                            type: "reply",
-                            reply: {
-                                id: button.id,
-                                title: button.title,
-                            }
-                        }))
-                    }
+        const data = {
+            messaging_product: this.messagingProduct,
+            recipient_type: "individual",
+            to: this.recipientPhoneNumber,
+            type: "interactive",
+            interactive: {
+                type: "button",
+                body: {
+                    text: messageText
+                },
+                action: {
+                    buttons: buttonsList.map(button => ({
+                        type: "reply",
+                        reply: {
+                            id: button.id,
+                            title: button.title,
+                        }
+                    }))
                 }
-            },
-        });
+            }
+        }
+
+        const response = await sendMsg(data);
 
         if (response.status === 200) {
             return res.status(200).send(response);
@@ -114,19 +104,14 @@ export const sendContacts = async (
     try {
         const { contactsList } = req.body;
 
-        const response = await whatsappCloudAp("/messages", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${this.bearerToken}`
-            },
-            data: {
-                messaging_product: this.messagingProduct,
-                to: this.recipientPhoneNumber,
-                type: "contacts",
-                contacts: contactsList
-            }
-        });
+        const data = {
+            messaging_product: this.messagingProduct,
+            to: this.recipientPhoneNumber,
+            type: "contacts",
+            contacts: contactsList
+        }
+
+        const response = await sendMsg(data);
 
         if (response.status === 200) {
             return res.status(200).send(response);
@@ -146,36 +131,31 @@ export const sendRadioButtons = async (
     try {
         const { headerText, bodyText, footerText, sectionsList } = req.body;
 
-        const response = await whatsappCloudAp("/messages", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${this.bearerToken}`
-            },
-            data: {
-                messaging_product: this.messagingProduct,
-                recipient_type: "individual",
-                to: this.recipientPhoneNumber,
-                type: "interactive",
-                interactive: {
-                    type: "list",
-                    header: {
-                        type: "text",
-                        text: headerText
-                    },
-                    body: {
-                        text: bodyText
-                    },
-                    footer: {
-                        text: footerText
-                    },
-                    action: {
-                        button: "Select from the list",
-                        sections: sectionsList
-                    }
+        const data = {
+            messaging_product: this.messagingProduct,
+            recipient_type: "individual",
+            to: this.recipientPhoneNumber,
+            type: "interactive",
+            interactive: {
+                type: "list",
+                header: {
+                    type: "text",
+                    text: headerText
+                },
+                body: {
+                    text: bodyText
+                },
+                footer: {
+                    text: footerText
+                },
+                action: {
+                    button: "Select from the list",
+                    sections: sectionsList
                 }
             }
-        });
+        }
+
+        const response = await sendMsg(data);
 
         if (response.status === 200) {
             return res.status(200).send(response);
@@ -195,23 +175,18 @@ export const sendImageByLink = async (
     try {
         const { imageLink, caption } = req.body;
 
-        const response = await whatsappCloudAp("/messages", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${this.bearerToken}`
-            },
-            data: {
-                messaging_product: this.messagingProduct,
-                recipient_type: "individual",
-                to: this.recipientPhoneNumber,
-                type: "image",
-                image: {
-                    link: imageLink,
-                    caption: caption
-                }
+        const data = {
+            messaging_product: this.messagingProduct,
+            recipient_type: "individual",
+            to: this.recipientPhoneNumber,
+            type: "image",
+            image: {
+                link: imageLink,
+                caption: caption
             }
-        });
+        }
+
+        const response = await sendMsg(data);
 
         if (response.status === 200) {
             return res.status(200).send(response);
@@ -265,24 +240,19 @@ export const sendDocumentMessage = async (
 
         const docId = await this.uploadMedia(documentPath);
 
-        const response = await whatsappCloudAp("/messages", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${this.bearerToken}`
-            },
-            data: {
-                messaging_product: this.messagingProduct,
-                recipient_type: "individual",
-                to: this.recipientPhoneNumber,
-                type: "document",
-                document: {
-                    caption: caption,
-                    filename: documentPath.split('./')[1],
-                    id: docId
-                }
-            },
-        });
+        const data = {
+            messaging_product: this.messagingProduct,
+            recipient_type: "individual",
+            to: this.recipientPhoneNumber,
+            type: "document",
+            document: {
+                caption: caption,
+                filename: documentPath.split('./')[1],
+                id: docId
+            }
+        }
+
+        const response = await sendMsg(data);
 
         if (response.status === 200) {
             return res.status(200).send(response);
