@@ -17,7 +17,7 @@ app.use(bodyParser.json({ verify: function (req, res, buf) { req.rawBody = buf; 
 app.use(bodyParser.urlencoded( { extended : false }));
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 
 app.use(cookieParser());
 

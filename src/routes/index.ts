@@ -8,7 +8,8 @@ import * as chatController from "../controllers/chat/chatController";
 // whatsapp controller
 import * as metaWebhookController from "../controllers/com/whatsapp/webhookController";
 import * as comController from "../controllers/com/whatsapp/comController";
-
+// facebook controller
+import * as facebook from '../services/facebook';
 
 const routes = Router();
 
@@ -20,8 +21,9 @@ routes
     .get("/webhook", metaWebhookController.subscribeToWb)
     .post("/webhook", metaWebhookController.incomingWb)
 
-    // chat test
-    .post("/chat", chatController.message)
+    // chat
+    .post("/chat", chatController.create)    
+    .get("/chat/:id", chatController.list)
 
     // whatsapp plugin
     .post("/whatsapp/set-status", comController.markMessageAsRead)
@@ -33,5 +35,8 @@ routes
     .post("/whatsapp/upload", comController.uploadMedia)
     .post("/whatsapp/send-doc", comController.sendDocumentMessage)
 
+    // facebook plugin
+    .post("/messenger", facebook.events)
+    .get("/messenger", facebook.webhook)
 
 export default routes;
