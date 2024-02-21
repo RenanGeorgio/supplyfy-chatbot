@@ -221,7 +221,7 @@ export const sendImageByLink = async (
                     link: imageLink,
                     caption: caption
                 }
-            },
+            }
         });
 
         if (response.status === 200) {

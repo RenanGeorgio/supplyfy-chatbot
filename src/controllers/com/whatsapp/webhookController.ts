@@ -1,7 +1,8 @@
 import { Response, NextFunction } from "express";
+import XHubSignature from "x-hub-signature";
 import { CustomRequest } from "../../helpers/customRequest";
 import { messageStatuses, statUses } from "../../helpers/messageStatuses";
-import XHubSignature from "x-hub-signature";
+import { processMessage } from "../processMessage";
 
 const verificationToken = process.env.WEBHOOK_VERIFICATION_TOKEN;
 const appSecret = process.env.APP_SECRET;
@@ -57,9 +58,7 @@ export const incomingWb = (req: CustomRequest, res: Response, next: NextFunction
                 console.log(error);
             }
         
-            body.value.messages.forEach(async (message) => {
-
-            });
+            body.value.messages.forEach(processMessage);
         }
 
         return res.sendStatus(200);
