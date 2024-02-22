@@ -11,6 +11,8 @@ import * as comController from "../controllers/com/whatsapp/comController";
 // facebook controller
 import * as facebook from '../services/facebook';
 
+import * as botController from "../controllers/bot/botController";
+
 const routes = Router();
 
 routes
@@ -37,5 +39,9 @@ routes
 
     // facebook plugin
     // .post("/messenger", facebook.events)
+    
+    .post("/telegram/bot", middlewares.JWT, botController.createBot)
+    .post("/telegram/bot/stop", middlewares.JWT, botController.stopBot);
+    // todo: bot resume etc
 
 export default routes;
