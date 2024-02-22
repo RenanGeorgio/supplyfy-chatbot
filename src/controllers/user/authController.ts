@@ -1,7 +1,7 @@
 import User from "../../models/user/User";
 import { Response, NextFunction } from "express";
 import { CustomRequest } from "../../helpers/customRequest";
-import authApi from "../../services/authApi";
+import authApi from "../../services/auth";
 import { generateAccessToken } from "../../helpers/accessToken";
 
 export const login = async (
@@ -22,7 +22,7 @@ export const login = async (
             },
         });
         if (response.status === 200) {
-            const token = generateAccessToken(user._id, user.email, user.company);
+            const token = generateAccessToken(user._id);
             return res
                 .status(200)
                 .send({ token, email: user.email, company: user.company, name: user.name });

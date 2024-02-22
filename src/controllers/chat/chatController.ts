@@ -2,6 +2,7 @@ import { Response, NextFunction } from "express";
 import { CustomRequest } from "../../helpers/customRequest";
 import { processQuestion } from "../../helpers/trainModel";
 import Message from "../../models/chat/Message";
+import User from "../../models/user/User";
 
 export const create = async (
     req: CustomRequest,
@@ -9,11 +10,18 @@ export const create = async (
     next: NextFunction
 ) => {
     try {
+        if (!req.user) {
+            return res.status(403).send({ message: "Unauthorized" });
+        }
+        const user = await User.findById(req.user.sub);
+        if (!user) {
+            return res.status(403).send({ message: "Unauthorized" });
+        }
         const { chat, text, date } = req.body;  
         const response = await processQuestion(text);
 
         const message = new Message({
-            name: chat.first_name + " " + chat.last_name,
+            name: user.name,
             chatId: chat.id,
             message: text,
             answer: response,
@@ -33,6 +41,13 @@ export const list = async (
     next: NextFunction
 ) => {
     try {
+        if (!req.user) {
+            return res.status(403).send({ message: "Unauthorized" });
+        }
+        const user = await User.findById(req.user.sub);
+        if (!user) {
+            return res.status(403).send({ message: "Unauthorized" });
+        }
         const { id } = req.params;
         const messages = await Message.find({ chatId: id });
         return res.status(200).send(messages);
