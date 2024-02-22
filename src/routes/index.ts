@@ -37,6 +37,5 @@ routes
 
     // facebook plugin
     .post("/messenger", facebook.events)
-    .get("/messenger", facebook.webhook)
 
 export default routes;
