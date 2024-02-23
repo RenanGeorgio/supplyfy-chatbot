@@ -1,11 +1,7 @@
-import TelegramBot from "node-telegram-bot-api";
+import { TelegramServiceController } from "../../types/types";
 import telegramService from "./telegramService";
 
-export const telegramServiceController: {
-  telegramService: TelegramBot[];
-  start: (token: string) => Promise<TelegramBot>;
-  stop: (botUsername: string) => Promise<boolean | null>;
-} = {
+export const telegramServiceController: TelegramServiceController = {
   telegramService: [],
 
   start: async (token: string) => {
@@ -14,7 +10,7 @@ export const telegramServiceController: {
     return telegram;
   },
 
-  stop: async (botUsername) => {
+  stop: async (botUsername: string) => {
     if (telegramServiceController.telegramService.length === 0) {
       return false;
     }
