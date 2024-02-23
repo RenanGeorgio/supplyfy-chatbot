@@ -41,7 +41,7 @@ routes
     // .post("/messenger", facebook.events)
     
     .post("/telegram/bot", middlewares.JWT, botController.createBot)
-    .post("/telegram/bot/stop", middlewares.JWT, botController.stopBot);
-    // todo: bot resume etc
+    .post("/telegram/bot/stop", middlewares.JWT, botController.stopBot)
+    .post("/telegram/bot/resume", middlewares.JWT, botController.resumeBot)
 
 export default routes;

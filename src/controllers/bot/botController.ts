@@ -28,8 +28,11 @@ export const createBot = async (req: Request, res: Response) => {
       });
     }
 
-    const test = await telegramServiceController.start(telegram.token);
+    const bot = await telegramServiceController.start(telegram.token);
 
+    if(!bot) {
+      return res.status(500).json({ message: "Error creating bot" });
+    }
 
     return res.status(201).json({ message: "Bot created" });
   } catch (error) {
@@ -52,6 +55,26 @@ export const stopBot = async (req: Request, res: Response) => {
     }
 
     return res.status(200).json({ message: `Bot ${username} stopped` });
+  } catch (error) {
+    return res.status(500);
+  }
+};
+
+export const resumeBot = async (req: Request, res: Response) => {
+  try {
+    const { username } = req.body;
+
+    if(!username) {
+      return res.status(400).json({ message: "Missing bot username" });
+    }
+
+    const bot = await telegramServiceController.resume(username);
+    console.log(bot)
+    if(!bot) {
+      return res.status(404).json({ message: "Bot not found" });
+    }
+
+    return res.status(200).json({ message: `Bot ${username} resumed` });
   } catch (error) {
     return res.status(500);
   }

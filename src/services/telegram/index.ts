@@ -1,28 +1,31 @@
+import { findTelegramBot } from "../../helpers/findTelegramBot";
 import { TelegramServiceController } from "../../types/types";
 import telegramService from "./telegramService";
 
 export const telegramServiceController: TelegramServiceController = {
   telegramService: [],
 
-  start: async (token: string) => {
+  async start(token: string) {
     const telegram = await telegramService(token);
-    telegramServiceController.telegramService.push(telegram);
+    this.telegramService.push(telegram);
     return telegram;
   },
 
-  stop: async (botUsername: string) => {
-    if (telegramServiceController.telegramService.length === 0) {
-      return false;
+  async stop(botUsername: string) {
+    const bot = await findTelegramBot(this.telegramService, botUsername);
+    if (bot) {
+      bot.stopPolling();
+      return true;
     }
-    for (const telegramBot of telegramServiceController.telegramService) {
-      const username = (await telegramBot.getMe()).username;
-      if (username === botUsername) {
-        telegramBot.stopPolling();
-        return true;
-      } else {
-        return false;
-      }
+    return false;
+  },
+
+  async resume(botUsername: string) {
+    const bot = await findTelegramBot(this.telegramService, botUsername);
+    if (bot) {
+      bot.startPolling();
+      return true;
     }
-    return null;
+    return false;
   },
 };
