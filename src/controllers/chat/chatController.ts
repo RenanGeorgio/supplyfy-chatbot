@@ -10,6 +10,7 @@ export const create = async (
 ) => {
     try {
         const { chat, text, date } = req.body;  
+
         const response = await processQuestion(text);
 
         const message = new Message({
@@ -19,6 +20,7 @@ export const create = async (
             answer: response,
             date: date
         });
+
         await message.save();
 
         return res.status(200).send(message);
@@ -34,7 +36,9 @@ export const list = async (
 ) => {
     try {
         const { id } = req.params;
+
         const messages = await Message.find({ chatId: id });
+        
         return res.status(200).send(messages);
     } catch (error) {
         next(error);

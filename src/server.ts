@@ -10,8 +10,8 @@ import { makeExecutableSchema } from "@graphql-tools/schema";
 import routes from "./routes";
 import resolvers from "./core/resolvers";
 import typeDefs from "./core/schemas";
-import * as webhookRouter from "./webhook";
-import sessionMiddleware from "./middlewares/session";
+import * as webhookRouter from "./webhooks";
+import { sessionMiddleware, serviceSelectorMiddleware } from "./middlewares";
 
 const redisClient = redis.createClient();
 const app = express();
@@ -60,11 +60,11 @@ app.use((req: Request, res: Response, next: Next) => {
 });
 
 // catch all errors
-app.use(((error, req, res, next) => {
-    res.locals.message = error.message;
-    res.locals.error = req.app.get('env') === 'development' ? error : {};
+app.use(((error: any, req: Request, res: Response, next: Next) => {
+  res.locals.message = error.message;
+  res.locals.error = req.app.get("env") === "development" ? error : {};
 
-    res.status(error.status || 500).send({ message: error.message });
+  res.status(error.status || 500).send({ message: error.message });
 }) as ErrorRequestHandler);
 
 export default app;

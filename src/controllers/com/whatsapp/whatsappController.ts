@@ -1,9 +1,9 @@
 import { Response } from "express";
 import XHubSignature from "x-hub-signature";
-import { CustomRequest } from "../../helpers/customRequest";
-import { messageStatuses, statUses } from "../../helpers/messageStatuses";
+import { CustomRequest } from "../../../helpers/customRequest";
+import { messageStatuses, statUses } from "../../../helpers/messageStatuses";
 import { processMessage } from "../processMessage";
-import { msgStatusChange } from "./service";
+import { msgStatusChange } from "../service";
 
 export const messageHandler = async (
     req: CustomRequest,
