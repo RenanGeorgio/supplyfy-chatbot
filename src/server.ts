@@ -1,7 +1,7 @@
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import bodyParser from "body-parser";
-import express, { ErrorRequestHandler, Response, Request, Next } from "express";
+import express, { ErrorRequestHandler, Response, Request, NextFunction } from "express";
 import createError from "http-errors";
 import * as session from "express-session";
 import redis from "redis";
@@ -19,7 +19,14 @@ const app = express();
 app.use(cors());
 
 // Copia raw body buffer para req["rawBody"] gerando a x-hub signature: necessaria para whatsapp cloud api
-app.use(bodyParser.json({ verify: function (req, res, buf) { req.rawBody = buf; } }));
+app.use(
+  bodyParser.json({
+    verify: function (req: Request, res: Request, buf: Buffer) {
+      req.rawBody = buf;
+    },
+  })
+);
+
 app.use(bodyParser.urlencoded( { extended : false }));
 
 app.use(express.json());
@@ -55,12 +62,12 @@ app.use('/incoming', sessionMiddleware, serviceSelectorMiddleware, webhookRouter
 app.use(routes);
 
 // catch not defined routes
-app.use((req: Request, res: Response, next: Next) => {
-    next(createError(404));
+app.use((req: Request, res: Response, next: NextFunction) => {
+  next(createError(404));
 });
 
 // catch all errors
-app.use(((error: any, req: Request, res: Response, next: Next) => {
+app.use(((error: any, req: Request, res: Response, next: NextFunction) => {
   res.locals.message = error.message;
   res.locals.error = req.app.get("env") === "development" ? error : {};
 

@@ -1,5 +1,13 @@
 import { Response, NextFunction } from "express";
-import { CustomRequest } from "../../types/customRequest";
+import {
+  CustomRequest,
+  SendText,
+  SendInterativeButton,
+  SendInterativeList,
+  SendContacts,
+  SendImg,
+  SendDoc
+} from "../../types";
 import { processQuestion } from "../../libs/trainModel";
 import { msgStatusChange, sendMsg } from "./service";
 
@@ -31,16 +39,16 @@ export const sendTextMessage = async (
     try {
         const { messageText } = req.body;
 
-        const data = {
-            messaging_product: this.messagingProduct,
-            recipient_type: "individual",
-            to: this.recipientPhoneNumber,
-            type: "text",
-            text: {
-                preview_url: false,
-                body: messageText
-            }
-        }
+        const data: SendText = {
+          messaging_product: this.messagingProduct,
+          recipient_type: "individual",
+          to: this.recipientPhoneNumber,
+          type: "text",
+          text: {
+            preview_url: false,
+            body: messageText,
+          },
+        };
 
         const response = await sendMsg(data);
 
@@ -62,27 +70,27 @@ export const sendButtonsMessage = async (
     try {
         const { messageText, buttonsList } = req.body;
 
-        const data = {
-            messaging_product: this.messagingProduct,
-            recipient_type: "individual",
-            to: this.recipientPhoneNumber,
-            type: "interactive",
-            interactive: {
-                type: "button",
-                body: {
-                    text: messageText
+        const data: SendInterativeButton = {
+          messaging_product: this.messagingProduct,
+          recipient_type: "individual",
+          to: this.recipientPhoneNumber,
+          type: "interactive",
+          interactive: {
+            type: "button",
+            body: {
+              text: messageText,
+            },
+            action: {
+              buttons: buttonsList.map((button) => ({
+                type: "reply",
+                reply: {
+                  id: button.id,
+                  title: button.title,
                 },
-                action: {
-                    buttons: buttonsList.map(button => ({
-                        type: "reply",
-                        reply: {
-                            id: button.id,
-                            title: button.title,
-                        }
-                    }))
-                }
-            }
-        }
+              })),
+            },
+          },
+        };
 
         const response = await sendMsg(data);
 
@@ -104,12 +112,12 @@ export const sendContacts = async (
     try {
         const { contactsList } = req.body;
 
-        const data = {
-            messaging_product: this.messagingProduct,
-            to: this.recipientPhoneNumber,
-            type: "contacts",
-            contacts: contactsList
-        }
+        const data: SendContacts = {
+          messaging_product: this.messagingProduct,
+          to: this.recipientPhoneNumber,
+          type: "contacts",
+          contacts: contactsList,
+        };
 
         const response = await sendMsg(data);
 
@@ -131,29 +139,29 @@ export const sendRadioButtons = async (
     try {
         const { headerText, bodyText, footerText, sectionsList } = req.body;
 
-        const data = {
-            messaging_product: this.messagingProduct,
-            recipient_type: "individual",
-            to: this.recipientPhoneNumber,
-            type: "interactive",
-            interactive: {
-                type: "list",
-                header: {
-                    type: "text",
-                    text: headerText
-                },
-                body: {
-                    text: bodyText
-                },
-                footer: {
-                    text: footerText
-                },
-                action: {
-                    button: "Select from the list",
-                    sections: sectionsList
-                }
-            }
-        }
+        const data: SendInterativeList = {
+          messaging_product: this.messagingProduct,
+          recipient_type: "individual",
+          to: this.recipientPhoneNumber,
+          type: "interactive",
+          interactive: {
+            type: "list",
+            header: {
+              type: "text",
+              text: headerText,
+            },
+            body: {
+              text: bodyText,
+            },
+            footer: {
+              text: footerText,
+            },
+            action: {
+              button: "Select from the list",
+              sections: sectionsList,
+            },
+          },
+        };
 
         const response = await sendMsg(data);
 
@@ -175,16 +183,16 @@ export const sendImageByLink = async (
     try {
         const { imageLink, caption } = req.body;
 
-        const data = {
-            messaging_product: this.messagingProduct,
-            recipient_type: "individual",
-            to: this.recipientPhoneNumber,
-            type: "image",
-            image: {
-                link: imageLink,
-                caption: caption
-            }
-        }
+        const data: SendImg = {
+          messaging_product: this.messagingProduct,
+          recipient_type: "individual",
+          to: this.recipientPhoneNumber,
+          type: "image",
+          image: {
+            link: imageLink,
+            caption: caption,
+          },
+        };
 
         const response = await sendMsg(data);
 
@@ -240,17 +248,17 @@ export const sendDocumentMessage = async (
 
         const docId = await this.uploadMedia(documentPath);
 
-        const data = {
-            messaging_product: this.messagingProduct,
-            recipient_type: "individual",
-            to: this.recipientPhoneNumber,
-            type: "document",
-            document: {
-                caption: caption,
-                filename: documentPath.split('./')[1],
-                id: docId
-            }
-        }
+        const data: SendDoc = {
+          messaging_product: this.messagingProduct,
+          recipient_type: "individual",
+          to: this.recipientPhoneNumber,
+          type: "document",
+          document: {
+            caption: caption,
+            filename: documentPath.split("./")[1],
+            id: docId,
+          },
+        };
 
         const response = await sendMsg(data);
 

@@ -79,6 +79,8 @@ export interface MsgStatus {
     message_id: number | string;
 };
 
+export type MsgProps = MsgStatus | SendDoc | SendImg | SendContacts | SendInterativeList | SendInterativeButton | SendText
+
 const contactsData = [
     {
         addresses: [

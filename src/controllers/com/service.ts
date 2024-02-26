@@ -1,23 +1,26 @@
-export const sendMsg = async (data) => {
-    try {
-        const response = await whatsappCloudApi("/messages", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${this.bearerToken}`
-            },
-            data: data
-        });
+import { whatsappCloudApi } from "../../api";
+import { MsgProps } from "../../types";
 
-        if (response) {
-            return response;
-        }
-    
-        return null;
-    } catch (error) {
-        next(error);
-    } 
-}
+export const sendMsg = async (data: MsgProps) => {
+  try {
+    const response = await whatsappCloudApi("/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${this.bearerToken}`,
+      },
+      data: data,
+    });
+
+    if (response) {
+      return response;
+    }
+
+    return null;
+  } catch (error) {
+    next(error);
+  }
+};
 
 export const msgStatusChange = async (messageId: string | number) => {
     const data = {

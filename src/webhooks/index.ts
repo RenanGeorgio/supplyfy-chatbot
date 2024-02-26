@@ -1,10 +1,7 @@
 import { Response, NextFunction, Router } from "express";
-import XHubSignature from "x-hub-signature";
-import { CustomRequest } from "../../helpers/customRequest";
+import { CustomRequest } from "../types";
 
 const verificationToken = process.env.WEBHOOK_VERIFICATION_TOKEN;
-const appSecret = process.env.APP_SECRET;
-const xhub = new XHubSignature("SHA256", appSecret);
  
 const router = Router();
 

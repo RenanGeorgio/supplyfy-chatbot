@@ -1,9 +1,12 @@
 import { Response } from "express";
 import XHubSignature from "x-hub-signature";
-import { CustomRequest } from "../../../types/customRequest";
-import { messageStatuses, statUses } from "../../../types/messageStatuses";
-import { processMessage } from "../processMessage";
+import { CustomRequest, statUses } from "../../../types";
+import { messageStatuses } from "../../../helpers/messageStatuses";
+import { processMessage } from "./processMessage";
 import { msgStatusChange } from "../service";
+
+const appSecret = process.env.APP_SECRET;
+const xhub = new XHubSignature("SHA256", appSecret);
 
 export const messageHandler = async (
     req: CustomRequest,

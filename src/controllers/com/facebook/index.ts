@@ -1,5 +1,5 @@
 import { Response } from "express";
-import { CustomRequest } from "../../../types/customRequest";
+import { CustomRequest } from "../../../types";
 import { facebookApi } from "../../../api";
 import { processQuestion } from "../../../libs/trainModel";
 
