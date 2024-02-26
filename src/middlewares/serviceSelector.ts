@@ -1,5 +1,5 @@
 import { NextFunction, Response } from "express";
-import { CustomRequest } from "../helpers/customRequest";
+import { CustomRequest } from "../types/customRequest";
 import { instagramService, telegramService, emailService } from "../services";
 
 const serviceSelectorMiddleware = async (req: CustomRequest, res: Response, next: NextFunction) => {

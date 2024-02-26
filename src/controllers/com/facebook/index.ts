@@ -1,7 +1,7 @@
 import { Response } from "express";
-import { CustomRequest } from "../../../helpers/customRequest";
+import { CustomRequest } from "../../../types/customRequest";
 import { facebookApi } from "../../../api";
-import { processQuestion } from "../../../helpers/trainModel";
+import { processQuestion } from "../../../libs/trainModel";
 
 export const eventsHandler = async (
     req: CustomRequest,

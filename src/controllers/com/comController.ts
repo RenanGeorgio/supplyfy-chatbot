@@ -1,6 +1,6 @@
 import { Response, NextFunction } from "express";
-import { CustomRequest } from "../../helpers/customRequest";
-import { processQuestion } from "../../helpers/trainModel";
+import { CustomRequest } from "../../types/customRequest";
+import { processQuestion } from "../../libs/trainModel";
 import { msgStatusChange, sendMsg } from "./service";
 
 export const markMessageAsRead = async (

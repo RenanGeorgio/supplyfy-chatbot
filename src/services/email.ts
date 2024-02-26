@@ -1,5 +1,5 @@
 const MailListener = require("mail-listener2");
-import { processQuestion } from "../helpers/trainModel";
+import { processQuestion } from "../libs/trainModel";
 import { transporterApi } from "../services";
 
 const mailListener = new MailListener({

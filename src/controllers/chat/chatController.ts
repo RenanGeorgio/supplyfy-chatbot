@@ -1,6 +1,6 @@
 import { Response, NextFunction } from "express";
-import { CustomRequest } from "../../helpers/customRequest";
-import { processQuestion } from "../../helpers/trainModel";
+import { CustomRequest } from "../../types/customRequest";
+import { processQuestion } from "../../libs/trainModel";
 import Message from "../../models/chat/Message";
 
 export const create = async (
@@ -38,7 +38,7 @@ export const list = async (
         const { id } = req.params;
 
         const messages = await Message.find({ chatId: id });
-        
+
         return res.status(200).send(messages);
     } catch (error) {
         next(error);

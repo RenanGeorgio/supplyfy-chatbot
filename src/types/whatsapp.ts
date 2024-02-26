@@ -1,15 +1,3 @@
-const DATA_MENSAGENS_TYPES = [
-    "text",
-    "interactive",
-    "contacts",
-    "image",
-    "document"
-];
-
-type Obj = {
-    [key: string]: any;
-}
-
 type Buttons = {
     type: 'reply' | undefined;
     reply: {

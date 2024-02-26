@@ -1,5 +1,5 @@
 import { Response, NextFunction } from "express";
-import { CustomRequest } from "../../helpers/customRequest";
+import { CustomRequest } from "../../types/customRequest";
 
 export const test = (req: CustomRequest, res: Response, next: NextFunction) => {
     try {

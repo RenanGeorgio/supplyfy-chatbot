@@ -1,5 +1,5 @@
 import { Response, NextFunction } from "express";
-import { CustomRequest } from "../../helpers/customRequest";
+import { CustomRequest } from "../../types/customRequest";
 import { authApi } from "../../api";
 import { generateAccessToken } from "../../helpers/accessToken";
 import User from "../../models/user/User";

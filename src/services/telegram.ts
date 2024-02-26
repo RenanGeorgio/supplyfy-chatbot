@@ -1,6 +1,6 @@
 import TelegramBot from "node-telegram-bot-api";
 import Message from "../models/chat/Message";
-import { processQuestion } from "../helpers/trainModel";
+import { processQuestion } from "../libs/trainModel";
 
 const token = process.env.TELEGRAM_BOT_TOKEN;
 

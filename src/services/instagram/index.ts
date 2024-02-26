@@ -1,5 +1,5 @@
 import { GraphQLSubscriptions } from "instagram_mqtt";
-import { processQuestion } from "../../helpers/trainModel";
+import { processQuestion } from "../../libs/trainModel";
 import instagramLogin from "./auth/session";
 
 const intagramService = async () => {

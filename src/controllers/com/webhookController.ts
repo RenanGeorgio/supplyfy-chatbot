@@ -1,7 +1,7 @@
 import { Response, NextFunction } from "express";
 import XHubSignature from "x-hub-signature";
-import { CustomRequest } from "../../helpers/customRequest";
-import { messageStatuses, statUses } from "../../helpers/messageStatuses";
+import { CustomRequest } from "../../types/customRequest";
+import { messageStatuses, statUses } from "../../types/messageStatuses";
 import { processMessage } from "../processMessage";
 import { msgStatusChange } from "./service";
 

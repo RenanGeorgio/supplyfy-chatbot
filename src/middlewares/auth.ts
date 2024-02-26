@@ -1,6 +1,6 @@
 import { NextFunction, Response } from "express";
 import jsonwebtoken from "jsonwebtoken";
-import { CustomRequest, User as IUser } from "../helpers/customRequest";
+import { CustomRequest, User as IUser } from "../types/customRequest";
 
 const JWT = async (req: CustomRequest, res: Response, next: NextFunction) => {
     try {
