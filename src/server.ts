@@ -1,13 +1,19 @@
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import bodyParser from "body-parser";
-import express, { ErrorRequestHandler, Response } from "express";
+import express, { ErrorRequestHandler, Response, Request, Next } from "express";
+import createError from "http-errors";
+import * as session from "express-session";
+import redis from "redis";
 import { graphqlHTTP } from "express-graphql";
 import { makeExecutableSchema } from "@graphql-tools/schema";
 import routes from "./routes";
 import resolvers from "./core/resolvers";
 import typeDefs from "./core/schemas";
+import * as webhookRouter from "./webhook";
+import sessionMiddleware from "./middlewares/session";
 
+const redisClient = redis.createClient();
 const app = express();
 
 app.use(cors());
@@ -21,12 +27,18 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(cookieParser());
 
+app.use(session({
+    secret: 'your_secret_key', // Replace with your actual secret key
+    resave: false,
+    saveUninitialized: true,
+    store: new (require('connect-redis')(session))({ client: redisClient }), // Use Redis as session store
+    cookie: { secure: false } // Set secure to true if using HTTPS
+}));
+
 const schema = makeExecutableSchema({
     resolvers,
     typeDefs,
 });
-
-app.use(routes);
 
 app.use(
     "/models",
@@ -36,13 +48,22 @@ app.use(
     })
 );
 
+app.use(sessionMiddleware, serviceSelectorMiddleware);
+
+app.use('/incoming', sessionMiddleware, serviceSelectorMiddleware, webhookRouter);
+
+app.use(routes);
+
 // catch not defined routes
-app.use((res: Response) => {
-    res.status(404).send({ message: "Not found" });
+app.use((req: Request, res: Response, next: Next) => {
+    next(createError(404));
 });
 
 // catch all errors
 app.use(((error, req, res, next) => {
+    res.locals.message = error.message;
+    res.locals.error = req.app.get('env') === 'development' ? error : {};
+
     res.status(error.status || 500).send({ message: error.message });
 }) as ErrorRequestHandler);
 

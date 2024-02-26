@@ -1,21 +1,4 @@
-const express = require("express");
-const bodyParser = require("body-parser");
-require("body-parser-xml")(bodyParser);
-const fetch = require("node-fetch");
-
-// import the config in the .env
-require('dotenv').config()
-
-const app = express();
-
-app.use(bodyParser.json());
-// parse xml and json
-app.use(bodyParser.xml());
-app.use(
-  bodyParser.urlencoded({
-    extended: true,
-  })
-);
+import app from "../../server";
 
 app.post("/outbound_message", (requset, response) => {
   const xml_data =
@@ -142,10 +125,4 @@ app.post("/webhook", async (request, response) => {
   } else {
     response.sendStatus(400);
   }
-});
-
-const port = process.env.LISTENER_PORT || 3000;
-
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
 });

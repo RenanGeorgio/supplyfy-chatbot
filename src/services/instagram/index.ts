@@ -1,17 +1,18 @@
-import { processQuestion } from '../../helpers/trainModel';
-import instagramLogin from './auth/session';
-import { GraphQLSubscriptions } from 'instagram_mqtt';
+import { GraphQLSubscriptions } from "instagram_mqtt";
+import { processQuestion } from "../../helpers/trainModel";
+import instagramLogin from "./auth/session";
 
-const intagramService = async() => {
+const intagramService = async () => {
     const { ig } = await instagramLogin();
 
     if (ig) {
-        ig.realtime.on('message', async(msg) => {
-          if(!msg.realtime){
+        ig.realtime.on('message', async (msg) => {
+          if (!msg.realtime) {
             const { message } = msg;
             
             const responseMessage = await processQuestion(message.text!);
             const thread = ig.entity.directThread([message.user_id.toString()]);
+
             await thread.broadcastText(responseMessage);
           }
         });
@@ -27,7 +28,6 @@ const intagramService = async() => {
         });
 
         console.log('Connected to instagram realtime!');
-
     } else {
         console.error('Failed to log in');
     }

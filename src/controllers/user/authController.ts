@@ -23,6 +23,9 @@ export const login = async (
         });
         if (response.status === 200) {
             const token = generateAccessToken(user._id, user.email, user.company);
+
+            req.session.user = { id: user._id, username: user.name, company: user.company };
+
             return res
                 .status(200)
                 .send({ token, email: user.email, company: user.company, name: user.name });

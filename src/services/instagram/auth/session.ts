@@ -1,13 +1,11 @@
 import { readFileSync, writeFileSync } from "fs";
 import { IgApiClient } from "instagram-private-api";
+import { withRealtime, IgApiClientRealtime } from "instagram_mqtt";
 
 const IG_USERNAME = process.env.IG_USERNAME;
 const IG_PASSWORD = process.env.IG_PASSWORD;
 
-import { withRealtime, IgApiClientRealtime } from 'instagram_mqtt';
-
 const instagramLogin = async () => {
-  
   const IG_SESSION_KEY = 'instagram-session.json'; // todo: armazenar a sessão em outro lugar
 
   const ig: IgApiClientRealtime = withRealtime(new IgApiClient()); 
