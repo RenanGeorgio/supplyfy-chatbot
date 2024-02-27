@@ -3,36 +3,28 @@ import mongoose from "../../database";
 const { Schema } = mongoose;
 
 const messageSchema = new Schema({
-    name: {
-        type: String,
-        required: true,
-    },
-    chatId: {
-        type: String,
-        required: true,
-    },
-    message: {
-        type: String,
-        required: true,
-    }, 
-    answer: {
-        type: String,
-        required: true,
-    },
-    date: {
-        type: Date,
-        default: Date.now,
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now,
-    },
-    updatedAt: {
-        type: Date,
-        default: Date.now,
-    },
+  chatId: {
+    type: String,
+    required: true,
+  },
+  senderId: {
+    type: String,
+    required: true,
+  },
+  text: {
+    type: String,
+    required: true,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now,
+  }
 });
 
-const Message = mongoose.model("Message", messageSchema);
+const messageModel = mongoose.model("Message", messageSchema);
 
-export default Message;
+export default messageModel;

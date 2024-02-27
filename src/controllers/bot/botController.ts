@@ -4,8 +4,8 @@ import { telegramServiceController } from "../../services/telegram";
 
 export const createBot = async (req: Request, res: Response) => {
   try {
-    const { companyId, instagram, telegram } = req.body;
-
+    const { companyId, instagram, telegram, userId } = req.body;
+    console.log(userId)
     if(!companyId || !instagram || !telegram) {
       return res.status(400).json({ message: "Missing required fields" });
     }
@@ -17,25 +17,27 @@ export const createBot = async (req: Request, res: Response) => {
     }
 
     const checkIfExist = await BotModel.findOne({ companyId });
-
+    
     if(!checkIfExist) {
       await BotModel.create({
         companyId,
+        userId,
         services: {
           instagram,
           telegram,
         },
       });
     }
-
+   
     const bot = await telegramServiceController.start(telegram.token);
-
+    
     if(!bot) {
       return res.status(500).json({ message: "Error creating bot" });
     }
 
     return res.status(201).json({ message: "Bot created" });
   } catch (error) {
+    console.error(error)
     return res.status(500);
   }
 };
