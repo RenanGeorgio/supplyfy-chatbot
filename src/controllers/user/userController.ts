@@ -1,7 +1,7 @@
 import { NextFunction, Response } from "express";
-import { CustomRequest } from "../../types";
+import { CustomRequest } from "../../helpers/customRequest";
 import User from "../../models/user/User";
-import { authApi } from "../../api";
+import authApi from "../../services/auth";
 import { generateAccessToken } from "../../helpers/accessToken";
 import { isValid } from "../../helpers/validCpfCnpj";
 
@@ -14,19 +14,15 @@ export const info = async (
         if (!req.user) {
             return res.status(403).send({ message: "Unauthorized" });
         }
-
-        const user = await User.findById(req.user._id);
-
+        const user = await User.findById(req.user.sub);
         if (!user) {
             return res.status(403).send({ message: "Unauthorized" });
         }
-
         const info = {
             name: user.name,
             company: user.company,
             email: user.email
         }
-
         return res.status(200).send(info);
     } catch (error) {
         next(error);
@@ -66,15 +62,11 @@ export const create = async (
         if (!isValid(req.body.cpf)) {
             return res.status(400).send({ message: "Invalid CPF or CNPJ" });
         }
-
         const { email, password, key, cpf, name } = req.body;
-
         const user = await User.findOne({ email: email });
-
         if (user) {
             return res.status(400).send({ message: "Usuário já cadastrado." });
         }
-
         const response = await authApi("/chatbot_clients", {
             method: "POST",
             data: {
@@ -84,7 +76,6 @@ export const create = async (
                 cpf: cpf,
             },
         });
-
         if (response.status === 201) {
             const newUser = await User.create({
                 email,
@@ -93,13 +84,9 @@ export const create = async (
                 company: response.data.company,
                 company_id: response.data.company_id,
             });
-
             const token = generateAccessToken(
-                newUser._id,
-                newUser.email,
-                newUser.company,
+                newUser._id
             );
-
             return res.status(200).send({ token });
         } else {
             return res.status(400).send(response.data);
@@ -118,22 +105,17 @@ export const update = async (
         if (!req.user) {
             return res.status(403).send({ message: "Update unauthorized" });
         }
-
-        const user = await User.findById(req.user._id);
-
+        const user = await User.findById(req.user.sub);
         if (!user) {
             return res.status(403).send({ message: "Unauthorized" });
         }
-
         const conflict = await User.findOne({
             name: req.body.name,
             _id: { $ne: req.params.id },
         });
-
         if (conflict) {
             return res.status(400).send({ message: "User with this name already exists" });
         }
-
         const client = await User.findByIdAndUpdate(
             req.params.id,
             {
@@ -143,7 +125,6 @@ export const update = async (
             },
             { new: true }
         );
-
         return res.status(201).send({ client });
     } catch (error) {
         next(error);
