@@ -3,11 +3,14 @@ import { MongoStore } from "wwebjs-mongo";
 import mongoose from "mongoose";
 import { processQuestion } from "../libs/trainModel";
 
-const whatsappWebService = () => {
+const whatsappWebService = (id: string) => {
+  let clientId = id;
+
   mongoose.connect(process.env.MONGODB_URI).then(() => {
     const store = new MongoStore({ mongoose: mongoose });
     const client = new Client({
       authStrategy: new RemoteAuth({
+        clientId: clientId,
         store: store,
         backupSyncIntervalMs: 300000,
       }),
