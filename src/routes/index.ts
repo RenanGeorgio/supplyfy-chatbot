@@ -5,7 +5,7 @@ import * as serverController from "../controllers/server/serverController";
 // chat controller
 import * as chatController from "../controllers/chat/chatController";
 // whatsapp controller
-import * as comController from "../controllers/com/whatsapp/comController";
+import * as comController from "../controllers/com/whatsapp/whatsappController";
 
 const routes = Router();
 

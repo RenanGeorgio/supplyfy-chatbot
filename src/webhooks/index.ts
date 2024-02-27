@@ -1,4 +1,6 @@
 import { Response, NextFunction, Router } from "express";
+import { messageHandler } from "../controllers/com/whatsapp/webhook";
+import { eventsHandler } from "../controllers/com/facebook";
 import { CustomRequest } from "../types";
 
 const verificationToken = process.env.WEBHOOK_VERIFICATION_TOKEN;

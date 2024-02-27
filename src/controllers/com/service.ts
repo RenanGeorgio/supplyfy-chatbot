@@ -18,19 +18,20 @@ export const sendMsg = async (data: MsgProps) => {
 
     return null;
   } catch (error) {
-    next(error);
+    console.log(error);
+    return null;
   }
 };
 
 export const msgStatusChange = async (messageId: string | number) => {
-    const data = {
-        messaging_product: this.messagingProduct,
-        status: 'read',
-        //to: this.recipientPhoneNumber,
-        message_id: messageId
-    }
+  const data = {
+    messaging_product: this.messagingProduct,
+    status: 'read',
+    //to: this.recipientPhoneNumber,
+    message_id: messageId
+  }
 
-    const response = await sendMsg(data);
+  const response = await sendMsg(data);
 
-    return response;
+  return response;
 }
