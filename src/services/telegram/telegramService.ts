@@ -52,31 +52,26 @@ const telegramService = async (token: string) => {
         }
       });
 
-      ChatService()
+      // ChatService()
       
-      io.emit("addNewUser", clientId);
-      telegram.on("message", async (msg) => {
-        // io.emit("message", {});
-        console.log("message", msg);
-      });
+      // io.emit("addNewUser", clientId);
+      // telegram.on("message", async (msg) => {
+      //   // io.emit("message", {});
+      //   console.log("message", msg);
+      // });
 
       console.log("suporte");
     });
   });
 
-  // telegram.on("message", async (msg) => {
-  //   const { chat, text, date, from } = msg;
+  telegram.on("message", async (msg) => {
+    const { chat, text, date, from } = msg;
 
-  //   if (from?.is_bot === false) {
-  //     const answer = await processQuestion(text ?? "");
-  //     if (text === "/start") {
-  //       const userChat = await ClientModel.findOne({ email: chat.id });
-
-  //     }
-
-  //     telegram.sendMessage(chat.id, answer);
-  //   }
-  // });
+    if (from?.is_bot === false) {
+      const answer = await processQuestion(text ?? "");
+      telegram.sendMessage(chat.id, answer);
+    }
+  });
 
   const botName = (await telegram.getMe()).username;
   console.info(`Telegram bot - ${botName} is running...`);
