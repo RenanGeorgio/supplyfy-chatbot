@@ -1,4 +1,5 @@
-import { NlpManager } from 'node-nlp';
+import { NlpManager } from "node-nlp";
+import getAnswer from "./openaiUtil";
 
 const manager = new NlpManager({ languages: ['pt'], forceNER: true });
 
@@ -112,5 +113,12 @@ manager.addAnswer("pt", "user.back", "Bom te ver de volta, em que posso ajudá-l
 
 export async function processQuestion(pergunta: string): Promise<string> {
     const response = await manager.process('pt', pergunta);
-    return response.answer || 'Desculpe, não tenho uma resposta para isso.';
+
+    if (response.answer) {
+        return response.answer || "Desculpe, não tenho uma resposta para isso.";
+    } else {
+        const value = await getAnswer(pergunta);
+
+        return value;
+    }
 }
