@@ -41,8 +41,7 @@ const emailListener = () => {
     (async () => {
       const responseMessage = await processQuestion(emailText);
       if (!responseMessage) return;
-
-      console.log("Email received", mail.subject, mail.text, responseMessage);
+      
       await transporter.sendMail({
         from: process.env.EMAIL_USERNAME,
         to: mail.from.value[0].address,

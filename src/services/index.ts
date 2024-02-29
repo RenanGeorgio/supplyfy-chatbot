@@ -4,5 +4,5 @@ import whatsappWebService from "./whatsapp/whatsapp";
 
 // inicializar os serviços
 // intagramService();
-emailService();
-whatsappWebService("1")
+// emailService();
+// whatsappWebService("1")

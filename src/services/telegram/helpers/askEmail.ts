@@ -2,7 +2,6 @@ import TelegramBot from "node-telegram-bot-api";
 import { validateEmail } from "../../../helpers/validateEmail";
 import EventEmitter from "node:events";
 
-
 const clientEmailEventEmitter = new EventEmitter();
 
 export const askEmail = async (
@@ -19,14 +18,14 @@ export const askEmail = async (
         },
       }
     );
-  
+
     telegram.onReplyToMessage(
       msg.chat.id,
       prompt.message_id,
       async (replyMsg) => {
         const email = replyMsg.text;
         const isValid = validateEmail(email!);
-  
+
         if (!isValid) {
           await telegram.sendMessage(msg.chat.id, `E-mail invalido!`);
           await askEmail(telegram, msg);
@@ -36,6 +35,5 @@ export const askEmail = async (
       }
     );
   })();
-
   return { clientEmailEventEmitter };
 };

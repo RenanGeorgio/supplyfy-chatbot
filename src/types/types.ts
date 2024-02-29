@@ -6,3 +6,10 @@ export type TelegramServiceController = {
   stop: (botUsername: string) => Promise<boolean | null>;
   resume: (botUsername: string) => Promise<boolean | null>;
 };
+
+
+export type RegisterClient = {
+  email: string;
+  name: string;
+  lastName?: string;
+};
