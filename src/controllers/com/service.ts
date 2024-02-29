@@ -2,8 +2,10 @@ import { whatsappCloudApi } from "../../api";
 import { MsgProps } from "../../types";
 
 export const sendMsg = async (data: MsgProps) => {
+  const useWhatsappApi = whatsappCloudApi("v19.0", "+16315551234");
+
   try {
-    const response = await whatsappCloudApi("/messages", {
+    const response = await useWhatsappApi("/messages", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -4,16 +4,19 @@ import bodyParser from "body-parser";
 import express, { ErrorRequestHandler, Response, Request, NextFunction } from "express";
 import createError from "http-errors";
 import * as session from "express-session";
-import redis from "redis";
+import expressValidator from "express-validator";
+import * as connectRedis from "connect-redis";
 import { graphqlHTTP } from "express-graphql";
 import { makeExecutableSchema } from "@graphql-tools/schema";
+import * as redisClient from "./core/redis";
 import routes from "./routes";
 import resolvers from "./core/resolvers";
 import typeDefs from "./core/schemas";
 import * as webhookRouter from "./webhooks";
 import { sessionMiddleware, serviceSelectorMiddleware } from "./middlewares";
 
-const redisClient = redis.createClient();
+const RedisStore = connectRedis(session);
+
 const app = express();
 
 app.use(cors());
@@ -33,12 +36,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(cookieParser());
+app.use(expressValidator());
 
 app.use(session({
     secret: 'your_secret_key', // Replace with your actual secret key
     resave: false,
     saveUninitialized: true,
-    store: new (require('connect-redis')(session))({ client: redisClient }), // Use Redis as session store
+    store: new RedisStore({ client: redisClient })
     cookie: { secure: false } // Set secure to true if using HTTPS
 }));
 
