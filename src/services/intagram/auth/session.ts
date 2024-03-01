@@ -1,10 +1,11 @@
-import { readFileSync, writeFileSync } from "fs";
+const { readFile, writeFile, access } = require('fs/promises')
 import { IgApiClient } from "instagram-private-api";
 
 const IG_USERNAME = process.env.IG_USERNAME;
 const IG_PASSWORD = process.env.IG_PASSWORD;
 
 import { withRealtime, IgApiClientRealtime } from 'instagram_mqtt';
+
 
 const instagramLogin = async () => {
   
@@ -18,7 +19,7 @@ const instagramLogin = async () => {
   let serialized_session;
 
   try {
-    serialized_session = readFileSync(IG_SESSION_KEY, 'utf8')
+    serialized_session = await readFile(IG_SESSION_KEY, 'utf8')
     
   } catch (error) {
     console.warn('Error while trying to read the session', error);
@@ -40,12 +41,19 @@ const instagramLogin = async () => {
     ig.request.end$.subscribe(async () => {
       const serialized = await ig.state.serialize();
       delete serialized.constants;
-      writeFileSync(IG_SESSION_KEY, JSON.stringify(serialized));
+      writeFile(IG_SESSION_KEY, JSON.stringify(serialized));
     });
-    const auth = await ig.account.login(IG_USERNAME as string, IG_PASSWORD as string); 
-    // obs: pode ser necessário usar proxy em produção
-    // todo: checkpoint challenge https://github.com/dilame/instagram-private-api/blob/master/examples/checkpoint.example.ts
+
+    try {
+      const auth = await ig.account.login(IG_USERNAME as string, IG_PASSWORD as string); 
+      // obs: pode ser necessário usar proxy em produção
+      // todo: checkpoint challenge https://github.com/dilame/instagram-private-api/blob/master/examples/checkpoint.example.ts
     console.debug(auth);
+    } catch (error) {
+      console.error('Failed to log in', error);
+    }
+
+
   }
 
   return {

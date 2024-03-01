@@ -7,6 +7,9 @@ export const telegramServiceController: TelegramServiceController = {
 
   async start(token: string) {
     const telegram = await telegramService(token);
+    if(!telegram) {
+      return null;
+    }
     this.telegramService.push(telegram);
     return telegram;
   },

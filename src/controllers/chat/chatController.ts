@@ -1,7 +1,7 @@
 import { Response, NextFunction } from "express";
 import { CustomRequest } from "../../helpers/customRequest";
 import { processQuestion } from "../../helpers/trainModel";
-import Message from "../../models/chat/Message";
+import Message from "../../models/chat/message";
 import User from "../../models/user/User";
 
 export const create = async (
