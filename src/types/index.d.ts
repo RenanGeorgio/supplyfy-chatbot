@@ -1,21 +1,6 @@
 import { User, CustomRequest } from "./customRequest";
-import { Obj, statUses } from "./types";
+import { Obj, statUses, Consumer, ReceiveProps } from "./types";
 import {
-  MsgProps, 
-  SendText,
-  SendInterativeButton,
-  SendInterativeList,
-  SendContacts,
-  SendImg,
-  SendDoc,
-  MsgStatus,
-} from "./whatsapp";
-
-export {
-  User, 
-  CustomRequest,
-  statUses,
-  Obj,
   MsgProps,
   SendText,
   SendInterativeButton,
@@ -24,4 +9,23 @@ export {
   SendImg,
   SendDoc,
   MsgStatus,
+  WebhookEventType
+} from "./whatsapp";
+
+export {
+  User,
+  CustomRequest,
+  statUses,
+  Obj,
+  Consumer,
+  ReceiveProps,
+  MsgProps,
+  SendText,
+  SendInterativeButton,
+  SendInterativeList,
+  SendContacts,
+  SendImg,
+  SendDoc,
+  MsgStatus,
+  WebhookEventType
 };

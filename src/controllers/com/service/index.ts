@@ -1,5 +1,5 @@
-import { whatsappCloudApi } from "../../api";
-import { MsgProps } from "../../types";
+import { whatsappCloudApi } from "../../../api";
+import { MsgProps } from "../../../types";
 
 export const sendMsg = async (data: MsgProps) => {
   const useWhatsappApi = whatsappCloudApi("v19.0", "+16315551234");
