@@ -15,11 +15,4 @@ serverHttp.listen(PORT, () => {
     console.log(`Server running on ${HOST}:${PORT}`);
 });
 
-import './services'
-const io = new Server(serverHttp, {
-    cors: {
-        origin: "http://localhost:7000",
-    },
-});
-
-export { io };
+import './services';

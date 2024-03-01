@@ -7,3 +7,8 @@ export async function botExist(path: string, value: string) {
 
   return botExist;
 }
+
+export async function listAllBots() {
+  const bots = await BotModel.find().exec();
+  return bots;
+}

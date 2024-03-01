@@ -4,33 +4,40 @@ import ClientModel from "../../models/chat/client";
 import { validateEmail } from "../../helpers/validateEmail";
 import { askEmail } from "./helpers/askEmail";
 import { botExist } from "../../repositories/bot";
-import ChatService from "../chat";
-import { io } from "../..";
 import { createClient } from "../../repositories/client";
 import { createChat } from "../../repositories/chat";
 import { ignoredMessages } from "./helpers/ignoredMessages";
+import { crmSocketClient } from "../../core/http";
+import { createMessage } from "../../repositories/message";
 
 const telegramService = async (token: string) => {
   const telegram = new TelegramBot(token, { polling: true });
+
+  try {
+    await telegram.getMe();
+  } catch (error) {
+    return telegram.stopPolling();
+  }
+
   let clientId: string | null = null;
   let enableChatBot = false;
 
   telegram.onText(/\/start/, async (msg) => {
+    const chatId = msg.chat.id;
+
     await telegram.sendMessage(
       msg.chat.id,
       `Olá, seja bem-vindo! \n\nPara começar, por favor, informe seu e-mail.`
     );
 
-    const name = msg.chat.first_name!;
-    const lastName = msg.chat?.last_name || " ";
-    const chatId = msg.chat.id;
-
     const { clientEmailEventEmitter } = await askEmail(telegram, msg);
 
     const createClientEvent = async (email: string) => {
-      const client = await createClient(email, name, lastName);
+      const { first_name, last_name } = msg.chat;
+
+      const client = await createClient(email, first_name!, last_name || " ");
       clientId = client?._id.toString()!;
-      await telegram.sendMessage(msg.chat.id, `Olá, ${name}!`);
+      await telegram.sendMessage(chatId, `Olá, ${first_name}!`);
       enableChatBot = true;
     };
 
@@ -39,7 +46,7 @@ const telegramService = async (token: string) => {
     );
 
     telegram.onText(/\/suporte/, async (msg) => {
-      await telegram.sendMessage(msg.chat.id, `Aguarde um momento, por favor!`);
+      await telegram.sendMessage(chatId, `Aguarde um momento, por favor!`);
       telegram.removeListener("message", messageHandler);
       telegram.removeTextListener(/\/suporte/);
 
@@ -50,12 +57,40 @@ const telegramService = async (token: string) => {
         const { companyId } = bot!;
 
         if (clientId && companyId && chatId) {
-          await createChat({
+          const chatRepo = await createChat({
             members: [clientId, bot?.companyId],
             origin: {
               platform: "telegram",
               chatId: chatId.toString(),
             },
+          });
+
+          crmSocketClient.emit("newClientChat", chatRepo);
+          crmSocketClient.emit("addNewUser", clientId);
+          
+          crmSocketClient.on("disconnect", () => {
+            crmSocketClient.emit("disconnect");
+          });
+
+          telegram.on("message", async (msg) => {
+            const { text, date, from } = msg;
+            const recipientId = companyId;
+
+            const message = await createMessage(
+              clientId!,
+              chatRepo._id.toString(),
+              text!
+            );
+
+            const newMessage = { ...message, recipientId };
+
+            if (newMessage) {
+              crmSocketClient.emit("sendMessage", newMessage);
+            }
+          });
+
+          crmSocketClient.on("getMessage", (msg) => {
+            telegram.sendMessage(chatId, msg.text);
           });
         }
       }
