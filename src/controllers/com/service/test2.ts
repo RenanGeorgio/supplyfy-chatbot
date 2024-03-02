@@ -1,8 +1,4 @@
 
-const config = require("./config"),
-  fetch = require("node-fetch"),
-  { URL, URLSearchParams } = require("url");
-
 export const callSendApi = async (requestBody) => {
   let url = new URL(`${config.apiUrl}/me/messages`);
   url.search = new URLSearchParams({
@@ -18,7 +14,7 @@ export const callSendApi = async (requestBody) => {
   }
 }
 
-export const getUserProfile = async (senderIgsid) => {
+export const getUserProfile = async (senderIgsid: string) => {
   let url = new URL(`${config.apiUrl}/${senderIgsid}`);
   url.search = new URLSearchParams({
     access_token: config.pageAccesToken,
@@ -36,48 +32,6 @@ export const getUserProfile = async (senderIgsid) => {
       `Could not load profile for ${senderIgsid}: ${response.statusText}`
     );
     return null;
-  }
-}
-
-export const setIcebreakers = async (iceBreakers) => {
-  let url = new URL(`${config.apiUrl}/me/messenger_profile`);
-  url.search = new URLSearchParams({
-    access_token: config.pageAccesToken
-  });
-  let json = {
-    platform: "instagram",
-    ice_breakers: iceBreakers
-  };
-  let response = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(json)
-  });
-  if (response.ok) {
-    console.log(`Icebreakers have been set.`);
-  } else {
-    console.warn(`Error setting ice breakers`, response.statusText);
-  }
-}
-
-export const setPersistentMenu =  async (persistentMenu) => {
-  let url = new URL(`${config.apiUrl}/me/messenger_profile`);
-  url.search = new URLSearchParams({
-    access_token: config.pageAccesToken
-  });
-  let json = {
-    platform: "instagram",
-    persistent_menu: persistentMenu
-  };
-  let response = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(json)
-  });
-  if (response.ok) {
-    console.log(`Persistent Menu has been set.`);
-  } else {
-    console.warn(`Error setting Persistent Menu`, response.statusText);
   }
 }
 
