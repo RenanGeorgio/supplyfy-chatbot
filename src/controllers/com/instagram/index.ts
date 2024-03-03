@@ -1,6 +1,7 @@
 import { Response } from "express";
 import XHubSignature from "x-hub-signature";
 import Receive from "./receive";
+import { getUserProfile } from "../service";
 import { Consumer, WebhookEventType, CustomRequest, Obj } from "../../../types";
 
 const appSecret = process.env.APP_SECRET;
@@ -34,7 +35,9 @@ export const messageHandler = async (req: CustomRequest, res: Response) => {
               console.log("Got a comments event");
             }
 
-            return receiveMessage.handlePrivateReply("comment_id", change.id);
+            const commentId = entry.changes[0].value.comment_id;
+
+            return receiveMessage.handlePrivateReply("comment_id", change.id, commentId);
           }
         }*/
 
@@ -60,21 +63,19 @@ export const messageHandler = async (req: CustomRequest, res: Response) => {
                 profilePic: undefined,
               };
 
-              let userProfile = await GraphApi.getUserProfile(senderIgsid);
+              let userProfile = await getUserProfile(senderIgsid.toString());
 
               if (userProfile) {
                 user.name = userProfile.name;
                 user.profilePic = userProfile.profilePic;
 
-                users[senderIgsid] = user;
+                users[senderIgsid as number] = user;
               }
             }
 
-            const receiveMessage = new Receive(users[senderIgsid], webhookEvent);
+            const receiveMessage = new Receive(users[senderIgsid as number], webhookEvent);
 
-            if (receiveMessage) {
-              return receiveMessage.handleMessage();
-            }
+            return receiveMessage.handleMessage();
           }
         });
       });

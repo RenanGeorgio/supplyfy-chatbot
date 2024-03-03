@@ -98,7 +98,7 @@ type WebhookEventBase = {
     }[];
 }
 
-type Attachment = {
+export type Attachment = {
     type: 'audio' | 'file' | 'image' | 'video' | 'fallback' | 'reel';
     payload: {
         url?: string;

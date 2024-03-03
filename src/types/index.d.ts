@@ -10,7 +10,8 @@ import {
   SendDoc,
   MsgStatus,
   WebhookEventType,
-  MsgEventProp
+  MsgEventProp,
+  Attachment
 } from "./whatsapp";
 
 export {
@@ -29,5 +30,6 @@ export {
   SendDoc,
   MsgStatus,
   WebhookEventType,
-  MsgEventProp
+  MsgEventProp,
+  Attachment
 };

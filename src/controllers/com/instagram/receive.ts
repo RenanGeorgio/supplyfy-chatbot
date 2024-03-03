@@ -1,6 +1,6 @@
 import { processQuestion } from "../../../libs/trainModel";
 import { callSendApi, getUserComment } from "../service";
-import { Consumer, WebhookEventType, ReceiveProps, Obj, MsgEventProp } from "../../../types";
+import { Consumer, WebhookEventType, ReceiveProps, Obj, MsgEventProp, Attachment } from "../../../types";
 
 const Receive = class<ReceiveProps> {
   user: Consumer;
@@ -86,7 +86,7 @@ const Receive = class<ReceiveProps> {
   }
 
   handleAttachmentMessage() {
-    const attachment = this.webhookEvent.message.attachments[0];
+    const attachment: Attachment = this.webhookEvent.message.attachments[0];
 
     const response = Response.genQuickReply(i18n.__("fallback.attachment"), [
       {
