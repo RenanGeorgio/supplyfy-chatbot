@@ -1,6 +1,6 @@
 import { Response } from "express";
 import { whatsappCloudApi, instagramApi } from "../../../api";
-import { MsgProps } from "../../../types";
+import { MsgProps, Obj } from "../../../types";
 
 export const sendMsg = async (data: MsgProps) => {
   const useWhatsappApi = whatsappCloudApi("v19.0", "+16315551234");
@@ -39,7 +39,7 @@ export const msgStatusChange = async (messageId: string | number) => {
   return response;
 }
 
-export const callSendApi = async (requestBody) => {
+export const callSendApi = async (requestBody: Obj) => {
   const useInstagramApi = instagramApi();
 
   const response: Response = await useInstagramApi(`/me/messages?access_token=${this.bearerToken}`, {
@@ -72,6 +72,27 @@ export const getUserProfile = async (senderIgsid: string) => {
       name: userProfile.name,
       profilePic: userProfile.profile_pic
     };
+  } else {
+    console.warn(`Could not load profile for ${senderIgsid}: ${response.statusText}`);
+  }
+
+  return null;
+}
+
+export const getUserComment = async (senderIgsid: string, commentId: string) => {
+  const useInstagramApi = instagramApi();
+
+  const response: Response = await useInstagramApi(`/${senderIgsid}?fields=mentioned_comment.comment_id(${commentId})&access_token=${this.bearerToken}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json"
+    }
+  });
+
+  if (response.ok) {
+    const value = await response.json();
+
+    return value.mentioned_comment.text;
   } else {
     console.warn(`Could not load profile for ${senderIgsid}: ${response.statusText}`);
   }

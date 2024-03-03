@@ -1,3 +1,5 @@
+import { processQuestion } from "../../../libs/trainModel";
+import { callSendApi, getUserComment } from "../service";
 import { Consumer, WebhookEventType, ReceiveProps, Obj, MsgEventProp } from "../../../types";
 
 const Receive = class<ReceiveProps> {
@@ -61,7 +63,7 @@ const Receive = class<ReceiveProps> {
     }
   }
 
-  handleTextMessage() {
+  async handleTextMessage() {
     const msgData: MsgEventProp = this.webhookEvent.message;
 
     if (msgData) {
@@ -72,7 +74,9 @@ const Receive = class<ReceiveProps> {
       if (message.includes("start over") || message.includes("get started") || message.includes("hi")) {
         response = Response.genNuxMessage(this.user);
       } else {
-        response = { message: msgData.text };
+        const answer = await processQuestion(msgData.text);
+
+        response = { message: answer };
       }
 
       return response;
@@ -129,32 +133,40 @@ const Receive = class<ReceiveProps> {
     return response;
   }
 
-  handlePrivateReply(type: string, object_id: string) {
-    let requestBody = {
-      recipient: {
-        [type]: object_id,
-      },
-      message: Response.genText(i18n.__("private_reply.post")),
-      tag: "HUMAN_AGENT",
-    };
+  async handlePrivateReply(type: string, object_id: string, commentId: string) {
+    const response = await getUserComment(object_id, commentId);
 
-    GraphApi.callSendApi(requestBody);
+    if (response) {
+      const answer = await processQuestion(response);
+
+      const requestBody = {
+        recipient: {
+          [type]: object_id,
+        },
+        message: answer,
+        tag: "HUMAN_AGENT",
+      };
+
+      await callSendApi(requestBody);
+    }
   }
 
-  sendMessage(response, delay = 0) {
+  async sendMessage(response: Obj, delay = 0) {
     if ("delay" in response) {
       delay = response["delay"];
       delete response["delay"];
     }
 
-    let requestBody = {
+    const requestBody = {
       recipient: {
         id: this.user.igsid,
       },
-      message: response,
+      message: response
     };
 
-    setTimeout(() => GraphApi.callSendApi(requestBody), delay);
+    setTimeout(async () => {
+      await callSendApi(requestBody)
+    }, delay);
   }
 }
 
