@@ -214,6 +214,26 @@ export type WebhookMsgReads = WebhookEventBase & {
     };
 }
 
+export type MsgEventProp = {
+    mid: string;
+    text?: string;
+    commands?: {
+        name: string;
+    }[];
+    quick_reply?: {
+        payload: string;
+    };
+    reply_to?: {
+        mid: string;
+    };
+    referral?: {
+        product: {
+            id: string;
+        };
+    };
+    attachments?: Attachment[];
+}
+
 export type WebhookMsgs = WebhookEventBase & {
     sender: {
         id: string;
@@ -223,25 +243,7 @@ export type WebhookMsgs = WebhookEventBase & {
         id: string;
     };
     timestamp: number;
-    message: {
-        mid: string;
-        text: string;
-        commands?: {
-            name: string;
-        }[];
-        quick_reply?: {
-            payload: string;
-        };
-        reply_to?: {
-            mid: string;
-        };
-        referral?: {
-            product: {
-                id: string;
-            };
-        };
-        attachments?: Attachment[];
-    };
+    message: MsgEventProp;
 }
 
 export type WebhookMsgAccLink = WebhookEventBase & {

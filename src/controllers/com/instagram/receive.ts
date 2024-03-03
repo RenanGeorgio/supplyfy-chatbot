@@ -1,6 +1,6 @@
-import { Consumer, WebhookEventType, ReceiveProps, Obj } from "../../../types";
+import { Consumer, WebhookEventType, ReceiveProps, Obj, MsgEventProp } from "../../../types";
 
-class Receive<ReceiveProps> {
+const Receive = class<ReceiveProps> {
   user: Consumer;
   webhookEvent: WebhookEventType;
   constructor(user: Consumer, webhookEvent: WebhookEventType) {
@@ -14,22 +14,30 @@ class Receive<ReceiveProps> {
     let responses;
 
     try {
-      if (event.message) {
-        const message: Obj = event.message;
-
-        if (message.is_echo) {
-          return;
-        } else if (message.quick_reply) {
-          responses = this.handleQuickReply();
-        } else if (message.attachments) {
-          responses = this.handleAttachmentMessage();
-        } else if (message.text) {
-          responses = this.handleTextMessage();
-        }
-      } else if (event.postback) {
+      if (event?.postback) {
         responses = this.handlePostback();
-      } else if (event.referral) {
+      } else if (event?.referral) {
         responses = this.handleReferral();
+      } else {
+        if (event?.message) {
+          const message: Obj = event.message;
+
+          if (message?.is_echo) {
+            return;
+          } else if (message?.quick_reply) {
+            responses = this.handleQuickReply();
+          } else if (message?.attachments) {
+            responses = this.handleAttachmentMessage();
+          } else {
+            if (message?.text) {
+              responses = this.handleTextMessage();
+            } else {
+              responses = null;
+            }
+          }
+        } else {
+          responses = null;
+        }
       }
     } catch (error) {
       responses = {
@@ -54,17 +62,23 @@ class Receive<ReceiveProps> {
   }
 
   handleTextMessage() {
-    const message = this.webhookEvent.message.text.trim().toLowerCase();
+    const msgData: MsgEventProp = this.webhookEvent.message;
 
-    let response;
+    if (msgData) {
+      const message = msgData.text.trim().toLowerCase();
 
-    if (message.includes("start over") || message.includes("get started") || message.includes("hi")) {
-      response = Response.genNuxMessage(this.user);
-    } else {
-      response = { message: this.webhookEvent.message.text };
+      let response;
+
+      if (message.includes("start over") || message.includes("get started") || message.includes("hi")) {
+        response = Response.genNuxMessage(this.user);
+      } else {
+        response = { message: msgData.text };
+      }
+
+      return response;
     }
 
-    return response;
+    return null;
   }
 
   handleAttachmentMessage() {
@@ -143,3 +157,5 @@ class Receive<ReceiveProps> {
     setTimeout(() => GraphApi.callSendApi(requestBody), delay);
   }
 }
+
+export default Receive;

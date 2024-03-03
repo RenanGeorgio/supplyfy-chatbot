@@ -1,23 +1,19 @@
 import { Response } from "express";
 import XHubSignature from "x-hub-signature";
+import Receive from "./receive";
 import { Consumer, WebhookEventType, CustomRequest, Obj } from "../../../types";
 
 const appSecret = process.env.APP_SECRET;
 const xhub = new XHubSignature("SHA256", appSecret);
 
-let users: Consumer[] | undefined = [];
+let users: Consumer[] | undefined = []; // TO-DO: jogar isso para o Redis
 
 export const messageHandler = async (req: CustomRequest, res: Response) => {
   // Calcula o valor da assinatura x-hub para comparar com o valor no request header
-  const calcXHubSignature = xhub.sign(req.rawBody).toLowerCase();
+  const calcXHubSignature = xhub.sign(req?.rawBody).toLowerCase();
 
-  if (req.headers["x-hub-signature-256"] != calcXHubSignature) {
-    res
-      .status(401)
-      .send({
-        message:
-          "Warning - request header X-Hub-Signature not present or invalid",
-      });
+  if (req?.headers["x-hub-signature-256"] != calcXHubSignature) {
+    res.status(401).send({ message: "Warning - request header X-Hub-Signature not present or invalid" });
   }
 
   try {
@@ -27,7 +23,7 @@ export const messageHandler = async (req: CustomRequest, res: Response) => {
       res.status(200).send("EVENT_RECEIVED");
 
       body.entry.forEach(async function (entry: Obj) {
-        if ("changes" in entry) {
+        /*if ("changes" in entry) {
           // Evento de mudança em pagina
           let receiveMessage = new Receive();
 
@@ -40,7 +36,7 @@ export const messageHandler = async (req: CustomRequest, res: Response) => {
 
             return receiveMessage.handlePrivateReply("comment_id", change.id);
           }
-        }
+        }*/
 
         if (!("messaging" in entry)) {
           res.sendStatus(400).send({ message: "No messaging field in entry" });
@@ -49,12 +45,12 @@ export const messageHandler = async (req: CustomRequest, res: Response) => {
 
         entry.messaging.forEach(async function (webhookEvent: WebhookEventType) {
           // Discarta eventos que nao sao do interesse para a aplicacao
-          if (("message" in webhookEvent) && (webhookEvent.message.is_echo === true)) {
+          if (("message" in webhookEvent) && (webhookEvent?.message?.is_echo === true)) {
             res.status(400).send({ message: "Got an echo" });
             return;
           }
 
-          let senderIgsid = webhookEvent.sender.id;
+          const senderIgsid: string | number = webhookEvent.sender.id;
 
           if (users != undefined) {
             if (!(senderIgsid in users)) { // Primeira vez que interage com o usuario
@@ -73,14 +69,12 @@ export const messageHandler = async (req: CustomRequest, res: Response) => {
                 users[senderIgsid] = user;
               }
             }
-          }
 
-          const receiveMessage = new Receive(users[senderIgsid], webhookEvent);
+            const receiveMessage = new Receive(users[senderIgsid], webhookEvent);
 
-          if (receiveMessage) {
-            return receiveMessage.handleMessage();
-          } else {
-            return null;
+            if (receiveMessage) {
+              return receiveMessage.handleMessage();
+            }
           }
         });
       });
