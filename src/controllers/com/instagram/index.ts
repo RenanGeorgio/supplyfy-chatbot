@@ -52,13 +52,13 @@ export const messageHandler = async (req: CustomRequest, res: Response) => {
           if (("message" in webhookEvent) && (webhookEvent?.message?.is_echo === true)) {
             res.status(400).send({ message: "Got an echo" });
           } else {
-            if (webhookEvent.optin) {
+            if (webhookEvent?.optin) {
               receivedAuthentication(webhookEvent);
-            } else if (webhookEvent.delivery) {
+            } else if (webhookEvent?.delivery) {
               receivedDeliveryConfirmation(webhookEvent);
-            } else if (webhookEvent.read) {
+            } else if (webhookEvent?.read) {
               receivedMessageRead(webhookEvent);
-            } else if (webhookEvent.account_linking) {
+            } else if (webhookEvent?.account_linking) {
               receivedAccountLink(webhookEvent);
             } else {
               const senderIgsid: string | number = webhookEvent.sender.id;

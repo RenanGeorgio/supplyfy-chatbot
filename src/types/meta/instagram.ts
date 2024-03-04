@@ -134,6 +134,7 @@ export type WebhookMsgReads = WebhookEventBase & {
 
 export type MsgEventProp = {
     mid: string;
+    is_echo?: boolean;
     text?: string | Obj;
     metadata?: string;
     commands?: {
