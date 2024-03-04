@@ -161,7 +161,8 @@ export type WebhookMsgDeliveries = WebhookEventBase & {
     };
     delivery: {
         mids: string[];
-        watermarks: number;
+        watermark: number;
+        seq?: number | string;
     };
 }
 
@@ -363,6 +364,7 @@ export type WebhookMsgSee = WebhookEventBase & {
     timestamp: number;
     read: {
         watermark: number;
+        seq?: number | string;
     };
 }
 
@@ -454,7 +456,7 @@ type HandoversAppRoles = MsghHandovers & {
 
 export type WebhookMsgHandovers = HandoversPassThreadControl | HandoversTakeThreadControl | HandoversRequestThreadControl | HandoversAppRoles;
 
-export type WebhookEventType = WebhookMsgDeliveries | WebhookMsgEchoes | WebhookMsgReactions | WebhookMsgReads | WebhookMsgs | WebhookMsgAccLink | WebhookMsgFeedback | WebhookMsgGamePlays | WebhookMsgOptions | WebhookMsgPolicyEnforcement | WebhookMsgPostbacks | WebhookMsgSee | WebhookStandby | WebhookSendCart | WebhookMsgReferral | WebhookMsgHandovers;
+export type WebhookEventType = WebhookMsgDeliveries | WebhookMsgEchoes | WebhookMsgReactions | WebhookMsgs | WebhookMsgAccLink | WebhookMsgFeedback | WebhookMsgGamePlays | WebhookMsgOptions | WebhookMsgPolicyEnforcement | WebhookMsgPostbacks | WebhookMsgSee | WebhookStandby | WebhookSendCart | WebhookMsgReferral | WebhookMsgHandovers;
 
 const contactsData = [
     {

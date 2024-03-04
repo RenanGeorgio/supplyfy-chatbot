@@ -11,7 +11,14 @@ import {
   MsgStatus,
   WebhookEventType,
   MsgEventProp,
-  Attachment
+  Attachment,
+  WebhookMsgAccLink,
+  WebhookMsgOptions,
+  WebhookMsgDeliveries,
+  WebhookMsgSee,
+  WebhookMsgPostbacks,
+  WebhookMsgReferral,
+  WebhookMsgs
 } from "./whatsapp";
 
 export {
@@ -31,5 +38,12 @@ export {
   MsgStatus,
   WebhookEventType,
   MsgEventProp,
-  Attachment
+  Attachment,
+  WebhookMsgAccLink,
+  WebhookMsgOptions,
+  WebhookMsgDeliveries,
+  WebhookMsgSee,
+  WebhookMsgPostbacks,
+  WebhookMsgReferral,
+  WebhookMsgs
 };

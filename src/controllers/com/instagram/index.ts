@@ -1,13 +1,14 @@
 import { Response } from "express";
 import XHubSignature from "x-hub-signature";
-import Receive from "./receive";
+import Receive from "./instagramController/receive";
 import { getUserProfile } from "../service";
+import { receivedAuthentication, receivedDeliveryConfirmation, receivedMessageRead, receivedAccountLink } from "./instagramController/received";
 import { Consumer, WebhookEventType, CustomRequest, Obj } from "../../../types";
 
 const appSecret = process.env.APP_SECRET;
 const xhub = new XHubSignature("SHA256", appSecret);
 
-let users: Consumer[] | undefined = []; // TO-DO: jogar isso para o Redis
+let users: Consumer[] = []; // TO-DO: jogar isso para o Redis
 
 export const messageHandler = async (req: CustomRequest, res: Response) => {
   // Calcula o valor da assinatura x-hub para comparar com o valor no request header
@@ -50,32 +51,44 @@ export const messageHandler = async (req: CustomRequest, res: Response) => {
           // Discarta eventos que nao sao do interesse para a aplicacao
           if (("message" in webhookEvent) && (webhookEvent?.message?.is_echo === true)) {
             res.status(400).send({ message: "Got an echo" });
-            return;
-          }
+          } else {
+            if (webhookEvent.optin) {
+              receivedAuthentication(webhookEvent);
+            } else if (webhookEvent.delivery) {
+              receivedDeliveryConfirmation(webhookEvent);
+            } else if (webhookEvent.read) {
+              receivedMessageRead(webhookEvent);
+            } else if (webhookEvent.account_linking) {
+              receivedAccountLink(webhookEvent);
+            } else {
+              //webhookEvent.message
+              //receivedMessage(webhookEvent);
 
-          const senderIgsid: string | number = webhookEvent.sender.id;
+              //webhookEvent.postback
+              //receivedPostback(webhookEvent);
+              const senderIgsid: string | number = webhookEvent.sender.id;
 
-          if (users != undefined) {
-            if (!(senderIgsid in users)) { // Primeira vez que interage com o usuario
-              const user: Consumer = {
-                igsid: senderIgsid,
-                name: undefined,
-                profilePic: undefined,
-              };
+              if (!(senderIgsid in users)) { // Primeira vez que interage com o usuario
+                const user: Consumer = {
+                  igsid: senderIgsid,
+                  name: undefined,
+                  profilePic: undefined,
+                };
 
-              let userProfile = await getUserProfile(senderIgsid.toString());
+                let userProfile = await getUserProfile(senderIgsid.toString());
 
-              if (userProfile) {
-                user.name = userProfile.name;
-                user.profilePic = userProfile.profilePic;
+                if (userProfile) {
+                  user.name = userProfile.name;
+                  user.profilePic = userProfile.profilePic;
 
-                users[senderIgsid as number] = user;
+                  users[senderIgsid as number] = user;
+                }
               }
+
+              const receiveMessage = new Receive(users[senderIgsid as number], webhookEvent);
+
+              return receiveMessage.handleMessage();
             }
-
-            const receiveMessage = new Receive(users[senderIgsid as number], webhookEvent);
-
-            return receiveMessage.handleMessage();
           }
         });
       });
