@@ -27,15 +27,15 @@ import {
   WebhookMsgs } from "../../../../types";
 
 const Receive = class<ReceiveProps> {
-  user: Consumer;
-  webhookEvent: WebhookEventType;
-  constructor(user: Consumer, webhookEvent: WebhookEventType) {
+  user?: Consumer;
+  webhookEvent?: WebhookEventType;
+  constructor(user?: Consumer, webhookEvent?: WebhookEventType) {
     this.user = user;
     this.webhookEvent = webhookEvent;
   }
 
   handleMessage() {
-    const event: WebhookEventType = this.webhookEvent;
+    const event: WebhookEventType | undefined = this.webhookEvent;
 
     let responses;
 

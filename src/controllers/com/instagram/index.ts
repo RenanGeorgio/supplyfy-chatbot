@@ -25,7 +25,7 @@ export const messageHandler = async (req: CustomRequest, res: Response) => {
       res.status(200).send("EVENT_RECEIVED");
 
       body.entry.forEach(async function (entry: Obj) {
-        /*if ("changes" in entry) {
+        if ("changes" in entry) {
           // Evento de mudança em pagina
           let receiveMessage = new Receive();
 
@@ -40,7 +40,7 @@ export const messageHandler = async (req: CustomRequest, res: Response) => {
 
             return receiveMessage.handlePrivateReply("comment_id", change.id, commentId);
           }
-        }*/
+        }
 
         if (!("messaging" in entry)) {
           res.sendStatus(400).send({ message: "No messaging field in entry" });
@@ -61,11 +61,6 @@ export const messageHandler = async (req: CustomRequest, res: Response) => {
             } else if (webhookEvent.account_linking) {
               receivedAccountLink(webhookEvent);
             } else {
-              //webhookEvent.message
-              //receivedMessage(webhookEvent);
-
-              //webhookEvent.postback
-              //receivedPostback(webhookEvent);
               const senderIgsid: string | number = webhookEvent.sender.id;
 
               if (!(senderIgsid in users)) { // Primeira vez que interage com o usuario
