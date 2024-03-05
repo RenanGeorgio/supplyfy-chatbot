@@ -1,7 +1,7 @@
 import { NextFunction, Response } from "express";
 import { CustomRequest } from "../../helpers/customRequest";
 import User from "../../models/user/User";
-import authApi from "../../services/authApi";
+import authApi from "../../services/auth";
 import { generateAccessToken } from "../../helpers/accessToken";
 import { isValid } from "../../helpers/validCpfCnpj";
 
@@ -14,7 +14,7 @@ export const info = async (
         if (!req.user) {
             return res.status(403).send({ message: "Unauthorized" });
         }
-        const user = await User.findById(req.user._id);
+        const user = await User.findById(req.user.sub);
         if (!user) {
             return res.status(403).send({ message: "Unauthorized" });
         }
@@ -85,9 +85,7 @@ export const create = async (
                 company_id: response.data.company_id,
             });
             const token = generateAccessToken(
-                newUser._id,
-                newUser.email,
-                newUser.company,
+                newUser._id
             );
             return res.status(200).send({ token });
         } else {
@@ -107,7 +105,7 @@ export const update = async (
         if (!req.user) {
             return res.status(403).send({ message: "Update unauthorized" });
         }
-        const user = await User.findById(req.user._id);
+        const user = await User.findById(req.user.sub);
         if (!user) {
             return res.status(403).send({ message: "Unauthorized" });
         }

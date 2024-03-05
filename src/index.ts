@@ -5,7 +5,8 @@ dotenv.config();
 
 import * as database from "./database";
 import { serverHttp } from "./core/http";
-import "./websocket";
+import { Server } from "socket.io";
+// import "./websocket";
 
 const PORT = process.env.PORT || 8000;
 const HOST = process.env.HOST || "http://localhost";
@@ -13,3 +14,5 @@ const HOST = process.env.HOST || "http://localhost";
 serverHttp.listen(PORT, () => {
     console.log(`Server running on ${HOST}:${PORT}`);
 });
+
+import './services';

@@ -11,7 +11,7 @@ const intagramService = async() => {
             const { message } = msg;
             
             const responseMessage = await processQuestion(message.text!);
-            const thread = ig.entity.directThread([message.user_id.toString()]);
+            const thread = ig.entity.directThread([String(message?.user_id)]);
             await thread.broadcastText(responseMessage);
           }
         });
