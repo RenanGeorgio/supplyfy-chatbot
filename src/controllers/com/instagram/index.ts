@@ -3,7 +3,7 @@ import XHubSignature from "x-hub-signature";
 import Receive from "./instagramController/receive";
 import { getUserProfile } from "../service";
 import { receivedAuthentication, receivedDeliveryConfirmation, receivedMessageRead, receivedAccountLink } from "./instagramController/received";
-import { Consumer, WebhookEventType, CustomRequest, Obj } from "../../../types";
+import { Consumer, WebhookEventType, WebhookEventBase, CustomRequest, Obj } from "../../../types";
 
 const appSecret = process.env.APP_SECRET;
 const xhub = new XHubSignature("SHA256", appSecret);
@@ -19,9 +19,9 @@ export const messageHandler = async (req: CustomRequest, res: Response) => {
   }
 
   try {
-    const body: Obj = req.body;
+    const body: WebhookEventType = req.body;
 
-    if (body.object === "instagram") {
+    if (body?.object === "instagram") {
       res.status(200).send("EVENT_RECEIVED");
 
       body.entry.forEach(async function (entry: Obj) {
@@ -47,7 +47,7 @@ export const messageHandler = async (req: CustomRequest, res: Response) => {
           return;
         }
 
-        entry.messaging.forEach(async function (webhookEvent: WebhookEventType) {
+        entry.messaging.forEach(async function (webhookEvent: WebhookEventBase) {
           // Discarta eventos que nao sao do interesse para a aplicacao
           if (("message" in webhookEvent) && (webhookEvent?.message?.is_echo === true)) {
             res.status(400).send({ message: "Got an echo" });

@@ -26,15 +26,13 @@ type EventTrans =
     | WebhookMsgOptions 
     | WebhookMsgPolicyEnforcement;
 
-type WebhookEventBase = EventMessaging | EventExtras | EventState | EventTrans | WebhookMsgHandovers;
+export type WebhookEventBase = EventMessaging | EventExtras | EventState | EventTrans | WebhookMsgHandovers;
 
-type WebhookEventType = {
-    object: 'page' | undefined;
+export type WebhookEventType = {
+    object: 'page' | 'instagram' | undefined;
     entry: {
         id: string;
         time: number;
         messaging: WebhookEventBase[];
     }[] | WebhookStandby[];
 }
-
-export default WebhookEventType;
