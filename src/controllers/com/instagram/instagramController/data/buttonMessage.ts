@@ -1,5 +1,3 @@
-import { callSendAPI } from '../callSendAPI';
-
 export default function sendButtonMessage(recipientId: string | number, label: string = "test") {
   const messageData = {
     recipient: {

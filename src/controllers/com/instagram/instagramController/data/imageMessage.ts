@@ -1,5 +1,3 @@
-import { callSendAPI } from '../callSendAPI';
-
 export default function sendImageMessage(recipientId: string | number, imagePath: string) {
   const messageData = {
     recipient: {

@@ -1,5 +1,3 @@
-import { callSendAPI } from '../callSendAPI';
-
 export default function sendReceiptMessage(recipientId: string | number) {
   const receiptId = 'order' + Math.floor(Math.random() * 1000);
 

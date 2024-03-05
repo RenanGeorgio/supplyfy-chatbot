@@ -3,7 +3,17 @@ import XHubSignature from "x-hub-signature";
 import Receive from "./instagramController/receive";
 import { getUserProfile } from "../service";
 import { receivedAuthentication, receivedDeliveryConfirmation, receivedMessageRead, receivedAccountLink } from "./instagramController/received";
-import { Consumer, WebhookEventType, WebhookEventBase, CustomRequest, Obj } from "../../../types";
+import { 
+  Consumer, 
+  WebhookEventType, 
+  WebhookEventBase, 
+  CustomRequest, 
+  Obj, 
+  EntryProps, 
+  WebhookMsgDeliveries, 
+  WebhookMsgSee, 
+  WebhookMsgAccLink,
+  WebhookMsgOptions } from "../../../types";
 
 const appSecret = process.env.APP_SECRET;
 const xhub = new XHubSignature("SHA256", appSecret);
@@ -24,21 +34,24 @@ export const messageHandler = async (req: CustomRequest, res: Response) => {
     if (body?.object === "instagram") {
       res.status(200).send("EVENT_RECEIVED");
 
-      body.entry.forEach(async function (entry: Obj) {
+      body.entry.forEach(async function (entry: EntryProps) {
         if ("changes" in entry) {
           // Evento de mudança em pagina
-          let receiveMessage = new Receive();
+          const receiveMessage = new Receive();
 
-          if (entry.changes[0].field === "comments") {
-            let change = entry.changes[0].value;
+          if (entry?.changes[0]?.field === "comments") {
+            const values: Obj = entry.changes[0];
 
-            if (entry.changes[0].value) {
-              console.log("Got a comments event");
+            if (values?.value) {
+              const change = values.value;
+
+              if (change) {
+                console.log("Got a comments event");
+                const commentId = change.comment_id;
+
+                return receiveMessage.handlePrivateReply("comment_id", change.id, commentId);
+              }
             }
-
-            const commentId = entry.changes[0].value.comment_id;
-
-            return receiveMessage.handlePrivateReply("comment_id", change.id, commentId);
           }
         }
 
@@ -47,45 +60,46 @@ export const messageHandler = async (req: CustomRequest, res: Response) => {
           return;
         }
 
-        entry.messaging.forEach(async function (webhookEvent: WebhookEventBase) {
-          // Discarta eventos que nao sao do interesse para a aplicacao
-          if (("message" in webhookEvent) && (webhookEvent?.message?.is_echo === true)) {
-            res.status(400).send({ message: "Got an echo" });
-          } else {
-            if (webhookEvent?.optin) {
-              receivedAuthentication(webhookEvent);
-            } else if (webhookEvent?.delivery) {
-              receivedDeliveryConfirmation(webhookEvent);
-            } else if (webhookEvent?.read) {
-              receivedMessageRead(webhookEvent);
-            } else if (webhookEvent?.account_linking) {
-              receivedAccountLink(webhookEvent);
+        if (entry?.messaging != undefined) {
+          entry?.messaging?.forEach(async function (webhookEvent: WebhookEventBase) {
+            if (("message" in webhookEvent) && (webhookEvent?.message?.is_echo === true)) { // Discarta eventos que nao sao do interesse para a aplicacao
+              res.status(400).send({ message: "Got an echo" });
             } else {
-              const senderIgsid: string | number = webhookEvent.sender.id;
+              if (webhookEvent?.optin) {
+                receivedAuthentication(webhookEvent as WebhookMsgOptions);
+              } else if (webhookEvent?.delivery) {
+                receivedDeliveryConfirmation(webhookEvent as WebhookMsgDeliveries);
+              } else if (webhookEvent?.read) {
+                receivedMessageRead(webhookEvent as WebhookMsgSee);
+              } else if (webhookEvent?.account_linking) {
+                receivedAccountLink(webhookEvent as WebhookMsgAccLink);
+              } else {
+                const senderIgsid: string | number = webhookEvent.sender.id;
 
-              if (!(senderIgsid in users)) { // Primeira vez que interage com o usuario
-                const user: Consumer = {
-                  igsid: senderIgsid,
-                  name: undefined,
-                  profilePic: undefined,
-                };
+                if (!(senderIgsid in users)) { // Primeira vez que interage com o usuario
+                  const user: Consumer = {
+                    igsid: senderIgsid,
+                    name: undefined,
+                    profilePic: undefined,
+                  };
 
-                let userProfile = await getUserProfile(senderIgsid.toString());
+                  let userProfile = await getUserProfile(senderIgsid.toString());
 
-                if (userProfile) {
-                  user.name = userProfile.name;
-                  user.profilePic = userProfile.profilePic;
+                  if (userProfile) {
+                    user.name = userProfile.name;
+                    user.profilePic = userProfile.profilePic;
 
-                  users[senderIgsid as number] = user;
+                    users[senderIgsid as number] = user;
+                  }
                 }
+
+                const receiveMessage = new Receive(users[senderIgsid as number], webhookEvent);
+
+                return receiveMessage.handleMessage();
               }
-
-              const receiveMessage = new Receive(users[senderIgsid as number], webhookEvent);
-
-              return receiveMessage.handleMessage();
             }
-          }
-        });
+          });
+        }
       });
     } else {
       res.status(404).send({ message: "Unrecognized POST to webhook" });

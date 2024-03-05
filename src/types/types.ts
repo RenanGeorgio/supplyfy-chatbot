@@ -1,6 +1,6 @@
 import { Request } from "express";
 import { Types } from "mongoose";
-import { WebhookEventType } from "./meta/whatsapp";
+import { WebhookEventBase } from "./meta";
 
 export interface User {
   sub: Types.ObjectId | string;
@@ -19,7 +19,7 @@ export type statUses = Obj & {
         messaging_product: string;
         status: string;
         message_id: string;
-        [key: string]?: any;
+        [key: string]: any;
     }
 }
 
@@ -31,7 +31,7 @@ export interface Consumer {
 
 export type ReceiveProps = {
     user: Consumer;
-    webhookEvent: WebhookEventType;
+    webhookEvent: WebhookEventBase;
 }
 
 export type ContactsData = {
@@ -41,7 +41,7 @@ export type ContactsData = {
         state?: string;
         zip?: string | number;
         country?: string;
-        country_code:? string;
+        country_code?: string;
         type?: string;
     }[];
     birthday?: string;

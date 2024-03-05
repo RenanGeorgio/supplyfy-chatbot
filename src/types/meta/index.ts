@@ -9,7 +9,8 @@ import {
   WebhookMsgPostbacks,
   WebhookMsgReferral,
   WebhookMsgs,
-  WebhookEventBase
+  WebhookEventBase,
+  EntryProps
 } from "./instagram";
 import {
   MsgProps,
@@ -34,6 +35,7 @@ export {
   WebhookMsgReferral,
   WebhookMsgs,
   WebhookEventBase,
+  EntryProps,
   MsgProps,
   SendText,
   SendInterativeButton,

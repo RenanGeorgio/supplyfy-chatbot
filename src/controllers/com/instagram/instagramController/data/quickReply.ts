@@ -1,5 +1,3 @@
-import { callSendAPI } from '../callSendAPI';
-
 export default function sendQuickReply(recipientId: string | number, label: string = "teste") {
   const messageData = {
     recipient: {

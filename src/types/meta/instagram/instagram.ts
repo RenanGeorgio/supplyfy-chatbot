@@ -28,11 +28,13 @@ type EventTrans =
 
 export type WebhookEventBase = EventMessaging | EventExtras | EventState | EventTrans | WebhookMsgHandovers;
 
+export type EntryProps = {
+    id?: string | number;
+    time?: number | string;
+    messaging?: WebhookEventBase[];
+} | WebhookStandby;
+
 export type WebhookEventType = {
     object: 'page' | 'instagram' | undefined;
-    entry: {
-        id: string;
-        time: number;
-        messaging: WebhookEventBase[];
-    }[] | WebhookStandby[];
+    entry: EntryProps[];
 }

@@ -1,5 +1,3 @@
-import { callSendAPI } from '../callSendAPI';
-
 export default function sendFileMessage(recipientId: string | number) {
   const messageData = {
     recipient: {

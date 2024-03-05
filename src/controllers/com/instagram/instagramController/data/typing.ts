@@ -1,5 +1,3 @@
-import { callSendAPI } from '../callSendAPI';
-
 export function sendTypingOff(recipientId: string | number) {
   const messageData = {
     recipient: {

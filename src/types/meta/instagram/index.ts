@@ -13,7 +13,7 @@ import {
   WebhookMsgAccLink,
   WebhookMsgOptions
 } from "./transformers";
-import { WebhookEventType, WebhookEventBase } from "./instagram";
+import { WebhookEventType, WebhookEventBase, EntryProps } from "./instagram";
 
 export {
   MsgEventProp,
@@ -26,5 +26,6 @@ export {
   WebhookMsgAccLink,
   WebhookMsgOptions,
   WebhookEventType,
-  WebhookEventBase
+  WebhookEventBase,
+  EntryProps
 }

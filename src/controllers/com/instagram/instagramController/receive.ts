@@ -17,7 +17,7 @@ import {
   sendTextMessage } from "./data";
 import { 
   Consumer, 
-  WebhookEventType, 
+  WebhookEventBase, 
   ReceiveProps, 
   Obj, 
   MsgEventProp, 
@@ -28,16 +28,16 @@ import {
 
 const Receive = class<ReceiveProps> {
   user?: Consumer;
-  webhookEvent?: WebhookEventType;
-  constructor(user?: Consumer, webhookEvent?: WebhookEventType) {
+  webhookEvent?: WebhookEventBase;
+  constructor(user?: Consumer, webhookEvent?: WebhookEventBase) {
     this.user = user;
     this.webhookEvent = webhookEvent;
   }
 
   handleMessage() {
-    const event: WebhookEventType | undefined = this.webhookEvent;
+    const event: WebhookEventBase | undefined = this.webhookEvent;
 
-    let responses;
+    let responses: Obj = {};
 
     try {
       if (event?.postback) {
@@ -46,7 +46,7 @@ const Receive = class<ReceiveProps> {
         responses = this.handleReferral(this.webhookEvent);
       } else {
         if (event?.message) {
-          const message: Obj = event.message;
+          const message: MsgEventProp = event.message;
 
           if (message?.is_echo) {
             console.log("Received echo for message %s and app %d with metadata %s", message?.mid, message?.app_id, message?.metadata);
@@ -118,12 +118,8 @@ const Receive = class<ReceiveProps> {
                   data = this.handleTextMessage(this.webhookEvent);
                   responses = sendTextMessage(this.user.igsid, data.message);
               }
-            } else {
-              responses = null;
             }
           }
-        } else {
-          responses = null;
         }
       }
     } catch (error) {
@@ -151,7 +147,7 @@ const Receive = class<ReceiveProps> {
   async handleTextMessage(event: WebhookMsgs) {
     const msgData: MsgEventProp = event.message;
 
-    if (msgData) {
+    if ((msgData) && (msgData?.text != undefined)) {
       const message = msgData.text.trim().toLowerCase();
 
       let response;

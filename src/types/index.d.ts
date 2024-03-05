@@ -18,7 +18,8 @@ import {
   WebhookMsgPostbacks,
   WebhookMsgReferral,
   WebhookMsgs,
-  WebhookEventBase
+  WebhookEventBase,
+  EntryProps
 } from "./meta";
 
 export {
@@ -46,5 +47,6 @@ export {
   WebhookMsgPostbacks,
   WebhookMsgReferral,
   WebhookMsgs,
-  WebhookEventBase
+  WebhookEventBase,
+  EntryProps
 };
