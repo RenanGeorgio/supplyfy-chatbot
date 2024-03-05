@@ -19,7 +19,7 @@ export type Attachment = {
     };
 }
 
-export type WebhookMsgEchoes = WebhookEventBase & {
+export type WebhookMsgEchoes = {
     sender: {
         id: string;
         user_ref?: string;
@@ -59,7 +59,7 @@ export type MsgEventProp = {
     attachments?: Attachment[];
 }
 
-export type WebhookMsgs = WebhookEventBase & {
+export type WebhookMsgs = {
     sender: {
         id: string;
         user_ref?: string;
@@ -71,8 +71,7 @@ export type WebhookMsgs = WebhookEventBase & {
     message: MsgEventProp;
 }
 
-
-export type WebhookMsgPostbacks = WebhookEventBase & {
+export type WebhookMsgPostbacks = {
     field: any;
     value: {
         sender: {
@@ -95,8 +94,7 @@ export type WebhookMsgPostbacks = WebhookEventBase & {
     };
 }
 
-
-export type WebhookMsgReferral = WebhookEventBase & {
+export type WebhookMsgReferral = {
     sender: {
         id: string;
         user_ref?: string;

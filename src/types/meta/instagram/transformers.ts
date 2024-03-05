@@ -1,6 +1,6 @@
 import { FREQUENCY, NOTIFICATIONS, TOKENSTATUS } from "../../../helpers/constants";
 
-export type WebhookMsgAccLink = WebhookEventBase & {
+export type WebhookMsgAccLink = {
     sender: {
         id: string;
     };
@@ -14,7 +14,7 @@ export type WebhookMsgAccLink = WebhookEventBase & {
     };
 }
 
-export type WebhookMsgOptions = WebhookEventBase & {
+export type WebhookMsgOptions = {
     sender: {
         id: string;
     };
@@ -35,7 +35,7 @@ export type WebhookMsgOptions = WebhookEventBase & {
     };
 }
 
-export type WebhookMsgPolicyEnforcement = WebhookEventBase & {
+export type WebhookMsgPolicyEnforcement = {
     recipient: {
         id: string;
     };

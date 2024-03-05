@@ -1,6 +1,6 @@
 import { Obj } from "../../types";
 
-type MsghHandovers = WebhookEventBase & {
+type MsghHandovers = {
     sender?: {
         id: string;
         user_ref?: string;

@@ -24,7 +24,7 @@ type Product = {
     quantity: number;
 }
 
-export type WebhookMsgReactions = WebhookEventBase & {
+export type WebhookMsgReactions = {
     sender: {
         id: string;
         user_ref?: string;
@@ -41,24 +41,20 @@ export type WebhookMsgReactions = WebhookEventBase & {
     };
 }
 
-export type WebhookMsgFeedback = Omit<WebhookEventBase, 'entry'> & {
-    entry: {
-        time: number;
-        messaging: {
-            sender: {
-                id: string;
-            };
-            recipient: {
-                id: string;
-            };
-            messaging_feedback: {
-                feedback_screens: feedbackScreens;
-            };
-        }[];
+export type WebhookMsgFeedback = {
+    sender: {
+        id: string;
+    };
+    recipient: {
+        id: string;
+    };
+    timestamp?: number;
+    messaging_feedback: {
+        feedback_screens: feedbackScreens;
     };
 }
 
-export type WebhookMsgGamePlays = WebhookEventBase & {
+export type WebhookMsgGamePlays = & {
     sender: {
         id: string;
         user_ref?: string;
@@ -78,7 +74,7 @@ export type WebhookMsgGamePlays = WebhookEventBase & {
     };
 }
 
-export type WebhookSendCart = WebhookEventBase & {
+export type WebhookSendCart = {
     sender: {
         id: string;
         user_ref?: string;

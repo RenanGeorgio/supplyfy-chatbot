@@ -1,24 +1,5 @@
 import { Obj } from "../../types";
 
-export type Attachment = {
-    type: 'audio' | 'file' | 'image' | 'video' | 'fallback' | 'reel';
-    payload: {
-        url?: string;
-        title?: string;
-        sticker_id?: number;
-        reel_video_id?: number;
-        product?: {
-            elements?: {
-                id: string | number;
-                retailer_id: string | number;
-                image_url?: string;
-                title: string;
-                subtitle?: string;
-            }[];
-        };
-    };
-}
-
 type Standy = {
     sender: {
         id: string;
@@ -27,10 +8,10 @@ type Standy = {
     recipient: {
         id: string;
     };
-    message?: Obj;
+    message?: Obj | Obj[];
 }
 
-export type WebhookMsgDeliveries = WebhookEventBase & {
+export type WebhookMsgDeliveries = {
     sender: {
         id: string;
     };
@@ -44,7 +25,7 @@ export type WebhookMsgDeliveries = WebhookEventBase & {
     };
 }
 
-export type WebhookMsgReads = WebhookEventBase & {
+export type WebhookMsgReads = {
     sender: {
         id: string;
         user_ref?: string;
@@ -58,7 +39,7 @@ export type WebhookMsgReads = WebhookEventBase & {
     };
 }
 
-export type WebhookMsgSee = WebhookEventBase & {
+export type WebhookMsgSee = {
     sender: {
         id: string;
         user_ref?: string;
