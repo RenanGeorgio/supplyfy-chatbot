@@ -1,7 +1,5 @@
 import { Consumer } from "../../../types";
 
-const i18n = require("../i18n.config");
-
 class Response {
   static genQuickReply(text, quickReplies) {
     let response = {

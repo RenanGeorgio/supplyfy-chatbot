@@ -89,7 +89,11 @@ export const messageHandler = async (req: CustomRequest, res: Response) => {
                     user.name = userProfile.name;
                     user.profilePic = userProfile.profilePic;
 
-                    users[senderIgsid as number] = user;
+                    if (typeof senderIgsid == 'string') {
+                      users[parseInt(senderIgsid, 10)] = user;
+                    } else {
+                      users[senderIgsid] = user;
+                    }
                   }
                 }
 

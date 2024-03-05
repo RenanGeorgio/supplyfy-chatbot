@@ -1,4 +1,4 @@
-import { Obj } from "../types";
+import { Obj, ContactsData } from "../types";
 
 type Buttons = {
     type: 'reply' | undefined;
@@ -56,7 +56,7 @@ export interface SendInterativeList extends DataProps {
 };
 
 export interface SendContacts extends DataProps {
-    contacts: Obj[] | string[];
+    contacts: ContactsData[] | Obj[] | string[];
 };
 
 export interface SendImg extends DataProps {
