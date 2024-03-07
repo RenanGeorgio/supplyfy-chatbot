@@ -1,4 +1,17 @@
-import { Obj, statUses, Consumer, ReceiveProps, User, CustomRequest } from "./types";
+import {
+  WebhookEventType,
+  MsgEventProp,
+  Attachment,
+  WebhookMsgAccLink,
+  WebhookMsgOptions,
+  WebhookMsgDeliveries,
+  WebhookMsgSee,
+  WebhookMsgPostbacks,
+  WebhookMsgReferral,
+  WebhookMsgs,
+  WebhookEventBase,
+  EntryProps
+} from "./instagram";
 import {
   MsgProps,
   SendText,
@@ -7,7 +20,10 @@ import {
   SendContacts,
   SendImg,
   SendDoc,
-  MsgStatus,
+  MsgStatus
+} from "./whatsapp";
+
+export {
   WebhookEventType,
   MsgEventProp,
   Attachment,
@@ -19,16 +35,7 @@ import {
   WebhookMsgReferral,
   WebhookMsgs,
   WebhookEventBase,
-  EntryProps
-} from "./meta";
-
-export {
-  User,
-  CustomRequest,
-  statUses,
-  Obj,
-  Consumer,
-  ReceiveProps,
+  EntryProps,
   MsgProps,
   SendText,
   SendInterativeButton,
@@ -36,17 +43,5 @@ export {
   SendContacts,
   SendImg,
   SendDoc,
-  MsgStatus,
-  WebhookEventType,
-  MsgEventProp,
-  Attachment,
-  WebhookMsgAccLink,
-  WebhookMsgOptions,
-  WebhookMsgDeliveries,
-  WebhookMsgSee,
-  WebhookMsgPostbacks,
-  WebhookMsgReferral,
-  WebhookMsgs,
-  WebhookEventBase,
-  EntryProps
-};
+  MsgStatus
+}

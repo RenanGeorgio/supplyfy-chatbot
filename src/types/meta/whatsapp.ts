@@ -1,4 +1,4 @@
-import { Obj } from "./types";
+import { Obj, ContactsData } from "../types";
 
 type Buttons = {
     type: 'reply' | undefined;
@@ -56,7 +56,7 @@ export interface SendInterativeList extends DataProps {
 };
 
 export interface SendContacts extends DataProps {
-    contacts: Obj[] | string[];
+    contacts: ContactsData[] | Obj[] | string[];
 };
 
 export interface SendImg extends DataProps {
@@ -82,52 +82,3 @@ export interface MsgStatus {
 };
 
 export type MsgProps = MsgStatus | SendDoc | SendImg | SendContacts | SendInterativeList | SendInterativeButton | SendText
-
-const contactsData = [
-    {
-        addresses: [
-            {
-                street: "123 Main Street",
-                city: "Cityville",
-                state: "Stateville",
-                zip: "12345",
-                country: "Countryland",
-                country_code: "CL",
-                type: "HOME"
-            }
-        ],
-        birthday: "1990-01-01",
-        emails: [
-            {
-                email: "example@example.com",
-                type: "WORK"
-            }
-        ],
-        name: {
-            formatted_name: "John Doe",
-            first_name: "John",
-            last_name: "Doe",
-            middle_name: "Middle",
-            suffix: "Jr.",
-            prefix: "Mr."
-        },
-        org: {
-            company: "Example Company",
-            department: "Sales",
-            title: "Manager"
-        },
-        phones: [
-            {
-                phone: "+1234567890",
-                wa_id: "1234567890",
-                type: "HOME"
-            }
-        ],
-        urls: [
-            {
-                url: "https://www.example.com",
-                type: "WORK"
-            }
-        ]
-    }
-];
