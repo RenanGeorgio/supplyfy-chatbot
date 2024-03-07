@@ -6,7 +6,7 @@ interface Props {
     senderPhoneId: string | number;
 }
 
-const whatsappCloudApi = ({ version='v19.0', senderPhoneId }: Props) => {
+const whatsappCloudApi = async ({ version='v19.0', senderPhoneId }: Props) => {
     const useWhatsappApi = axios.create({
         baseURL: `https://graph.facebook.com/${version}/${senderPhoneId}`,
         withCredentials: true,

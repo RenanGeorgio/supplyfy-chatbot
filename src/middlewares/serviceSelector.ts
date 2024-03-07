@@ -11,34 +11,37 @@ const serviceSelectorMiddleware = async (req: CustomRequest, res: Response, next
 
     try {
         if (req.session) {
-            const { service } = req.session.user;
+            const sessionID = req.session.id;
 
-            switch (service) {
-                case 'chat':
-                    next();
-                    break;
-                case 'whatsapp':
-                    next();
-                    break;
-                case 'instagram':
-                    instagramService();
-                    next();
-                    break;
-                case 'facebook':
-                    next();
-                    break;
-                case 'email':
-                    emailService();
-                    next();
-                    break;
-                case 'telegram':
-                    telegramService();
-                    next();
-                    break;
-                default:
-                    res.status(404).json({ error: 'Service not defined' });
-                    break;
-            }
+            const service = "chat";
+
+            next();
+            // switch (service) {
+            //     case 'chat':
+            //         next();
+            //         break;
+            //     case 'whatsapp':
+            //         next();
+            //         break;
+            //     case 'instagram':
+            //         instagramService();
+            //         next();
+            //         break;
+            //     case 'facebook':
+            //         next();
+            //         break;
+            //     case 'email':
+            //         emailService();
+            //         next();
+            //         break;
+            //     case 'telegram':
+            //         telegramService();
+            //         next();
+            //         break;
+            //     default:
+            //         res.status(404).json({ error: 'Service not defined' });
+            //         break;
+            // }
         } else {
             res.status(401).json({ error: 'Unauthorized' });
         }

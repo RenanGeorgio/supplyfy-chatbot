@@ -1,6 +1,6 @@
 const MailListener = require("mail-listener2");
+import { transporterApi } from "../api";
 import { processQuestion } from "../libs/trainModel";
-import { transporterApi } from "../services";
 
 const mailListener = new MailListener({
   username: process.env.EMAIL_USERNAME,

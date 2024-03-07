@@ -1,3 +1,5 @@
+import { Obj } from "./types";
+
 type Buttons = {
     type: 'reply' | undefined;
     reply: {

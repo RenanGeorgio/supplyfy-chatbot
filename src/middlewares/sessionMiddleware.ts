@@ -3,8 +3,9 @@ import { CustomRequest } from "../types/customRequest";
 
 const sessionMiddleware = async (req: CustomRequest, res: Response, next: NextFunction) => {
     try {
-        if (req.session && req.session.user) {
-            next();
+        if (req.session && req.session.id) {
+            console.log("Sessão: ", req.session.id)
+            next(); 
         } else {
             res.status(401).json({ error: 'Unauthorized' });
         }

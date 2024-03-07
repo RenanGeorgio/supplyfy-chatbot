@@ -9,6 +9,7 @@ import {
   SendDoc
 } from "../../../types";
 import { msgStatusChange, sendMsg } from "../service";
+import fs from 'fs';
 
 export const markMessageAsRead = async (
     req: CustomRequest,
@@ -20,7 +21,7 @@ export const markMessageAsRead = async (
 
         const response = await msgStatusChange(messageId);
 
-        if (response.status === 200) {
+        if (response?.status === 200) {
             return res.status(200).send(response);
         }
 
@@ -70,7 +71,7 @@ export const sendButtonsMessage = async (
               text: messageText,
             },
             action: {
-              buttons: buttonsList.map((button) => ({
+              buttons: buttonsList.map((button: any) => ({
                 type: "reply",
                 reply: {
                   id: button.id,
@@ -83,7 +84,7 @@ export const sendButtonsMessage = async (
 
         const response = await sendMsg(data);
 
-        if (response.status === 200) {
+        if (response?.status === 200) {
             return res.status(200).send(response);
         }
 
@@ -110,7 +111,7 @@ export const sendContacts = async (
 
         const response = await sendMsg(data);
 
-        if (response.status === 200) {
+        if (response?.status === 200) {
             return res.status(200).send(response);
         }
 
@@ -154,7 +155,7 @@ export const sendRadioButtons = async (
 
         const response = await sendMsg(data);
 
-        if (response.status === 200) {
+        if (response?.status === 200) {
             return res.status(200).send(response);
         }
 
@@ -185,7 +186,7 @@ export const sendImageByLink = async (
 
         const response = await sendMsg(data);
 
-        if (response.status === 200) {
+        if (response?.status === 200) {
             return res.status(200).send(response);
         }
 
@@ -207,7 +208,7 @@ export const uploadMedia = async (
         data.append("messaging_product", this.messagingProduct);
         data.append("file", fs.createReadStream(filePath));
 
-        const response = await whatsappCloudAp("/messages", {
+        const response = await useWhatsappApi("/messages", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -217,7 +218,7 @@ export const uploadMedia = async (
             data: data
         });
 
-        if (response.status === 200) {
+        if (response?.status === 200) {
             return res.status(200).send({ message: response.data.id });
         }
 

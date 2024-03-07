@@ -34,7 +34,7 @@ export const create = async (
         return res.status(200).send(message);
     } catch (error) {
         next(error);
-    }           
+    }
 };
 
 export const list = async (

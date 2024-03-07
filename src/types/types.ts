@@ -7,6 +7,6 @@ export type statUses = Obj & {
         messaging_product: string;
         status: string;
         message_id: string;
-        [key: string]?: any;
+        [key: string]: any;
     }
 }

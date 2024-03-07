@@ -3,7 +3,6 @@ import "express-async-errors";
 import * as dotenv from "dotenv";
 dotenv.config();
 
-import * as database from "./database";
 import { serverHttp } from "./core/http";
 import "./websocket";
 
