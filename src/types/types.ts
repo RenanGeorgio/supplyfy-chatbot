@@ -1,13 +1,16 @@
 import { Request } from "express";
 import { Types } from "mongoose";
 import { WebhookEventBase } from "./meta";
+import { Session } from "express-session";
 
 export interface User {
-  sub: Types.ObjectId | string;
+    sub: Types.ObjectId | string;
 }
 
 export interface CustomRequest extends Request {
-  user?: User;
+    user?: User;
+    rawBody?: Buffer;
+    session: Session;
 }
 
 export type Obj = {
