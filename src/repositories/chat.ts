@@ -1,4 +1,4 @@
-import ChatModel from "../models/chat/chat";
+import ChatModel from "../models/chat/chatModel";
 
 export async function chatExist(
   members: string[],
