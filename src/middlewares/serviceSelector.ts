@@ -1,5 +1,5 @@
 import { NextFunction, Response } from "express";
-import { CustomRequest } from "../types/customRequest";
+import { CustomRequest } from "../types";
 import { instagramService, telegramService, emailService } from "../services";
 
 const serviceSelectorMiddleware = async (req: CustomRequest, res: Response, next: NextFunction) => {
@@ -11,8 +11,8 @@ const serviceSelectorMiddleware = async (req: CustomRequest, res: Response, next
 
     try {
         if (req.session) {
-            const { service } = req.session.user;
-
+            const service = req.session.service || "";
+            
             switch (service) {
                 case 'chat':
                     next();

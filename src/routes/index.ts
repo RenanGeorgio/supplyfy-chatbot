@@ -1,18 +1,26 @@
 import { Router } from "express";
-import { authMiddleware  } from "../middlewares";
+import { authMiddleware } from "../middlewares";
 
 // server controller
-import * as serverController from "../controllers/server/serverController"; 
+import * as serverController from "../controllers/server/serverController";
 // chat controller
 import * as chatController from "../controllers/chat/chatController";
 // whatsapp controller
 import * as whatsappController from "../controllers/com/whatsapp/whatsappController";
+// auth controller
+import * as authController from "../controllers/user/authController";
 
 const routes = Router();
 
 routes
   // Test-server
   .get("/test", serverController.test)
+
+  // session test
+  .get("/session", serverController.session)
+
+  // login
+  .get("/login", authController.login)
 
   // chat
   .post("/chat", authMiddleware.JWT, chatController.create)
