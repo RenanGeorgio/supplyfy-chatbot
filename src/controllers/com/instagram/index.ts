@@ -3,17 +3,19 @@ import XHubSignature from "x-hub-signature";
 import Receive from "./instagramController/receive";
 import { getUserProfile } from "../service";
 import { receivedAuthentication, receivedDeliveryConfirmation, receivedMessageRead, receivedAccountLink } from "./instagramController/received";
-import { 
-  Consumer, 
+import {  
   WebhookEventType, 
   WebhookEventBase, 
-  CustomRequest, 
-  Obj, 
   EntryProps, 
   WebhookMsgDeliveries, 
   WebhookMsgSee, 
   WebhookMsgAccLink,
-  WebhookMsgOptions } from "../../../types";
+  WebhookMsgOptions } from "../../../types/meta";
+import {
+  Consumer,
+  CustomRequest,
+  Obj
+} from "../../../types/types";
 
 const appSecret = process.env.APP_SECRET;
 const xhub = new XHubSignature("SHA256", appSecret);
@@ -109,6 +111,6 @@ export const messageHandler = async (req: CustomRequest, res: Response) => {
       res.status(404).send({ message: "Unrecognized POST to webhook" });
     }
   } catch (error) {
-    return res.status(500).send({ message: error.message });
+    return res.status(500).send({ message: error });
   }
 };

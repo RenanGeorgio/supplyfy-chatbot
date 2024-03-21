@@ -1,7 +1,5 @@
 import { io } from '../core/http';
-import { processQuestion } from '../libs/trainModel';
 import { authMiddleware } from '../middlewares';
-import { CustomRequest } from '../types';
 
 // middleware do JWT
 io.use(authMiddleware.socketJWT);

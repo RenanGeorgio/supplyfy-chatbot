@@ -1,5 +1,5 @@
 import { sendTextMessage } from '../sendMessageActions';
-import { WebhookMsgOptions } from "../../../../../types";
+import { WebhookMsgOptions } from "../../../../../types/meta";
 
 export default function receivedAuthentication(event: WebhookMsgOptions) {
   const senderID = event.sender.id;

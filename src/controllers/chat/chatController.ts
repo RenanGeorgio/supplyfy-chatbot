@@ -1,5 +1,5 @@
 import { Response, NextFunction } from "express";
-import { CustomRequest } from "../../types";
+import { CustomRequest } from "../../types/types";
 import { processQuestion } from "../../libs/trainModel";
 import Message from "../../models/chat/Message";
 import User from "../../models/user/User";

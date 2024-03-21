@@ -1,7 +1,7 @@
 import { Response, NextFunction, Router } from "express";
 import { messageHandler } from "../controllers/com/whatsapp/webhook";
 import { eventsHandler } from "../controllers/com/facebook";
-import { CustomRequest } from "../types";
+import { CustomRequest } from "../types/types";
 
 const verificationToken = process.env.WEBHOOK_VERIFICATION_TOKEN;
  
@@ -21,14 +21,14 @@ router.get('/', function (req: CustomRequest, res: Response, next: NextFunction)
 
 router.post('/', function (req: CustomRequest, res: Response, next: NextFunction) {
     try {
-        const { service } = req.session.user;
+        const { service } = req.session;
 
         switch (service) {
             case 'whasapp':
-                messageHandler(req, res);
+                messageHandler(req, res, next);
                 break;
             case 'facebook':
-                eventsHandler(req, res);
+                eventsHandler(req, res, next);
             default:
                 res.status(404).json({ error: 'Service not defined' });
                 break;

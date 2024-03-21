@@ -1,6 +1,6 @@
-import { Response } from "express";
+import { NextFunction, Response } from "express";
 import XHubSignature from "x-hub-signature";
-import { CustomRequest, statUses } from "../../../types";
+import { CustomRequest, statUses } from "../../../types/types";
 import { messageStatuses } from "../../../helpers/messageStatuses";
 import { processMessage } from "./processMessage";
 import { msgStatusChange } from "../service";
@@ -10,7 +10,8 @@ const xhub = new XHubSignature("SHA256", appSecret);
 
 export const messageHandler = async (
     req: CustomRequest,
-    res: Response
+    res: Response,
+    next: NextFunction
 ) => {
     try {
         // Calcula o valor da assinatura x-hub para comparar com o valor no request header
@@ -33,7 +34,7 @@ export const messageHandler = async (
         if (body.changes[0].value.hasOwnProperty("messages")) {
             try { // Marca msg como lida
                 let sendReadStatus: statUses = messageStatuses?.read;
-                sendReadStatus?.message_id = body.value.messages[0].id;
+                sendReadStatus.message_id = body.value.messages[0].id;
 
                 const response = await msgStatusChange(sendReadStatus?.message_id);
 
@@ -47,6 +48,6 @@ export const messageHandler = async (
 
         res.sendStatus(200);
     } catch (error) {
-        return res.status(500).send({ message: error.message });
+        return res.status(500).send({ message: error });
     }           
 };

@@ -7,10 +7,14 @@ export interface User {
     sub: Types.ObjectId | string;
 }
 
+export interface CustomSession extends Session {
+    service?: string;
+}
+
 export interface CustomRequest extends Request {
     user?: User;
     rawBody?: Buffer;
-    session: Session;
+    session: CustomSession;
 }
 
 export type Obj = {

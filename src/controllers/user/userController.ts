@@ -3,7 +3,7 @@ import User from "../../models/user/User";
 import { authApi } from "../../api";
 import { generateAccessToken } from "../../helpers/accessToken";
 import { isValid } from "../../helpers/validCpfCnpj";
-import { CustomRequest } from "../../types";
+import { CustomRequest } from "../../types/types";
 
 export const info = async (
     req: CustomRequest,

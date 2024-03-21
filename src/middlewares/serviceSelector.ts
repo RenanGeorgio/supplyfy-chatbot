@@ -1,8 +1,8 @@
 import { NextFunction, Response } from "express";
-import { CustomRequest } from "../types/customRequest";
-import { instagramService, telegramService, emailService } from "../services";
+import { CustomRequest } from "../types/types";
+import { instagramService, telegramService } from "../services";
 
-const serviceSelectorMiddleware = async (req: CustomRequest, res: Response, next: NextFunction) => {
+const serviceSelectorMiddleware = (req: CustomRequest, res: Response, next: NextFunction) => {
     const path = req.originalUrl;
 
     if (path === '/incoming') {
@@ -12,36 +12,33 @@ const serviceSelectorMiddleware = async (req: CustomRequest, res: Response, next
     try {
         if (req.session) {
             const sessionID = req.session.id;
+            const service = req.session.service || "";
 
-            const service = "chat";
-
-            next();
-            // switch (service) {
-            //     case 'chat':
-            //         next();
-            //         break;
-            //     case 'whatsapp':
-            //         next();
-            //         break;
-            //     case 'instagram':
-            //         instagramService();
-            //         next();
-            //         break;
-            //     case 'facebook':
-            //         next();
-            //         break;
-            //     case 'email':
-            //         emailService();
-            //         next();
-            //         break;
-            //     case 'telegram':
-            //         telegramService();
-            //         next();
-            //         break;
-            //     default:
-            //         res.status(404).json({ error: 'Service not defined' });
-            //         break;
-            // }
+            switch (service) {
+                case 'chat':
+                    next();
+                    break;
+                case 'whatsapp':
+                    next();
+                    break;
+                case 'instagram':
+                    instagramService();
+                    next();
+                    break;
+                case 'facebook':
+                    next();
+                    break;
+                case 'email':
+                    next();
+                    break;
+                case 'telegram':
+                    telegramService();
+                    next();
+                    break;
+                default:
+                    res.status(404).json({ error: 'Service not defined' });
+                    break;
+            }
         } else {
             res.status(401).json({ error: 'Unauthorized' });
         }

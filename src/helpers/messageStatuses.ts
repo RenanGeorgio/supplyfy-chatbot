@@ -1,4 +1,4 @@
-import { statUses } from "../types";
+import { statUses } from "../types/types";
 
 export const messageStatuses: statUses = {
     read : {

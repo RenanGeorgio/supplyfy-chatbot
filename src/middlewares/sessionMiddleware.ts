@@ -1,10 +1,9 @@
 import { NextFunction, Response } from "express";
-import { CustomRequest } from "../types/customRequest";
+import { CustomRequest } from "../types/types";
 
-const sessionMiddleware = async (req: CustomRequest, res: Response, next: NextFunction) => {
+const sessionMiddleware = (req: CustomRequest, res: Response, next: NextFunction) => {
     try {
-        if (req.session && req.session.id) {
-            console.log("Sessão: ", req.session.id)
+        if (req.session && req.session.id) {            
             next(); 
         } else {
             res.status(401).json({ error: 'Unauthorized' });

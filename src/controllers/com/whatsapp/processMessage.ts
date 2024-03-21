@@ -1,6 +1,6 @@
 import { processQuestion } from "../../../libs/trainModel";
 import { sendTextMessage } from "./whatsappController";
-import { MsgProps, SendInterativeButton, SendInterativeList } from "../../../types";
+import { MsgProps, SendInterativeButton, SendInterativeList } from "../../../types/meta";
 
 function interactiveMessage(message: SendInterativeList | SendInterativeButton) {
   const interactiveType = message.interactive.type;

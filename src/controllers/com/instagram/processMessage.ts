@@ -1,4 +1,4 @@
-import { Consumer } from "../../../types";
+import { Consumer } from "../../../types/types";
 
 class Response {
   static genQuickReply(text, quickReplies) {

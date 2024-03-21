@@ -1,4 +1,4 @@
-import { WebhookMsgAccLink } from "../../../../../types";
+import { WebhookMsgAccLink } from "../../../../../types/meta";
 
 export default function receivedAccountLink(event: WebhookMsgAccLink) {
   const senderID = event.sender.id;

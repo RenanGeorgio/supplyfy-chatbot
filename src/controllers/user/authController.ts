@@ -2,7 +2,7 @@ import User from "../../models/user/User";
 import { Response, NextFunction } from "express";
 import { authApi } from "../../api";
 import { generateAccessToken } from "../../helpers/accessToken";
-import { CustomRequest } from "../../types";
+import { CustomRequest } from "../../types/types";
 
 export const login = async (
     req: CustomRequest,

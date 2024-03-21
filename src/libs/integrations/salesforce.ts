@@ -1,8 +1,10 @@
-import app from "../../server";
+import { NextFunction } from "express";
+import { app } from "../../server";
+import { CustomRequest } from "../../types/types";
 
-app.post("/outbound_message", (requset, response) => {
+app.post("/outbound_message", (req: CustomRequest, res: Response, next: NextFunction) => {
   const xml_data =
-    requset.body["soapenv:Envelope"]["soapenv:Body"][0].notifications[0]
+    req.body["soapenv:Envelope"]["soapenv:Body"][0].notifications[0]
       .Notification[0].sObject[0];
 
   // Get user name and Phone Number
@@ -58,14 +60,14 @@ app.post("/outbound_message", (requset, response) => {
   </soapenv:Body>
 </soapenv:Envelope>`;
 
-  response.header("Content-Type", "application/xml");
-  return response.status(200).send(xml);
+  res.headers.append("Content-Type", "application/xml");
+  return res.status(200).send(xml);
 });
 
-app.get("/webhook", (request, response) => {
-  let mode = request.query["hub.mode"];
-  let token = request.query["hub.verify_token"];
-  let challenge = request.query["hub.challenge"];
+app.get("/webhook", (req: CustomRequest, res: Response, next: NextFunction) => {
+  let mode = req.query["hub.mode"];
+  let token = req.query["hub.verify_token"];
+  let challenge = req.query["hub.challenge"];
 
   // Check if a token and mode were sent
   if (mode && token) {
@@ -73,20 +75,20 @@ app.get("/webhook", (request, response) => {
     if (mode === "subscribe" && token === process.env.WEBHOOK_VERIFICATION_TOKEN) {
       // Respond with 200 OK and challenge token from the request
       console.log("WEBHOOK_VERIFIED");
-      response.status(200).send(challenge);
+      res.status(200).send(challenge);
     } else {
       // Responds with '403 Forbidden' if verify tokens do not match
-      response.sendStatus(403);
+      res.status(403);
     }
   }
 });
 
-app.post("/webhook", async (request, response) => {
-  const body = request.body;
+app.post("/webhook", async (req: CustomRequest, res: Response, next: NextFunction) => {
+  const body = req.body;
 
   if (body.entry[0].changes[0].value !== "messages") {
     // not from the messages webhook so dont process
-    return response.sendStatus(400);
+    return res.status(400);
   }
 
   const msg_status = body.entry[0].changes[0].value.statuses[0].status;
@@ -120,9 +122,9 @@ app.post("/webhook", async (request, response) => {
       method: "POST",
     })
       .then((response) => response.json())
-      .then((data) => response.sendStatus(200))
-      .catch((err) => response.sendStatus(400));
+      .then((data) => res.status(200))
+      .catch((err) => res.status(400));
   } else {
-    response.sendStatus(400);
+    res.status(400);
   }
 });

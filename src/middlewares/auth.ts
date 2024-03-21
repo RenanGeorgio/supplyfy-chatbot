@@ -1,6 +1,6 @@
 import { NextFunction, Response } from "express";
 import jsonwebtoken from "jsonwebtoken";
-import { CustomRequest, User as IUser } from "../types/customRequest";
+import { CustomRequest, User as IUser } from "../types/types";
 import { Socket } from "socket.io";
 import { ExtendedError } from "socket.io/dist/namespace";
 
