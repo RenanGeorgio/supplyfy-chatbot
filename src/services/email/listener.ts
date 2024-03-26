@@ -1,5 +1,5 @@
 const { MailListener } = require("mail-listener5");
-import { processQuestion } from "../libs/trainModel";
+import { processQuestion } from "../../libs/trainModel";
 import transporter from "./transporter";
 
 const mailListener = new MailListener({
@@ -12,9 +12,10 @@ const mailListener = new MailListener({
   authTimeout: 5000,
   tlsOptions: { rejectUnauthorized: false },
   mailbox: "INBOX",
-  searchFilter: ["RECENT"],
+  searchFilter: ["RECENT", "UNSEEN"],
   markSeen: true,
   fetchUnreadOnStart: true,
+  debugger: console.log,
   // mailParserOptions: { streamAttachments: true },
   // attachments: true,
   // attachmentOptions: { directory: "attachments/" },
@@ -34,19 +35,24 @@ const emailListener = () => {
     console.log(err);
   });
 
-  mailListener.on("mail", async (mail: any, seqno: any, attributes: any) => {
+  mailListener.on("mail", (mail: any, seqno: any, attributes: any) => {
     const emailText = mail.text.split(/\r?\n/).join(" "); // adicionar algum tratamento para a mensagem
-    const responseMessage = await processQuestion(emailText);
-    transporter.sendMail({
-      from: process.env.EMAIL_USERNAME,
-      to: mail.from[0].address,
-      subject: "Re: " + (mail.subject || attributes.uid),
-      text: responseMessage,
-      inReplyTo: mail.messageId,
-      references: mail.messageId,
-    });
 
-    console.log("email processed");
+    (async () => {
+      const responseMessage = await processQuestion(emailText);
+      if (!responseMessage) return;
+      
+      await transporter.sendMail({
+        from: process.env.EMAIL_USERNAME,
+        to: mail.from.value[0].address,
+        subject: "Re: " + (mail.subject || attributes.uid),
+        text: responseMessage,
+        inReplyTo: mail.messageId,
+        references: mail.messageId,
+      });
+    })();
+
+    console.info("Email sent to", mail.from.value[0].address);
   });
 };
 
