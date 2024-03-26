@@ -10,6 +10,8 @@ import * as whatsappController from "../controllers/com/whatsapp/whatsappControl
 // auth controller
 import * as authController from "../controllers/user/authController";
 
+import * as botController from "../controllers/bot/botController";
+
 const routes = Router();
 
 routes
@@ -34,6 +36,10 @@ routes
   .post("/whatsapp/inte-list", whatsappController.sendRadioButtons)
   .post("/whatsapp/send-img", whatsappController.sendImageByLink)
   .post("/whatsapp/upload", whatsappController.uploadMedia)
-  .post("/whatsapp/send-doc", whatsappController.sendDocumentMessage);
+  .post("/whatsapp/send-doc", whatsappController.sendDocumentMessage)
+    
+  .post("/telegram/bot", middlewares.JWT, botController.createBot)
+  .post("/telegram/bot/stop", middlewares.JWT, botController.stopBot)
+  .post("/telegram/bot/resume", middlewares.JWT, botController.resumeBot)
 
 export default routes;

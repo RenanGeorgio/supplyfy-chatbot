@@ -1,6 +1,6 @@
-const MailListener = require("mail-listener2");
+const { MailListener } = require("mail-listener5");
 import { processQuestion } from "../libs/trainModel";
-import { transporterApi } from "../services";
+import transporter from "./transporter";
 
 const mailListener = new MailListener({
   username: process.env.EMAIL_USERNAME,
@@ -37,7 +37,7 @@ const emailListener = () => {
   mailListener.on("mail", async (mail: any, seqno: any, attributes: any) => {
     const emailText = mail.text.split(/\r?\n/).join(" "); // adicionar algum tratamento para a mensagem
     const responseMessage = await processQuestion(emailText);
-    transporterApi.sendMail({
+    transporter.sendMail({
       from: process.env.EMAIL_USERNAME,
       to: mail.from[0].address,
       subject: "Re: " + (mail.subject || attributes.uid),

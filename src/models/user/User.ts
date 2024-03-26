@@ -19,7 +19,7 @@ const userSchema = new Schema({
         type: String,
         required: true,
     },
-    company_id: {
+    companyId: {
         type: String,
         required: true,
     },
