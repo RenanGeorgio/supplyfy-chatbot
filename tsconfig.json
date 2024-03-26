@@ -1,18 +1,19 @@
 {
   "include": ["src/**/*", "tests/**/*"],
   "compilerOptions": {
-    "target": "es6", 
-    "lib": ["es6"], 
+    "target": "es2016", 
     "module": "commonjs",
     "rootDir": "src",
+    "moduleResolution": "node10", 
+    "typeRoots": ["src/types/**/*", "node_modules/@types/**/*"],
     "resolveJsonModule": true,
     "allowJs": true,
     "outDir": "build",
+    "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "noImplicitAny": true, 
-    "skipLibCheck": true,
-    "typeRoots": ["./src/types", "./node_modules/@types"]
+    "skipLibCheck": true
   }
 }
