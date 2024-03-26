@@ -1,7 +1,7 @@
 import { WebhookMsgFeedback, WebhookMsgGamePlays, WebhookMsgReactions, WebhookSendCart } from "./extras";
 import { WebhookMsgHandovers } from "./handovers";
 import { WebhookMsgEchoes, WebhookMsgPostbacks, WebhookMsgReferral, WebhookMsgs } from "./messages";
-import { WebhookMsgDeliveries, WebhookMsgSee, WebhookStandby, WebhookMsgReads } from "./state";
+import { WebhookMsgDeliveries, WebhookMsgSee, WebhookMsgReads } from "./state";
 import { WebhookMsgAccLink, WebhookMsgOptions, WebhookMsgPolicyEnforcement } from "./transformers";
 
 type EventMessaging = 
@@ -32,7 +32,7 @@ export type EntryProps = {
     id?: string | number;
     time?: number | string;
     messaging?: WebhookEventBase[];
-} | WebhookStandby;
+};
 
 export type WebhookEventType = {
     object: 'page' | 'instagram' | undefined;

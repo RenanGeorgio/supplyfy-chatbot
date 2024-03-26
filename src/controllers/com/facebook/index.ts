@@ -37,7 +37,7 @@ export const eventsHandler = async (
         } else {
             res.status(404).send();  
         }
-    } catch (error) {
+    } catch (error: any) {
         console.log(error);
 
         return res.status(500).send({ message: error.message });

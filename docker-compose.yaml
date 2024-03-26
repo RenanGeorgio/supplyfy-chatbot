@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   redis:
-    image: redis:latest
+    image: redis:7.2.4-alpine3.19
     hostname: redis
     container_name: redis
     restart: always
@@ -36,5 +36,5 @@ services:
 networks:
   mynetwork:
     driver: bridge
-    # external:
-    #   name: test-kafka-local_default
+    external:
+      name: kafka-chatbot_default

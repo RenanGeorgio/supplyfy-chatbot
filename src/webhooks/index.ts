@@ -1,5 +1,5 @@
 import { Response, NextFunction, Router } from "express";
-import { messageHandler } from "../controllers/com/whatsapp/webhook";
+// import { messageHandler } from "../controllers/com/whatsapp/webhook";
 import { eventsHandler } from "../controllers/com/facebook";
 import { CustomRequest } from "../types";
 
@@ -25,7 +25,7 @@ router.post('/', function (req: CustomRequest, res: Response, next: NextFunction
 
         switch (service) {
             case 'whasapp':
-                messageHandler(req, res);
+                // messageHandler(req, res);
                 break;
             case 'facebook':
                 eventsHandler(req, res);

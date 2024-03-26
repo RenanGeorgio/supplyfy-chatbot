@@ -2,7 +2,7 @@ import { Client, LocalAuth, RemoteAuth } from "whatsapp-web.js";
 import { MongoStore } from "wwebjs-mongo";
 import mongoose from "mongoose";
 import qrcode from "qrcode-terminal";
-import { processQuestion } from "../../helpers/trainModel";
+import { processQuestion } from "../../libs/trainModel";
 
 /*
 const whatsappWebService = (id: string) => {
@@ -278,7 +278,7 @@ const whatsappWebService = (id: string) => {
       msg.reply(msg.body.slice(6));
     } else if (msg.body.startsWith("!preview ")) {
       const text = msg.body.slice(9);
-      msg.reply(text, null, { linkPreview: true });
+      msg.reply(text, "", { linkPreview: true });
     } else if (msg.body === "!chats") {
       const chats = await client.getChats();
       client.sendMessage(msg.from, `The bot has ${chats.length} chats open.`);
@@ -359,7 +359,7 @@ const whatsappWebService = (id: string) => {
     } else if (msg.body === "!jumpto") {
       if (msg.hasQuotedMsg) {
         const quotedMsg = await msg.getQuotedMessage();
-        client.interface.openChatWindowAt(quotedMsg.id._serialized);
+        // client.interface.openChatWindowAt(quotedMsg.id._serialized);
       }
     } else if (msg.body === "!reaction") {
       msg.react("👍");
@@ -386,8 +386,8 @@ const whatsappWebService = (id: string) => {
          * 3. 2592000 for 30 days
          * You can pass your own value:
          */
-        const result = await msg.pin(60); // Will pin a message for 1 minute
-        console.log(result); // True if the operation completed successfully, false otherwise
+        // const result = await msg.pin(60); // Will pin a message for 1 minute
+        // console.log(result); // True if the operation completed successfully, false otherwise
       }
     }
   });

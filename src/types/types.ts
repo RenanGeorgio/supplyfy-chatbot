@@ -1,6 +1,6 @@
 import { Request } from "express";
 import { Types } from "mongoose";
-import { WebhookEventBase } from "./meta";
+// import { WebhookEventBase } from "./meta";
 import { Session } from "express-session";
 import TelegramBot from "node-telegram-bot-api";
 
@@ -39,7 +39,7 @@ export interface Consumer {
 
 export type ReceiveProps = {
     user: Consumer;
-    webhookEvent: WebhookEventBase;
+    // webhookEvent: WebhookEventBase;
 }
 
 export type ContactsData = {

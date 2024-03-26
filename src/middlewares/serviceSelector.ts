@@ -1,6 +1,7 @@
 import { NextFunction, Response } from "express";
 import { CustomRequest } from "../types";
-import { instagramService, telegramService, emailService } from "../services";
+import { instagramService, emailService } from "../services";
+import mongoose from "mongoose";
 
 const serviceSelectorMiddleware = async (req: CustomRequest, res: Response, next: NextFunction) => {
     const path = req.originalUrl;
@@ -32,7 +33,6 @@ const serviceSelectorMiddleware = async (req: CustomRequest, res: Response, next
                     next();
                     break;
                 case 'telegram':
-                    telegramService();
                     next();
                     break;
                 default:

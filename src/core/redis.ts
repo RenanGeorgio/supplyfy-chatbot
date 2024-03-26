@@ -1,8 +1,11 @@
 import * as redis from 'redis';
 
 const redisClient = redis.createClient({
-  host: "localhost",
-  port: 6379,
+  password: process.env.REDIS_PASSWORD,
+  socket:{
+    host: process.env.REDIS_HOST,
+    port: Number(process.env.REDIS_PORT),
+  },    
 });
 
 redisClient.on("error", function (err) {
