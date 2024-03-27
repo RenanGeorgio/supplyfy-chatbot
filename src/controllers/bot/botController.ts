@@ -1,10 +1,13 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import BotModel from "../../models/bot/botModel";
 import { telegramServiceController } from "../../services/telegram";
+import { CustomRequest } from "../../types";
+import produce from "../../core/kafka/producer";
 
-export const createBot = async (req: Request, res: Response) => {
+export const createBot = async (req: CustomRequest, res: Response, next: NextFunction) => {
   try {
-    const { companyId, instagram, telegram, userId } = req.body;
+    const { companyId, instagram, telegram } = req.body;
+    const userId = req.user?.sub;
 
     if(!companyId || !instagram || !telegram) {
       return res.status(400).json({ message: "Missing required fields" });
@@ -39,14 +42,14 @@ export const createBot = async (req: Request, res: Response) => {
       return res.status(500).json({ message: "Error creating bot" });
     }
 
+    await produce('logs', { value: 'Telegram bot created' })
     return res.status(201).json({ message: "Bot created" });
   } catch (error) {
-    console.error(error)
-    return res.status(500);
+    next(error);
   }
 };
 
-export const stopBot = async (req: Request, res: Response) => {
+export const stopBot = async (req: CustomRequest, res: Response, next: NextFunction) => {
   try {
     const { username } = req.body;
 
@@ -62,11 +65,11 @@ export const stopBot = async (req: Request, res: Response) => {
 
     return res.status(200).json({ message: `Bot ${username} stopped` });
   } catch (error) {
-    return res.status(500);
+    next(error);
   }
 };
 
-export const resumeBot = async (req: Request, res: Response) => {
+export const resumeBot = async (req: CustomRequest, res: Response, next: NextFunction) => {
   try {
     const { username } = req.body;
 
@@ -82,6 +85,6 @@ export const resumeBot = async (req: Request, res: Response) => {
 
     return res.status(200).json({ message: `Bot ${username} resumed` });
   } catch (error) {
-    return res.status(500);
+    next(error);
   }
 };

@@ -35,15 +35,18 @@ const serviceSelectorMiddleware = async (req: CustomRequest, res: Response, next
                 case 'telegram':
                     next();
                     break;
+                case 'cadastro':
+                    next();
+                    break;
                 default:
                     res.status(404).json({ error: 'Service not defined' });
                     break;
             }
         } else {
-            res.status(401).json({ error: 'Unauthorized' });
+            return res.status(401).json({ error: 'Unauthorized' });
         }
-    } catch (err: any) {
-        return res.status(500).send({ message: err.message });
+    } catch (error: any) {
+        next(error)
     }
 };
 

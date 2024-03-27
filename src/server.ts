@@ -67,12 +67,13 @@ app.use(sessionMiddleware, serviceSelectorMiddleware);
 app.use(routes);
 
 // catch not defined routes
-app.use((req: Request, res: Response, next: NextFunction) => {
+app.use((req: CustomRequest, res: Response, next: NextFunction) => {
   next(createError(404));
 });
 
 // catch all errors
-app.use(((error: any, req: Request, res: Response, next: NextFunction) => {
+app.use(((error: any, req: CustomRequest, res: Response, next: NextFunction) => {
+  console.log(error)
   res.locals.message = error.message;
   res.locals.error = req.app.get("env") === "development" ? error : {};
   res.status(error.status || 500).send({ message: error.message });
