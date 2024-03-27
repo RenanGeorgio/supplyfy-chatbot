@@ -4,7 +4,7 @@ import { io } from "socket.io-client";
 
 const serverHttp = http.createServer(app);
 
-const crmSocketClient = io("http://localhost:7000");
+const crmSocketClient = io(process.env.CRM_SERVER_URL as string);
 
 crmSocketClient.on("connect", () => {
   console.log("Conectado ao CRM Server");
