@@ -1,5 +1,4 @@
 import http from "http";
-import { Server } from "socket.io";
 import app from "../server";
 import { io } from "socket.io-client";
 

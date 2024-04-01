@@ -1,5 +1,5 @@
 import { MongooseError } from "mongoose";
-import ClientModel from "../models/chat/client";
+import ClientModel from "../models/chat/chatClientModel";
 
 export async function clientExist(email: string) {
   const clientExist = await ClientModel.findOne({

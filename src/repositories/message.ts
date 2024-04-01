@@ -1,4 +1,4 @@
-import MessageModel from "../models/chat/message";
+import MessageModel from "../models/chat/messageModel";
 
 export async function createMessage(sender: string, chat: string, messageText: string){
     try {

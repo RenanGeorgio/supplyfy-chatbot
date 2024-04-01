@@ -1,7 +1,5 @@
 import TelegramBot from "node-telegram-bot-api";
 import { processQuestion } from "../../helpers/trainModel";
-import ClientModel from "../../models/chat/client";
-import { validateEmail } from "../../helpers/validateEmail";
 import { askEmail } from "./helpers/askEmail";
 import { botExist } from "../../repositories/bot";
 import { createClient } from "../../repositories/client";
@@ -69,7 +67,7 @@ const telegramService = async (token: string) => {
           crmSocketClient.emit("addNewUser", clientId);
           
           crmSocketClient.on("disconnect", () => {
-            crmSocketClient.emit("disconnect");
+            crmSocketClient.disconnect();
           });
 
           telegram.on("message", async (msg) => {
