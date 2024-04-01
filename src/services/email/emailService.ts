@@ -1,28 +1,22 @@
-const { MailListener } = require("mail-listener5");
+
 import { processQuestion } from "../../libs/trainModel";
-import transporter from "./transporter";
+import { IEmailService } from "../../types/types";
+import emailListener from "./lib/listener";
+import emailTransporter from "./lib/transporter";
 
-const mailListener = new MailListener({
-  username: process.env.EMAIL_USERNAME,
-  password: process.env.EMAIL_PASSWORD,
-  host: process.env.IMAP_SERVER,
-  port: process.env.IMAP_PORT,
-  tls: true,
-  connTimeout: 10000,
-  authTimeout: 5000,
-  tlsOptions: { rejectUnauthorized: false },
-  mailbox: "INBOX",
-  searchFilter: ["RECENT", "UNSEEN"],
-  markSeen: true,
-  fetchUnreadOnStart: true,
-  debugger: console.log,
-  // mailParserOptions: { streamAttachments: true },
-  // attachments: true,
-  // attachmentOptions: { directory: "attachments/" },
-});
+const emailService = async ({
+  imapHost,
+  imapPort,
+  smtpHost,
+  smtpPort,
+  emailUsername,
+  emailPassword,
+  secure
+}: IEmailService) => {
 
-const emailListener = () => {
-  mailListener.start();
+  const mailListener = await emailListener({ emailUsername, emailPassword, imapHost, imapPort, secure });
+  const mailTransporter = emailTransporter({ smtpHost, smtpPort, emailUsername, emailPassword, secure });
+
   mailListener.on("server:connected", function () {
     console.log("imapConnected");
   });
@@ -41,9 +35,9 @@ const emailListener = () => {
     (async () => {
       const responseMessage = await processQuestion(emailText);
       if (!responseMessage) return;
-      
-      await transporter.sendMail({
-        from: process.env.EMAIL_USERNAME,
+
+      await mailTransporter.sendMail({
+        from: emailUsername,
         to: mail.from.value[0].address,
         subject: "Re: " + (mail.subject || attributes.uid),
         text: responseMessage,
@@ -54,6 +48,8 @@ const emailListener = () => {
 
     console.info("Email sent to", mail.from.value[0].address);
   });
+
+  return { mailListener, mailTransporter }
 };
 
-export default emailListener;
+export default emailService;

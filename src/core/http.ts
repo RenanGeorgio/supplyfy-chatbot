@@ -1,7 +1,7 @@
 import http from "http";
 import { app } from "../server";
 import { io } from "socket.io-client";
-import produce from "./kafka/producer";
+// import produce from "./kafka/producer";
 
 const serverHttp = http.createServer(app);
 
@@ -20,9 +20,9 @@ crmSocketClient.on("connect", () => {
 
 crmSocketClient.on("connect_error", (error) => {
   console.log("Erro ao conectar com o CRM Server");
-  produce("chatbot-socket", {
-    value: "Ocorreu um erro ao conectar com o CRM Server"
-  })
+  // produce("chatbot-socket", {
+  //   value: "Ocorreu um erro ao conectar com o CRM Server"
+  // })
 });
 
 export { serverHttp, crmSocketClient };

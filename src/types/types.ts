@@ -93,3 +93,13 @@ export type RegisterClient = {
   name: string;
   lastName?: string;
 };
+
+export interface IEmailService {
+    imapHost?: string;
+    imapPort?: number;
+    smtpHost?: string;
+    smtpPort?: number;
+    emailUsername?: string;
+    emailPassword?: string;
+    secure: boolean;
+}

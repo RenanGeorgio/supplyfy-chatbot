@@ -1,4 +1,4 @@
-import emailService from "./email/listener";
+import { emailServiceController } from "./email";
 import instagramService from "./instagram";
 import { telegramServiceController } from "./telegram";
 import whatsappWebService from "./whatsapp-web";
@@ -17,4 +17,7 @@ import { listAllBots } from "../repositories/bot";
   }
 })();
 
-export { emailService, instagramService, telegramServiceController, whatsappWebService };
+// instagramService();
+// todo: chamar serviço de e-mail
+
+export { emailServiceController, instagramService, telegramServiceController, whatsappWebService };
