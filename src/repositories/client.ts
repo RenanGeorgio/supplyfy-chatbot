@@ -1,8 +1,7 @@
-import { MongooseError } from "mongoose";
-import ClientModel from "../models/chat/chatClientModel";
+import chatClientModel from "../models/chat/chatClientModel";
 
 export async function clientExist(email: string) {
-  const clientExist = await ClientModel.findOne({
+  const clientExist = await chatClientModel.findOne({
     email: email,
   }).exec();
 
@@ -19,7 +18,7 @@ export async function createClient(
     if (checkClient) {
       return checkClient;
     }
-    const client = await ClientModel.create({
+    const client = await chatClientModel.create({
       name,
       lastName,
       email,

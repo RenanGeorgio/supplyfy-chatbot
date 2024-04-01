@@ -1,11 +1,17 @@
 import http from "http";
 import { app } from "../server";
 import { io } from "socket.io-client";
+import produce from "./kafka/producer";
 
 const serverHttp = http.createServer(app);
 
 const crmSocketClient = io(process.env.CRM_SERVER_URL as string, {
-  auth: { token: process.env.CRM_SERVER_TOKEN }
+  auth: {
+    token: process.env.CRM_SERVER_TOKEN,
+  },
+  reconnection: true,
+  reconnectionDelay: 1000,
+  // reconnectionAttempts: 10,
 });
 
 crmSocketClient.on("connect", () => {
@@ -13,8 +19,10 @@ crmSocketClient.on("connect", () => {
 });
 
 crmSocketClient.on("connect_error", (error) => {
-  crmSocketClient.disconnect();
+  console.log("Erro ao conectar com o CRM Server");
+  produce("chatbot-socket", {
+    value: "Ocorreu um erro ao conectar com o CRM Server"
+  })
 });
-
 
 export { serverHttp, crmSocketClient };
