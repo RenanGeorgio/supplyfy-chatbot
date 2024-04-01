@@ -28,7 +28,7 @@ router.post('/', function (req: CustomRequest, res: Response, next: NextFunction
                 // messageHandler(req, res);
                 break;
             case 'facebook':
-                eventsHandler(req, res);
+                eventsHandler(req, res, next);
             default:
                 res.status(404).json({ error: 'Service not defined' });
                 break;
