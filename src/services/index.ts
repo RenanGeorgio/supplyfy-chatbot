@@ -10,11 +10,9 @@ import { listAllBots } from "../repositories/bot";
   const bots = await listAllBots();
   for (const bot of bots) {
     if (bot.services?.telegram) {
-      const token = bot.services.telegram.token;
-      await telegramServiceController.start(token);
+      await telegramServiceController.start(bot.services.telegram);
     }
     if (bot.services?.email) {
-      console.log(bot.services.email);
       emailServiceController.start(bot.services.email);
     }
   }
@@ -27,8 +25,4 @@ const servicesActions = {
   // whastapp
 };
 
-export {
-  instagramService,
-  whatsappWebService,
-  servicesActions
-};
+export { instagramService, whatsappWebService, servicesActions };

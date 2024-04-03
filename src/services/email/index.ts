@@ -1,11 +1,6 @@
 import emailService from "./emailService";
 import { IEmailCredentials } from "../../types";
-
-interface IEmailService {
-  id: string;
-  mailListener: any;
-  mailTransporter: any;
-}
+import { IEmailService } from "../../types/types";
 
 export const emailServiceController = {
   emailService: [] as IEmailService[],
@@ -35,17 +30,17 @@ export const emailServiceController = {
     return {};
   },
 
-  async stop(id: string) {
+  stop(id: string) {
     const service = this.emailService.find((service) => service.id === id);
     if (!service) return;
-    await service.mailListener.stop();
+    service.mailListener.stop();
   },
 
-  async resume(id: string) {
+  resume(id: string) {
     const service = this.emailService.find((service) => service.id === id);
     if (!service) return;
     try {
-      await service.mailListener.start();
+      service.mailListener.start();
       // todo: verificar o pq de não estar resumindo o listener
     } catch (error) {
       console.log(error)

@@ -3,6 +3,8 @@ import { Types } from "mongoose";
 // import { WebhookEventBase } from "./meta";
 import { Session } from "express-session";
 import TelegramBot from "node-telegram-bot-api";
+import { Transporter } from "nodemailer";
+import { IMailListener } from "../services/email/lib/types";
 
 export interface User {
     sub: Types.ObjectId | string;
@@ -88,6 +90,13 @@ export type TelegramServiceController = {
   resume: (botUsername: string) => Promise<boolean | null>;
 };
 
+export type EmailServiceController = {
+    emailService: any[];
+    start: (emailCredentials: IEmailCredentials) => Promise<any>;
+    stop: (id: string) => Promise<void>;
+    resume: (id: string) => Promise<void>;
+};
+
 export type RegisterClient = {
   email: string;
   name: string;
@@ -125,3 +134,9 @@ export interface IMongoErrorHandler {
     message: string;
     error: string[] | any;
 }
+
+export interface IEmailService {
+    id: string;
+    mailListener: IMailListener;
+    mailTransporter: Transporter;
+  }

@@ -1,8 +1,8 @@
-import nodemailer from "nodemailer";
-import { IEmailCredentials } from "../../../types/types";
+import nodemailer, { Transporter } from "nodemailer";
+import { IEmailCredentials } from "../../../types";
 
 const transporter = ({ smtpHost, smtpPort, emailUsername, emailPassword, smtpSecure }: IEmailCredentials) => {
-  const transporter =  nodemailer.createTransport({
+  const transporter: Transporter =  nodemailer.createTransport({
     host: smtpHost,
     port: smtpPort,
     secure: smtpSecure,

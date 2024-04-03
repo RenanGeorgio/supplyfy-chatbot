@@ -1,14 +1,13 @@
-import exp from "constants";
-import { IEmailCredentials } from "../../../types/types";
-const { MailListener } = require("mail-listener5");
+import { MailListener } from "mail-listener5";
+import { IMailListener, IOptions } from "./types";
+import { IEmailCredentials } from "../../../types";
 
-const emailListener = ({ emailUsername, emailPassword, imapHost, imapPort, imapTls }: IEmailCredentials) => {
-  console.log(emailUsername, emailPassword, imapHost, imapPort, imapTls)
+const emailListener = ({ emailUsername, emailPassword, imapHost, imapPort, imapTls}: IEmailCredentials): IMailListener  => {
   const mailListener = new MailListener({
-    username: emailUsername, // emailUsername,
+    username: emailUsername,
     password: emailPassword,
     host: imapHost,
-    port: imapPort, // imap port
+    port: imapPort,
     tls: imapTls,
     connTimeout: 15000,
     authTimeout: 8000,
@@ -19,9 +18,9 @@ const emailListener = ({ emailUsername, emailPassword, imapHost, imapPort, imapT
     fetchUnreadOnStart: true,
     debugger: console.log,
     // mailParserOptions: { streamAttachments: true },
-    // attachments: true,
+    attachments: false,
     // attachmentOptions: { directory: "attachments/" },
-  });
+  } as IOptions);
   return mailListener;
 };
 

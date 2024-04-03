@@ -841,7 +841,7 @@
 
 "@types/imap@^0.8.40":
   version "0.8.40"
-  resolved "https://registry.npmjs.org/@types/imap/-/imap-0.8.40.tgz"
+  resolved "https://registry.yarnpkg.com/@types/imap/-/imap-0.8.40.tgz#fb302b04112acd1c8c9b997e7117a7d76b046465"
   integrity sha512-kWFwOc88CGwWZlHqCnZiceS6EralsAHdjpQyk1+fIA875NQdIHvLpdD5NU3Pi1yZ8FKFdOF81UDNAo8/XS6HiQ==
   dependencies:
     "@types/node" "*"

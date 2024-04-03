@@ -6,7 +6,7 @@ export const telegramServiceController: TelegramServiceController = {
   telegramService: [],
 
   async start(crendentials: IBotData['services']['telegram']) {
-    const token = (typeof crendentials === 'string') ? crendentials : crendentials?.token;
+    const token = crendentials?.token;
     const telegram = await telegramService(token!);
     if (!telegram) {
       return null;

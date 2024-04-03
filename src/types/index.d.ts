@@ -9,6 +9,9 @@ import {
   IBotData,
   IEmailCredentials,
   IMongoErrorHandler,
+  IEmailService,
+  IEmailServiceController,
+  ITelegramServiceController,
 } from "./types";
 
 import {
@@ -63,4 +66,7 @@ export {
   IBotData,
   IEmailCredentials,
   IMongoErrorHandler,
+  IEmailService,
+  IEmailServiceController,
+  ITelegramServiceController,
 };

@@ -3,7 +3,6 @@ import { IEmailCredentials } from "../../types";
 import emailListener from "./lib/listener";
 import emailTransporter from "./lib/transporter";
 import EventEmitter from "node:events";
-const mailListenerEventEmitter = new EventEmitter();
 
 const emailService = async ({
   imapHost,
@@ -16,8 +15,9 @@ const emailService = async ({
   smtpSecure
 }: IEmailCredentials) => {
   const mailTransporter = emailTransporter({ smtpHost, smtpPort, emailUsername, emailPassword, smtpSecure });
-  const mailListener = await emailListener({ emailUsername, emailPassword, imapHost, imapPort, imapTls });
-  
+  const mailListener = emailListener({ emailUsername, emailPassword, imapHost, imapPort, imapTls });
+  const mailListenerEventEmitter = new EventEmitter();
+
   mailListener.on("server:connected", function () {
     console.log("imapConnected");
     mailListenerEventEmitter.emit("email:connected")
@@ -29,7 +29,7 @@ const emailService = async ({
 
   mailListener.on("error", function (err: any) {
     console.log(err);
-    mailListenerEventEmitter.emit("error", err)
+    // mailListenerEventEmitter.emit("error", err)
   });
 
   mailListener.on("mail", (mail: any, seqno: any, attributes: any) => {
