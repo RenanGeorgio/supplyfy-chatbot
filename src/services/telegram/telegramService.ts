@@ -31,6 +31,7 @@ const telegramService = async (token: string) => {
 
     if (checkIfClientOriginExist) {
       await telegram.sendMessage(chatId, `Olá, ${first_name}!`);
+      enableChatBot = true;
     } else {
       await telegram.sendMessage(
         msg.chat.id,
@@ -43,12 +44,13 @@ const telegramService = async (token: string) => {
         const client = await createClient(email, first_name!, last_name || " ");
         clientId = client?._id.toString()!;
         await telegram.sendMessage(chatId, `Olá, ${first_name}!`);
-        enableChatBot = true;
+        
       };
 
       clientEmailEventEmitter.once("telegramClientEmail", (email) =>
         createClientEvent(email)
       );
+      enableChatBot = true;
     }
 
     telegram.onText(/\/suporte/, async (msg) => {
@@ -106,7 +108,9 @@ const telegramService = async (token: string) => {
   const messageHandler = async (msg: TelegramBot.Message) => {
     const { chat, text, date, from } = msg;
     if (text) {
+      console.log("Message received: ", text);
       if (!enableChatBot || ignoredMessages(text)) return;
+      console.log("enableChatBot: ", enableChatBot);
       if (from?.is_bot === false) {
         const answer = await processQuestion(text ?? "");
         telegram.sendMessage(chat.id, answer);

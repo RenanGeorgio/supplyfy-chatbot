@@ -3,4 +3,4 @@ build/
 
 .env
 
-instagram-session.json
+*_session.json

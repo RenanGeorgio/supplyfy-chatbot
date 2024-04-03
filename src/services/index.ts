@@ -1,5 +1,5 @@
 import { emailServiceController } from "./email";
-import instagramService from "./instagram";
+import { instagramServiceController } from "./instagram";
 import { telegramServiceController } from "./telegram";
 import whatsappWebService from "./whatsapp-web";
 
@@ -15,14 +15,17 @@ import { listAllBots } from "../repositories/bot";
     if (bot.services?.email) {
       emailServiceController.start(bot.services.email);
     }
+    if(bot.services?.instagram) {
+      instagramServiceController.start(bot.services.instagram);
+    }
   }
 })();
 
 const servicesActions = {
   telegram: telegramServiceController,
   email: emailServiceController,
-  // instagram
+  instagram: instagramServiceController
   // whastapp
 };
 
-export { instagramService, whatsappWebService, servicesActions };
+export { whatsappWebService, servicesActions };

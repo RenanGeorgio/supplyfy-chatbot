@@ -1,11 +1,13 @@
+import TelegramBot from "node-telegram-bot-api";
 import { findTelegramBot } from "../../helpers/findTelegramBot";
-import { IBotData, TelegramServiceController } from "../../types/types";
+import { IBotData } from "../../types";
 import telegramService from "./telegramService";
+import { ITelegramServiceController } from "../../types";
 
-export const telegramServiceController: TelegramServiceController = {
-  telegramService: [],
+export const telegramServiceController = {
+  telegramService: [] as TelegramBot[],
 
-  async start(crendentials: IBotData['services']['telegram']) {
+  async start(crendentials: IBotData["services"]["telegram"]) {
     const token = crendentials?.token;
     const telegram = await telegramService(token!);
     if (!telegram) {
@@ -32,4 +34,4 @@ export const telegramServiceController: TelegramServiceController = {
     }
     return false;
   },
-};
+} as ITelegramServiceController;

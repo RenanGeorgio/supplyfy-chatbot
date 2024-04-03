@@ -1,63 +1,18 @@
-import { GraphQLSubscriptions } from "instagram_mqtt";
-import { processQuestion } from "../../libs/trainModel";
+import { IgApiClientRealtime } from "instagram_mqtt";
 import instagramLogin from "./auth/session";
+import intagramService from "./instagram";
 
-const intagramService = async () => {
-    const { ig } = await instagramLogin();
+export const instagramServiceController = {
+  instagramService: [] as IgApiClientRealtime[],
 
-    if (ig) {
-        ig.realtime.on('message', async (msg) => {
-          if (msg.realtime) {
-            const { message } = msg;
-            
-            const responseMessage = await processQuestion(message.text!);
-            // const thread = ig.entity.directThread([String(message.user_id)]);
+  async start(igCredentials: Record<string, any>) {
+    const { ig } = await instagramLogin({
+      username: igCredentials.username,
+      password: igCredentials.password,
+    });
 
-            // await thread.broadcastText(responseMessage);
-            try {
-              await ig.realtime.direct.sendText({threadId: String(message.thread_id), text: responseMessage})
-            } catch (error) {
-              console.error('Error while trying to send the message', error);
-            }
-         
-            console.log(message)
-            console.log(responseMessage)
-          }
-        });
-    
-        ig.realtime.on('error', console.error);
+    const { igClient } = await intagramService(ig);
 
-        await ig.realtime.connect({
-            graphQlSubs: [
-              GraphQLSubscriptions.getAppPresenceSubscription(),
-              GraphQLSubscriptions.getDirectTypingSubscription(ig.state.cookieUserId),
-            ],
-            irisData: await ig.feed.directInbox().request(),
-        });
-
-            // simulate turning the device off after 2s and turning it back on after another 2s
-          setTimeout(() => {
-            console.log('Device off');
-            // from now on, you won't receive any realtime-data as you "aren't in the app"
-            // the keepAliveTimeout is somehow a 'constant' by instagram
-            ig.realtime.direct.sendForegroundState({
-                inForegroundApp: false,
-                inForegroundDevice: false,
-                keepAliveTimeout: 900,
-            });
-        }, 2000);
-        setTimeout(() => {
-            console.log('In App');
-            ig.realtime.direct.sendForegroundState({
-                inForegroundApp: true,
-                inForegroundDevice: true,
-                keepAliveTimeout: 60,
-            });
-        }, 4000);
-        console.log('Connected to instagram realtime!');
-    } else {
-        console.error('Failed to log in');
-    }
+    this.instagramService.push(igClient);
+  },
 }
-
-export default intagramService;

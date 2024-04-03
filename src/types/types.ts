@@ -83,15 +83,15 @@ export type ContactsData = {
     }[];
 }
 
-export type TelegramServiceController = {
+export interface ITelegramServiceController {
   telegramService: TelegramBot[];
   start: (crendentials: IBotData['services']['telegram']) => Promise<TelegramBot | null>;
   stop: (botUsername: string) => Promise<boolean | null>;
   resume: (botUsername: string) => Promise<boolean | null>;
 };
 
-export type EmailServiceController = {
-    emailService: any[];
+export interface IEmailServiceController {
+    emailService: IMailListener[];
     start: (emailCredentials: IEmailCredentials) => Promise<any>;
     stop: (id: string) => Promise<void>;
     resume: (id: string) => Promise<void>;
