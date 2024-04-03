@@ -1,4 +1,16 @@
-import { Obj, statUses, Consumer, ReceiveProps, User, CustomRequest, CustomSession } from "./types";
+import {
+  Obj,
+  statUses,
+  Consumer,
+  ReceiveProps,
+  User,
+  CustomRequest,
+  CustomSession,
+  IBotData,
+  IEmailCredentials,
+  IMongoErrorHandler,
+} from "./types";
+
 import {
   MsgProps,
   SendText,
@@ -18,7 +30,7 @@ import {
   WebhookMsgPostbacks,
   WebhookMsgReferral,
   WebhookMsgs,
-  EntryProps
+  EntryProps,
 } from "./meta";
 
 export {
@@ -47,5 +59,8 @@ export {
   WebhookMsgPostbacks,
   WebhookMsgReferral,
   WebhookMsgs,
-  EntryProps
+  EntryProps,
+  IBotData,
+  IEmailCredentials,
+  IMongoErrorHandler,
 };

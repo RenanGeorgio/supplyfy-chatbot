@@ -38,8 +38,9 @@ routes
   // .post("/whatsapp/upload", whatsappController.uploadMedia)
   // .post("/whatsapp/send-doc", whatsappController.sendDocumentMessage)
     
-  .post("/telegram/bot", authMiddleware.JWT, botController.createBot)
-  .post("/telegram/bot/stop", authMiddleware.JWT, botController.stopBot)
-  .post("/telegram/bot/resume", authMiddleware.JWT, botController.resumeBot)
+  .post("/bot", authMiddleware.JWT, botController.create)
+  // .put("/bot", authMiddleware.JWT, botController.update)
+  .post("/bot/service/:service/stop", authMiddleware.JWT, botController.stop)
+  .post("/bot/service/:service/resume", authMiddleware.JWT, botController.resume)
 
 export default routes;

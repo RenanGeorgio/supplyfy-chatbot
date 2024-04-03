@@ -83,7 +83,7 @@ export type ContactsData = {
 
 export type TelegramServiceController = {
   telegramService: TelegramBot[];
-  start: (token: string) => Promise<TelegramBot | null>;
+  start: (crendentials: IBotData['services']['telegram']) => Promise<TelegramBot | null>;
   stop: (botUsername: string) => Promise<boolean | null>;
   resume: (botUsername: string) => Promise<boolean | null>;
 };
@@ -94,12 +94,34 @@ export type RegisterClient = {
   lastName?: string;
 };
 
-export interface IEmailService {
+export interface IEmailCredentials {
     imapHost?: string;
     imapPort?: number;
+    imapTls?: boolean;
     smtpHost?: string;
     smtpPort?: number;
+    smtpSecure?: boolean;
     emailUsername?: string;
     emailPassword?: string;
-    secure: boolean;
+}
+
+export interface IBotData {
+    companyId?: string;
+    userId?: string;
+    services: {
+        instagram?: {
+            username: string;
+            password: string;
+        };
+        telegram?: {
+            token: string;
+        };
+        email?: IEmailCredentials;
+    };
+}
+
+export interface IMongoErrorHandler {
+    success: boolean;
+    message: string;
+    error: string[] | any;
 }

@@ -1,8 +1,9 @@
-
 import { processQuestion } from "../../libs/trainModel";
-import { IEmailService } from "../../types/types";
+import { IEmailCredentials } from "../../types";
 import emailListener from "./lib/listener";
 import emailTransporter from "./lib/transporter";
+import EventEmitter from "node:events";
+const mailListenerEventEmitter = new EventEmitter();
 
 const emailService = async ({
   imapHost,
@@ -11,14 +12,15 @@ const emailService = async ({
   smtpPort,
   emailUsername,
   emailPassword,
-  secure
-}: IEmailService) => {
-
-  const mailListener = await emailListener({ emailUsername, emailPassword, imapHost, imapPort, secure });
-  const mailTransporter = emailTransporter({ smtpHost, smtpPort, emailUsername, emailPassword, secure });
-
+  imapTls,
+  smtpSecure
+}: IEmailCredentials) => {
+  const mailTransporter = emailTransporter({ smtpHost, smtpPort, emailUsername, emailPassword, smtpSecure });
+  const mailListener = await emailListener({ emailUsername, emailPassword, imapHost, imapPort, imapTls });
+  
   mailListener.on("server:connected", function () {
     console.log("imapConnected");
+    mailListenerEventEmitter.emit("email:connected")
   });
 
   mailListener.on("server:disconnected", function () {
@@ -27,6 +29,7 @@ const emailService = async ({
 
   mailListener.on("error", function (err: any) {
     console.log(err);
+    mailListenerEventEmitter.emit("error", err)
   });
 
   mailListener.on("mail", (mail: any, seqno: any, attributes: any) => {
@@ -49,7 +52,7 @@ const emailService = async ({
     console.info("Email sent to", mail.from.value[0].address);
   });
 
-  return { mailListener, mailTransporter }
+  return { mailListener, mailTransporter, mailListenerEventEmitter }
 };
 
 export default emailService;

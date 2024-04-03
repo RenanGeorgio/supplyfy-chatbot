@@ -1,16 +1,17 @@
 import exp from "constants";
-import { IEmailService } from "../../../types/types";
+import { IEmailCredentials } from "../../../types/types";
 const { MailListener } = require("mail-listener5");
 
-const emailListener = async ({ emailUsername, emailPassword, imapHost, imapPort}: IEmailService) => {
+const emailListener = ({ emailUsername, emailPassword, imapHost, imapPort, imapTls }: IEmailCredentials) => {
+  console.log(emailUsername, emailPassword, imapHost, imapPort, imapTls)
   const mailListener = new MailListener({
-    username: emailUsername,
+    username: emailUsername, // emailUsername,
     password: emailPassword,
     host: imapHost,
-    port: imapPort,
-    tls: true,
-    connTimeout: 10000,
-    authTimeout: 5000,
+    port: imapPort, // imap port
+    tls: imapTls,
+    connTimeout: 15000,
+    authTimeout: 8000,
     tlsOptions: { rejectUnauthorized: false },
     mailbox: "INBOX",
     searchFilter: ["RECENT", "UNSEEN"],

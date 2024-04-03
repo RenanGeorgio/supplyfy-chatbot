@@ -5,7 +5,6 @@ import whatsappWebService from "./whatsapp-web";
 
 // import ChatService from "./chatSocket";
 import { listAllBots } from "../repositories/bot";
-// import { telegramServiceController } from "./telegram";
 
 (async () => {
   const bots = await listAllBots();
@@ -14,10 +13,22 @@ import { listAllBots } from "../repositories/bot";
       const token = bot.services.telegram.token;
       await telegramServiceController.start(token);
     }
+    if (bot.services?.email) {
+      console.log(bot.services.email);
+      emailServiceController.start(bot.services.email);
+    }
   }
 })();
 
-// instagramService();
-// todo: chamar serviço de e-mail
+const servicesActions = {
+  telegram: telegramServiceController,
+  email: emailServiceController,
+  // instagram
+  // whastapp
+};
 
-export { emailServiceController, instagramService, telegramServiceController, whatsappWebService };
+export {
+  instagramService,
+  whatsappWebService,
+  servicesActions
+};

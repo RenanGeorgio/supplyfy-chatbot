@@ -1,13 +1,14 @@
 import { findTelegramBot } from "../../helpers/findTelegramBot";
-import { TelegramServiceController } from "../../types/types";
+import { IBotData, TelegramServiceController } from "../../types/types";
 import telegramService from "./telegramService";
 
 export const telegramServiceController: TelegramServiceController = {
   telegramService: [],
 
-  async start(token: string) {
-    const telegram = await telegramService(token);
-    if(!telegram) {
+  async start(crendentials: IBotData['services']['telegram']) {
+    const token = (typeof crendentials === 'string') ? crendentials : crendentials?.token;
+    const telegram = await telegramService(token!);
+    if (!telegram) {
       return null;
     }
     this.telegramService.push(telegram);
