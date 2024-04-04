@@ -22,7 +22,7 @@ export async function createBot({ companyId, userId, services }: IBotData) {
       userId,
       services,
     });
-    console.log(bot)
+
     return bot;
   } catch (error: any) {
     return mongoErrorHandler(error);

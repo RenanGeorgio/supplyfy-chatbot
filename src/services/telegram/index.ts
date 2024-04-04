@@ -1,37 +1,43 @@
-import TelegramBot from "node-telegram-bot-api";
-import { findTelegramBot } from "../../helpers/findTelegramBot";
-import { IBotData } from "../../types";
-import telegramService from "./telegramService";
+import { findBot } from "../../helpers/findBot";
 import { ITelegramServiceController } from "../../types";
+import telegramService from "./telegramService";
 
-export const telegramServiceController = {
-  telegramService: [] as TelegramBot[],
+export const telegramServiceController: ITelegramServiceController = {
+  telegramServices: [],
 
-  async start(crendentials: IBotData["services"]["telegram"]) {
-    const token = crendentials?.token;
-    const telegram = await telegramService(token!);
+  async start(credentials) {
+    const id = credentials._id?.toString()!;
+
+    const token = credentials.token;
+    const telegram = await telegramService(token);
+    
     if (!telegram) {
-      return null;
+      return null; // enviar evento de erro
     }
-    this.telegramService.push(telegram);
+
+    this.telegramServices.push({
+      id,
+      telegramBot: telegram,
+    });
+
     return telegram;
   },
 
-  async stop(botUsername: string) {
-    const bot = await findTelegramBot(this.telegramService, botUsername);
+  async stop(id) {
+    const bot = findBot(id, this.telegramServices);
     if (bot) {
-      bot.stopPolling();
+      bot.telegramBot.stopPolling();
       return true;
     }
     return false;
   },
 
-  async resume(botUsername: string) {
-    const bot = await findTelegramBot(this.telegramService, botUsername);
+  async resume(id) {
+    const bot = findBot(id, this.telegramServices);
     if (bot) {
-      bot.startPolling();
+      bot.telegramBot.startPolling();
       return true;
     }
     return false;
   },
-} as ITelegramServiceController;
+};

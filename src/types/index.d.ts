@@ -8,10 +8,15 @@ import {
   CustomSession,
   IBotData,
   IEmailCredentials,
+  IInstagramCredentials,
+  ITelegramCredentials,
   IMongoErrorHandler,
   IEmailService,
+  IInstagramService,
+  ITelegramService,
   IEmailServiceController,
   ITelegramServiceController,
+  IInstagramServiceController
 } from "./types";
 
 import {
@@ -65,8 +70,13 @@ export {
   EntryProps,
   IBotData,
   IEmailCredentials,
+  IInstagramCredentials,
+  ITelegramCredentials,
   IMongoErrorHandler,
   IEmailService,
+  IInstagramService,
+  ITelegramService,
   IEmailServiceController,
   ITelegramServiceController,
+  IInstagramServiceController
 };

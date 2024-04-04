@@ -11,6 +11,7 @@ import * as chatController from "../controllers/chat/chatController";
 import * as authController from "../controllers/user/authController";
 
 import * as botController from "../controllers/bot/botController";
+import * as botStatusController from "../controllers/bot/botStatusController";
 
 const routes = Router();
 
@@ -40,7 +41,10 @@ routes
     
   .post("/bot", authMiddleware.JWT, botController.create)
   // .put("/bot", authMiddleware.JWT, botController.update)
-  .post("/bot/service/:service/stop", authMiddleware.JWT, botController.stop)
-  .post("/bot/service/:service/resume", authMiddleware.JWT, botController.resume)
+
+  // controle do serviço dos bots
+  .post("/bot/service/:serviceId/start", authMiddleware.JWT, botStatusController.start)
+  .post("/bot/service/:serviceId/stop", authMiddleware.JWT, botStatusController.stop)
+  .post("/bot/service/:serviceId/resume", authMiddleware.JWT, botStatusController.resume)
 
 export default routes;

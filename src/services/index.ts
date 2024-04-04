@@ -9,15 +9,15 @@ import { listAllBots } from "../repositories/bot";
 (async () => {
   const bots = await listAllBots();
   for (const bot of bots) {
-    if (bot.services?.telegram) {
-      await telegramServiceController.start(bot.services.telegram);
-    }
-    if (bot.services?.email) {
-      emailServiceController.start(bot.services.email);
-    }
-    if(bot.services?.instagram) {
-      instagramServiceController.start(bot.services.instagram);
-    }
+    // if (bot.services?.telegram) {
+    //   await telegramServiceController.start(bot.services.telegram);
+    // }
+    // if (bot.services?.email) {
+    //   emailServiceController.start(bot.services.email);
+    // }
+    // if(bot.services?.instagram) {
+    //   instagramServiceController.start(bot.services.instagram);
+    // }
   }
 })();
 

@@ -1,18 +1,38 @@
-import { IgApiClientRealtime } from "instagram_mqtt";
+
 import instagramLogin from "./auth/session";
 import intagramService from "./instagram";
+import { IInstagramServiceController } from "../../types";
+import { findBot } from "../../helpers/findBot";
 
-export const instagramServiceController = {
-  instagramService: [] as IgApiClientRealtime[],
+export const instagramServiceController: IInstagramServiceController = {
+  instagramServices: [],
 
-  async start(igCredentials: Record<string, any>) {
-    const { ig } = await instagramLogin({
+  async start(igCredentials) {
+    const id = igCredentials._id?.toString()!;
+    const service = findBot(id, this.instagramServices);
+
+    if(service) {
+      return { success: false, message: "Bot já está rodando" };
+    }
+
+    const session = await instagramLogin({
       username: igCredentials.username,
       password: igCredentials.password,
     });
 
-    const { igClient } = await intagramService(ig);
+    if (session?.success === false) {
+      return session;
+    }
 
-    this.instagramService.push(igClient);
+    const { ig } = session;
+
+    const { igClient } = await intagramService(ig!);
+
+    this.instagramServices.push({
+      id: igCredentials._id?.toString()!,
+      ig: igClient,
+    });
+
+    return { success: true };
   },
 }

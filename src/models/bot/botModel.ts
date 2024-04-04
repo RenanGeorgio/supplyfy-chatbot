@@ -60,10 +60,6 @@ const botSchema = new Schema({
     type: String,
     required: true,
   },
-  userId: {
-    type: String,
-    required: false,
-  },
   services: {
     telegram: {
       _id: { auto: false },

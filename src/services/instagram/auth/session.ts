@@ -4,6 +4,14 @@ import { withRealtime, IgApiClientRealtime } from "instagram_mqtt";
 import { customSession } from "../../../server";
 import { redisClient } from "../../../core/redis";
 
+const ERROR_MESSAGES = {
+  CHALLENGE_REQUIRED: "É necessário resolver um desafio para continuar",
+  SESSION_ERROR: "Erro ao tentar restaurar a sessão",
+  LOGIN_ERROR: "Erro ao tentar fazer login",
+  SESSION_RESTORED: "Sessão restaurada com sucesso!",
+  SESSION_SAVED: "Sessão salva com sucesso!",
+};
+
 // todo: tratar o erro "RequestError: Error: connect ETIMEDOUT 157.240.222.63:443", causando crash no servidor
 const instagramLogin = async ({ username, password }) => {
   const IG_SESSION_KEY = `${username}_session.json`;
@@ -11,6 +19,7 @@ const instagramLogin = async ({ username, password }) => {
 
   let should_login = true;
   let serialized_session: string | null = null;
+  let status = {} as any;
 
   const deserializeSession = async () => {
     await ig.state.deserialize(serialized_session);
@@ -30,20 +39,27 @@ const instagramLogin = async ({ username, password }) => {
       await deserializeSession();
       should_login = false;
     } catch (error: any) {
-      console.warn("Error while trying to restore the session", error);
-      console.log("type of error code", typeof error)
-      console.log("error code", Object.keys(error))
-      if(error.cause.code === 'ETIMEDOUT') {
-        console.error('Tempo esgotado para tentar restaurar a sessão, tentando novamente...');
+      const errorString = error.toString();
+      if (errorString.includes("challenge_required")) {
+        ig.destroy();
+        return {
+          success: false,
+          message: ERROR_MESSAGES.CHALLENGE_REQUIRED,
+        };
+      } else if (error?.cause.code === "ETIMEDOUT" || errorString.includes("ETIMEDOUT")) {
         const restoreSession = setTimeout(async () => {
           await deserializeSession();
           should_login = false;
-          console.log('Sessão restaurada com sucesso!');
+          console.log(ERROR_MESSAGES.SESSION_RESTORED);
         }, 5000);
         clearTimeout(restoreSession);
+      } else {
+        console.log("dentro do else");
+        should_login = true;
       }
     }
   }
+  
   if (should_login) {
     console.log("should login again");
 
@@ -58,7 +74,6 @@ const instagramLogin = async ({ username, password }) => {
 
     try {
       const auth = await ig.account.login(username, password);
-      console.debug(auth);
     } catch (error) {
       console.error("Erro ao tentar fazer login", error);
     }

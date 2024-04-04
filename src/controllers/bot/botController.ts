@@ -1,90 +1,50 @@
 import { NextFunction, Request, Response } from "express";
-import { telegramServiceController } from "../../services/telegram";
 import { botExist, createBot, updateBot } from "../../repositories/bot";
 import { checkServices } from "../../services/helpers/checkServices";
-import { servicesActions } from "../../services";
+
+import { CustomRequest, IBotData } from "../../types";
+import { userExist } from "../../repositories/user";
 
 export const create = async (
-  req: Request,
+  req: CustomRequest,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const { companyId, userId, services } = req.body;
-  
-    if (!companyId) {
+    const { services } = req.body;
+
+    if (!services) {
       return res.status(400).json({ message: "Campos obrigatórios ausentes" });
     }
 
+    const checkUser = await userExist(req.user?.sub as string);
+
+    const companyId = checkUser?.companyId as string;
+
     const existingBot = await botExist("companyId", companyId);
+
     let bot = {} as any;
+
     if (existingBot) {
-      const { success, message } = await checkServices(existingBot, services);
+      const { success, message } = await checkServices(existingBot as IBotData, services);
 
       if (success === false) {
         return res.status(400).json({ message });
       }
-      
+
       bot = await updateBot({ companyId, services });
     } else {
-      const startService = await checkServices({}, services);
-      bot = await createBot({ companyId, userId, services });
+      bot = await createBot({ companyId, services });
+      // await checkServices({}, services);
     }
 
     if (bot && "success" in bot && !bot.success) {
-      console.log('aqui?')
       const { message, error } = bot;
       throw new Error(`${message}, ${error}`);
     }
 
-    return res.status(201).json({ message: "Bot created" });
+    return res.status(201).json({ message: "Bot criado" });
   } catch (error) {
     next(error);
-  }
-};
-
-export const stop = async (req: Request, res: Response) => {
-  try {
-    const { service } = req.params;
-    const { id } = req.body;
-
-    if (!id) {
-      return res.status(400).json({ message: "Identificação não fornecida" });
-    }
-
-    const serviceControl = servicesActions[service];
-
-    if (!serviceControl) {
-      res.status(400).json({ message: "Serviço fornecido é inválido" });
-    }
-
-    const bot = await serviceControl.stop(id)
-    console.log(bot)
-    return res.status(200).json({ message: `Bot foi parado` });
-  } catch (error) {
-    return res.status(500);
-  }
-};
-
-export const resume = async (req: Request, res: Response) => {
-  try {
-    const { service } = req.params;
-    const { id } = req.body;
-
-    if (!id) {
-      return res.status(400).json({ message: "Identificação não fornecida" });
-    }
-
-    const serviceControl = servicesActions[service];
-
-    if (!serviceControl) {
-      res.status(400).json({ message: "Serviço fornecido é inválido" });
-    }
-
-    const bot = await serviceControl.resume(id)
-
-    return res.status(200).json({ message: `Bot foi iniciado` });
-  } catch (error) {
-    return res.status(500);
   }
 };
