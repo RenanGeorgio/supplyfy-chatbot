@@ -1,8 +1,8 @@
-
 import instagramLogin from "./auth/session";
 import intagramService from "./instagram";
 import { IInstagramServiceController } from "../../types";
 import { findBot } from "../../helpers/findBot";
+import { Events } from "../../types/types";
 
 export const instagramServiceController: IInstagramServiceController = {
   instagramServices: [],
@@ -11,8 +11,13 @@ export const instagramServiceController: IInstagramServiceController = {
     const id = igCredentials._id?.toString()!;
     const service = findBot(id, this.instagramServices);
 
-    if(service) {
-      return { success: false, message: "Bot já está rodando" };
+    if (service) {
+      return {
+        success: false,
+        event: Events.SERVICE_ALREADY_RUNNING,
+        service: "instagram",
+        message: "serviço já está rodando",
+      };
     }
 
     const session = await instagramLogin({
@@ -24,15 +29,28 @@ export const instagramServiceController: IInstagramServiceController = {
       return session;
     }
 
-    const { ig } = session;
+    if (session?.ig) {
+      const { ig } = session;
+      const { igClient } = await intagramService(ig!);
 
-    const { igClient } = await intagramService(ig!);
+      this.instagramServices.push({
+        id,
+        ig: igClient,
+      });
 
-    this.instagramServices.push({
-      id: igCredentials._id?.toString()!,
-      ig: igClient,
-    });
-
-    return { success: true };
+      return {
+        success: true,
+        event: Events.SERVICE_STARTED,
+        service: "instagram",
+        message: "serviço iniciado",
+      };
+    } else {
+      return {
+        success: false,
+        Events: Events.SERVICE_ERROR,
+        service: "instagram",
+        message: "não autorizado",
+      };
+    }
   },
-}
+};

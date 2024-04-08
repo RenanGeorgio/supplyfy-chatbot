@@ -1,5 +1,5 @@
 import emailService from "./emailService";
-import { IEmailServiceController } from "../../types/types";
+import { Events, IEmailServiceController } from "../../types/types";
 import { findBot } from "../../helpers/findBot";
 
 export const emailServiceController: IEmailServiceController = {
@@ -8,27 +8,49 @@ export const emailServiceController: IEmailServiceController = {
   async start(emailCredentials) {
     const { mailListener, mailTransporter, mailListenerEventEmitter } = await emailService(emailCredentials);
 
-    mailListenerEventEmitter.on("error", (err: any) => {
-      if (err.source === "authentication") {
-        console.error("Erro de autenticação");
-        // enviar evento pelo kafka ?
-      } else {
-        console.error(err);
-      }
-    });
+    const waitForConnect = () => {
+      return new Promise((resolve) => {
+        mailListenerEventEmitter.on("error", (err: any) => {
+          if (err.source === "authentication") {
+            console.error("Erro de autenticação");
+            resolve({
+              success: false,
+              event: Events.SERVICE_ERROR,
+              message: "erro de autenticação",
+              service: "email"
+            });
+            // enviar evento pelo kafka ?
+          } else {
+            console.error(err);
+            resolve({
+              success: false,
+              event: Events.SERVICE_ERROR,
+              message: "erro inesperado",
+              service: "email"
+            });
+          }
+        });
 
-    mailListenerEventEmitter.on("email:connected", () => {
-      console.log("Email conectado");
-      this.emailServices.push({
-        id: emailCredentials._id?.toString()!,
-        mailListener: mailListener,
-        mailTransporter: mailTransporter,
+        mailListenerEventEmitter.on("email:connected", () => {
+          this.emailServices.push({
+            id: emailCredentials._id?.toString()!,
+            mailListener: mailListener,
+            mailTransporter: mailTransporter,
+          });
+
+          resolve({
+            success: true,
+            event: Events.SERVICE_STARTED,
+            message: "serviço iniciado",
+            service: "email"
+          });
+        });
       });
-    });
+    };
 
-    mailListener.start();
+    const connect = await waitForConnect();
 
-    return {}
+    return connect;
   },
 
   stop(id) {
@@ -44,8 +66,7 @@ export const emailServiceController: IEmailServiceController = {
       service.mailListener.start();
       // todo: verificar o pq de não estar resumindo o listener
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-
   },
 };

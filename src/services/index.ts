@@ -2,13 +2,15 @@ import { emailServiceController } from "./email";
 import { instagramServiceController } from "./instagram";
 import { telegramServiceController } from "./telegram";
 import whatsappWebService from "./whatsapp-web";
-
+import { webhookPromiseHandler } from "./webhook/webhookHandler";
 // import ChatService from "./chatSocket";
 import { listAllBots } from "../repositories/bot";
 
 (async () => {
   const bots = await listAllBots();
   for (const bot of bots) {
+    // inicializar os serviços quando o servidor iniciar ?
+
     // if (bot.services?.telegram) {
     //   await telegramServiceController.start(bot.services.telegram);
     // }
@@ -28,4 +30,4 @@ const servicesActions = {
   // whastapp
 };
 
-export { whatsappWebService, servicesActions };
+export { whatsappWebService, servicesActions, webhookPromiseHandler };

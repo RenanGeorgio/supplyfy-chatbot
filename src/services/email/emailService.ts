@@ -18,6 +18,8 @@ const emailService = async ({
   const mailListener = emailListener({ emailUsername, emailPassword, imapHost, imapPort, imapTls });
   const mailListenerEventEmitter = new EventEmitter();
 
+  console.log("emailService", mailListener)
+  
   mailListener.on("server:connected", function () {
     console.log("imapConnected");
     mailListenerEventEmitter.emit("email:connected")
@@ -29,7 +31,7 @@ const emailService = async ({
 
   mailListener.on("error", function (err: any) {
     console.log(err);
-    // mailListenerEventEmitter.emit("error", err)
+    mailListenerEventEmitter.emit("error", err)
   });
 
   mailListener.on("mail", (mail: any, seqno: any, attributes: any) => {
@@ -51,6 +53,8 @@ const emailService = async ({
 
     console.info("Email sent to", mail.from.value[0].address);
   });
+
+  mailListener.start();
 
   return { mailListener, mailTransporter, mailListenerEventEmitter }
 };

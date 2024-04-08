@@ -104,9 +104,9 @@ export interface ITelegramServiceController {
   telegramServices: ITelegramService[];
   start: (
     credentials: ITelegramCredentials
-  ) => Promise<TelegramBot | null>;
-  stop: (botUsername: string) => Promise<boolean | null>;
-  resume: (botUsername: string) => Promise<boolean | null>;
+  ) => Promise<IEvents>;
+  stop: (credentials: ITelegramCredentials) => Promise<IEvents>;
+  resume: (credentials: ITelegramCredentials) => Promise<IEvents>;
 }
 
 export interface IEmailServiceController {
@@ -167,3 +167,18 @@ export interface IMongoErrorHandler {
   message: string;
   error: string[] | any;
 }
+
+export interface IEvents {
+  event: Events;
+  message: string;
+  success: boolean;
+  service: string;
+}
+
+export enum Events {
+  SERVICE_STARTED = "service_started",
+  SERVICE_STOPPED = "service_stopped",
+  SERVICE_ERROR = "service_error",
+  SERVICE_ALREADY_RUNNING = "service_already_running",
+  SERVICE_NOT_RUNNING = "service_not_running",
+} 

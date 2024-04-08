@@ -12,6 +12,7 @@ import * as authController from "../controllers/user/authController";
 
 import * as botController from "../controllers/bot/botController";
 import * as botStatusController from "../controllers/bot/botStatusController";
+import * as webhookController from "../controllers/webhook/webhookController";
 
 const routes = Router();
 
@@ -43,8 +44,11 @@ routes
   // .put("/bot", authMiddleware.JWT, botController.update)
 
   // controle do serviço dos bots
-  .post("/bot/service/:serviceId/start", authMiddleware.JWT, botStatusController.start)
-  .post("/bot/service/:serviceId/stop", authMiddleware.JWT, botStatusController.stop)
-  .post("/bot/service/:serviceId/resume", authMiddleware.JWT, botStatusController.resume)
+  .post("/bot/service/:serviceId/:action", authMiddleware.JWT, botStatusController.action)
+  // .post("/bot/service/:serviceId/stop", authMiddleware.JWT, botStatusController.stop)
+  // .post("/bot/service/:serviceId/resume", authMiddleware.JWT, botStatusController.resume)
+
+  // webhook
+  .post("/webhook", authMiddleware.JWT, webhookController.create);
 
 export default routes;

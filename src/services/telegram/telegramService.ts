@@ -28,7 +28,7 @@ const telegramService = async (token: string) => {
       platform: "telegram",
       chatId: chatId.toString(),
     });
-
+    
     if (checkIfClientOriginExist) {
       await telegram.sendMessage(chatId, `Olá, ${first_name}!`);
       enableChatBot = true;
@@ -44,12 +44,12 @@ const telegramService = async (token: string) => {
         const client = await createClient(email, first_name!, last_name || " ");
         clientId = client?._id.toString()!;
         await telegram.sendMessage(chatId, `Olá, ${first_name}!`);
-        
       };
 
       clientEmailEventEmitter.once("telegramClientEmail", (email) =>
         createClientEvent(email)
       );
+      
       enableChatBot = true;
     }
 
