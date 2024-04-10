@@ -3,6 +3,7 @@ import { IgApiClient } from "instagram-private-api";
 import { withRealtime, IgApiClientRealtime } from "instagram_mqtt";
 import { customSession } from "../../../server";
 import { redisClient } from "../../../core/redis";
+import { Events } from "../../../types/types";
 
 const ERROR_MESSAGES = {
   CHALLENGE_REQUIRED: "É necessário resolver um desafio para continuar",
@@ -44,6 +45,8 @@ const instagramLogin = async ({ username, password }) => {
         return {
           success: false,
           message: ERROR_MESSAGES.CHALLENGE_REQUIRED,
+          event: Events.SERVICE_ERROR,
+          service: "instagram",
         };
       } else if (error?.cause?.code === "ETIMEDOUT" || errorString.includes("ETIMEDOUT")) {
         console.log("dentro do timeout", error)
@@ -75,7 +78,9 @@ const instagramLogin = async ({ username, password }) => {
     ig.state.generateDevice(username + "123");
 
     try {
+      await ig.simulate.preLoginFlow();
       const auth = await ig.account.login(username, password);
+      process.nextTick(async () => await ig.simulate.postLoginFlow());
     } catch (error) {
       console.error("Erro ao tentar fazer login", error);
     }

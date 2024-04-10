@@ -1,7 +1,9 @@
 import { GraphQLSubscriptions, IgApiClientRealtime } from "instagram_mqtt";
 import { processQuestion } from "../../libs/trainModel";
+import { Events } from "../../types/types";
+import { webhookTrigger } from "../webhook/webhookTrigger";
 
-const intagramService = async (ig: IgApiClientRealtime) => {
+const intagramService = async (ig: IgApiClientRealtime, webhook) => {
   if (ig) {
     const userId = ig.state.cookieUserId;
 
@@ -9,7 +11,10 @@ const intagramService = async (ig: IgApiClientRealtime) => {
       {
         graphQlSubs: [
           GraphQLSubscriptions.getAppPresenceSubscription(),
+          GraphQLSubscriptions.getZeroProvisionSubscription(ig.state.phoneId),
+          GraphQLSubscriptions.getDirectStatusSubscription(),
           GraphQLSubscriptions.getDirectTypingSubscription(ig.state.cookieUserId),
+          GraphQLSubscriptions.getAsyncAdSubscription(ig.state.cookieUserId),
         ],
         irisData: await ig.feed.directInbox().request(),
         autoReconnect: true,
@@ -24,10 +29,10 @@ const intagramService = async (ig: IgApiClientRealtime) => {
 
         if (user_id && user_id.toString() !== userId) {
           try {
-            const responseMessage = await processQuestion(text as string);
-            await ig.entity
-              .directThread([String(user_id)])
-              .broadcastText(responseMessage);
+            const responseMessage: string = await processQuestion(text as string);
+            await ig.entity.directThread(thread_id!).markItemSeen(message.item_id!);
+            await ig.entity.directThread(thread_id!).broadcastText(responseMessage)
+      
           } catch (error) {
             console.error("Error while trying to send the message", error);
           }
@@ -45,28 +50,19 @@ const intagramService = async (ig: IgApiClientRealtime) => {
         ig.realtime.connect(connectParams);
       }
 
+      if(webhook){
+        webhookTrigger({
+          url: webhook.url,
+          event: Events.SERVICE_DISCONNECTED,
+          message: "Erro no serviço de Instagram",
+          service: "instagram"
+        })
+      
+      }
+
     });
 
     console.log(igConnect, "Connected to the Instagram Realtime API")
-    // simulate turning the device off after 2s and turning it back on after another 2s
-    // setTimeout(() => {
-    //   console.log("Device off");
-    //   // from now on, you won't receive any realtime-data as you "aren't in the app"
-    //   // the keepAliveTimeout is somehow a 'constant' by instagram
-    //   ig.realtime.direct.sendForegroundState({
-    //     inForegroundApp: false,
-    //     inForegroundDevice: false,
-    //     keepAliveTimeout: 900,
-    //   });
-    // }, 2000);
-    // setTimeout(() => {
-    //   console.log("In App");
-    //   ig.realtime.direct.sendForegroundState({
-    //     inForegroundApp: true,
-    //     inForegroundDevice: true,
-    //     keepAliveTimeout: 60,
-    //   });
-    // }, 4000);
   } else {
     console.error("Failed to log in");
   }

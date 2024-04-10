@@ -37,8 +37,8 @@ export const action = async (req: CustomRequest, res: Response) => {
       // rotas unificadas, com um parâmetro para identificar a ação
       return res.status(400).json({ message: "Ação fornecida é inválida" });
     } else {
-      const control = serviceControl[action](service); // não estou esperando o retorno, para não travar a requisição
       const webhook = await getWebhook({ companyId });
+      const control = serviceControl[action](service, webhook); // não estou esperando o retorno, para não travar a requisição
 
       if (webhook) {
         webhookPromiseHandler(webhook.url, control);

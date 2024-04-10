@@ -7,8 +7,10 @@ import { chatOriginExist, createChat } from "../../repositories/chat";
 import { ignoredMessages } from "./helpers/ignoredMessages";
 import { crmSocketClient } from "../../core/http";
 import { createMessage } from "../../repositories/message";
+import { webhookTrigger } from "../webhook/webhookTrigger";
+import { Events } from "../../types/types";
 
-const telegramService = async (token: string) => {
+const telegramService = async (token: string, webhook) => {
   const telegram = new TelegramBot(token, { polling: true });
 
   try {
@@ -119,6 +121,17 @@ const telegramService = async (token: string) => {
   };
 
   telegram.on("message", messageHandler);
+
+  telegram.on("polling_error", () => {
+    if(webhook){
+      webhookTrigger({
+        url: webhook.url,
+        event: Events.SERVICE_ERROR,
+        message: "telegram bot polling error",
+        service: "telegram",
+      });
+    }
+  });
 
   const botName = (await telegram.getMe()).username;
   console.info(`Telegram bot - ${botName} is running...`);

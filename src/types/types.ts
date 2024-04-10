@@ -103,7 +103,8 @@ export interface IInstagramService {
 export interface ITelegramServiceController {
   telegramServices: ITelegramService[];
   start: (
-    credentials: ITelegramCredentials
+    credentials: ITelegramCredentials,
+    webhook?: IWebhook
   ) => Promise<IEvents>;
   stop: (credentials: ITelegramCredentials) => Promise<IEvents>;
   resume: (credentials: ITelegramCredentials) => Promise<IEvents>;
@@ -111,15 +112,15 @@ export interface ITelegramServiceController {
 
 export interface IEmailServiceController {
   emailServices: IEmailService[];
-  start: (emailCredentials: IEmailCredentials) => any;
-  stop: (id: string) => void;
-  resume: (id: string) => void;
+  start: (emailCredentials: IEmailCredentials, webhook?: IWebhook) => any;
+  stop: (emailCredentials: IEmailCredentials) => void;
+  resume: (emailCredentials: IEmailCredentials) => void;
 }
 
 export interface IInstagramServiceController {
   instagramServices: IInstagramService[];
-  start: (credentials: IInstagramCredentials) => any;
-  // stop: (id: string) => void;
+  start: (credentials: IInstagramCredentials, webhook?: IWebhook) => any;
+  stop: (credentials: IInstagramCredentials) => void;
   // resume: (id: string) => void;
 }
 
@@ -175,9 +176,15 @@ export interface IEvents {
   service: string;
 }
 
+export interface IWebhook {
+  url: string;
+  companyId: string;
+};
+
 export enum Events {
   SERVICE_STARTED = "service_started",
   SERVICE_STOPPED = "service_stopped",
+  SERVICE_DISCONNECTED = "service_disconnected",
   SERVICE_ERROR = "service_error",
   SERVICE_ALREADY_RUNNING = "service_already_running",
   SERVICE_NOT_RUNNING = "service_not_running",

@@ -10,7 +10,7 @@ const crmSocketClient = io(process.env.CRM_SERVER_URL as string, {
     token: process.env.CRM_SERVER_TOKEN,
   },
   reconnection: true,
-  reconnectionDelay: 1000,
+  reconnectionDelay: 5000,
   // reconnectionAttempts: 10,
 });
 
@@ -19,7 +19,7 @@ crmSocketClient.on("connect", () => {
 });
 
 crmSocketClient.on("connect_error", (error) => {
-  console.log("Erro ao conectar com o CRM Server");
+  console.log("Sem conexão com o CRM Server");
   // produce("chatbot-socket", {
   //   value: "Ocorreu um erro ao conectar com o CRM Server"
   // })

@@ -1,4 +1,4 @@
-import { findBot } from "../../helpers/findBot";
+import { findBot, removeBot } from "../../helpers/findBot";
 import { ITelegramServiceController } from "../../types";
 import { Events } from "../../types/types";
 import telegramService from "./telegramService";
@@ -6,7 +6,7 @@ import telegramService from "./telegramService";
 export const telegramServiceController: ITelegramServiceController = {
   telegramServices: [],
 
-  async start(credentials) {
+  async start(credentials, webhook) {
     const id = credentials._id?.toString()!;
     const token = credentials.token;
 
@@ -21,7 +21,7 @@ export const telegramServiceController: ITelegramServiceController = {
       };
     }
 
-    const telegram = await telegramService(token);
+    const telegram = await telegramService(token, webhook);
 
     if (!telegram) {
       return {
@@ -48,8 +48,11 @@ export const telegramServiceController: ITelegramServiceController = {
   async stop(credentials) {
     const id = credentials._id?.toString()!;
     const bot = findBot(id.toString(), this.telegramServices);
+
     if (bot) {
       bot.telegramBot.stopPolling();
+      bot.telegramBot.removeAllListeners();
+      removeBot(bot, this.telegramServices);
       return {
         success: true,
         event: Events.SERVICE_STOPPED,
