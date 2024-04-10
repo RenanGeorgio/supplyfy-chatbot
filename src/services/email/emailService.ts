@@ -11,7 +11,7 @@ const errorMessages = {
   "timeout-auth": "timeout de autenticação",
 }
 
-const emailService = async (credentials: IEmailCredentials, webhook: IWebhook) => {
+const emailService = async (credentials: IEmailCredentials, webhook) => {
   const { imapHost, imapPort, imapTls, smtpHost, smtpPort, smtpSecure, emailUsername, emailPassword } = credentials;
   const mailTransporter = emailTransporter({ smtpHost, smtpPort, emailUsername, emailPassword, smtpSecure });
   const mailListener = emailListener({ emailUsername, emailPassword, imapHost, imapPort, imapTls: false });
@@ -75,8 +75,6 @@ const emailService = async (credentials: IEmailCredentials, webhook: IWebhook) =
 
     console.info("E-mail enviado para: ", mail.from.value[0].address);
   });
-
-  mailListener.start();
 
   return { mailListener, mailTransporter, mailListenerEventEmitter };
 };

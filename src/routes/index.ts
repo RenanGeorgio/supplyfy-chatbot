@@ -44,7 +44,7 @@ routes
   // .put("/bot", authMiddleware.JWT, botController.update)
 
   // controle do serviço dos bots
-  .post("/bot/service/:serviceId/:action", authMiddleware.JWT, botStatusController.action)
+  .post("/bot/:serviceId/:action", authMiddleware.JWT, botStatusController.action)
   // .post("/bot/service/:serviceId/stop", authMiddleware.JWT, botStatusController.stop)
   // .post("/bot/service/:serviceId/resume", authMiddleware.JWT, botStatusController.resume)
 
