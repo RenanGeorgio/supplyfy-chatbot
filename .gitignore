@@ -1,6 +1,15 @@
 node_modules/
 build/
 
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional stylelint cache
+.stylelintcache
+
 .env
 
 instagram-session.json
