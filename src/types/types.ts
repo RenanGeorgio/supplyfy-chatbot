@@ -11,6 +11,14 @@ export interface User {
   sub: Types.ObjectId | string;
 }
 
+export interface CustomMessageKafka {
+  topic: string, 
+  text: string, 
+  from: string, 
+  to: string, 
+  service: string
+}
+
 export interface CustomSession extends Session {
   service?: string;
 }
