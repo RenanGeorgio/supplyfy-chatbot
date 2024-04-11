@@ -12,6 +12,19 @@ export const emailServiceController: IEmailServiceController = {
       mailListenerEventEmitter 
     } = await emailService(emailCredentials, webhook);
 
+    const id = emailCredentials._id?.toString()!;
+
+    const bot = findBot(id, this.emailServices);
+
+    if (bot) {
+      return {
+        success: false,
+        event: Events.SERVICE_ALREADY_RUNNING,
+        message: "serviço já está rodando",
+        service: "email",
+      };
+    }
+
     const waitForConnect = () => {
       return new Promise((resolve) => {
         mailListenerEventEmitter.on("email:connected", () => {
@@ -30,7 +43,8 @@ export const emailServiceController: IEmailServiceController = {
         });
       });
     };
-
+    
+    mailListener.start();
     const connect = await waitForConnect();
 
     return connect;

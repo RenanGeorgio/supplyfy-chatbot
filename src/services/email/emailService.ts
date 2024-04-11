@@ -76,8 +76,6 @@ const emailService = async (credentials: IEmailCredentials, webhook: IWebhook | 
     console.info("E-mail enviado para: ", mail.from.value[0].address);
   });
 
-  mailListener.start();
-
   return { mailListener, mailTransporter, mailListenerEventEmitter };
 };
 
