@@ -60,7 +60,7 @@ app.use(
   })
 );
 
-// app.use(sessionMiddleware, serviceSelectorMiddleware);
+//app.use(sessionMiddleware, serviceSelectorMiddleware);
 
 //app.use('/incoming', sessionMiddleware, serviceSelectorMiddleware, webhookRouter);
 
