@@ -8,3 +8,11 @@ export const test = (req: CustomRequest, res: Response, next: NextFunction) => {
         next(error);
     }
 };
+
+export const session = (req: CustomRequest, res: Response, next: NextFunction) => {
+    try {
+        return res.status(200).send(req.session);
+    } catch (error) {
+        next(error);
+    }
+};

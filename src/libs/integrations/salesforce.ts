@@ -1,4 +1,4 @@
-import app from "../../server";
+import { app } from "../../server";
 
 app.post("/outbound_message", (requset, response) => {
   const xml_data =

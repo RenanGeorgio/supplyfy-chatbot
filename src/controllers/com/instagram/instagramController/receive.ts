@@ -41,9 +41,11 @@ const Receive = class<ReceiveProps> {
 
     try {
       if (event?.postback) {
-        responses = this.handlePostback(this.webhookEvent);
+        responses = this.handlePostback(event?.postback);
+        //responses = this.handlePostback(this.webhookEvent);
       } else if (event?.referral) {
-        responses = this.handleReferral(this.webhookEvent);
+        responses = this.handleReferral(event?.referral);
+        //responses = this.handleReferral(this.webhookEvent);
       } else {
         if (event?.message) {
           const message: MsgEventProp = event.message;

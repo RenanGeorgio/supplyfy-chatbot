@@ -1,11 +1,12 @@
-import { Response } from "express";
+import { NextFunction, Response } from "express";
 import { CustomRequest } from "../../../types";
 import { facebookApi } from "../../../api";
 import { processQuestion } from "../../../libs/trainModel";
 
 export const eventsHandler = async (
     req: CustomRequest,
-    res: Response
+    res: Response,
+    next: NextFunction
 ) => {
     try {
         if (req.body.object === "page") {
@@ -37,9 +38,7 @@ export const eventsHandler = async (
         } else {
             res.status(404).send();  
         }
-    } catch (error) {
-        console.log(error);
-
-        return res.status(500).send({ message: error.message });
+    } catch (error: any) {
+        next(error)
     }
 };

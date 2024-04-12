@@ -1,13 +1,21 @@
 import { Request } from "express";
 import { Types } from "mongoose";
-import { WebhookEventBase } from "./meta";
+// import { WebhookEventBase } from "./meta";
+import { Session } from "express-session";
+import TelegramBot from "node-telegram-bot-api";
 
 export interface User {
-  sub: Types.ObjectId | string;
+    sub: Types.ObjectId | string;
+}
+
+export interface CustomSession extends Session {
+    service?: string;
 }
 
 export interface CustomRequest extends Request {
-  user?: User;
+    user?: User;
+    rawBody?: Buffer;
+    session: CustomSession;
 }
 
 export type Obj = {
@@ -31,7 +39,7 @@ export interface Consumer {
 
 export type ReceiveProps = {
     user: Consumer;
-    webhookEvent: WebhookEventBase;
+    // webhookEvent: WebhookEventBase;
 }
 
 export type ContactsData = {
@@ -72,3 +80,16 @@ export type ContactsData = {
         type?: string;
     }[];
 }
+
+export type TelegramServiceController = {
+  telegramService: TelegramBot[];
+  start: (token: string) => Promise<TelegramBot | null>;
+  stop: (botUsername: string) => Promise<boolean | null>;
+  resume: (botUsername: string) => Promise<boolean | null>;
+};
+
+export type RegisterClient = {
+  email: string;
+  name: string;
+  lastName?: string;
+};

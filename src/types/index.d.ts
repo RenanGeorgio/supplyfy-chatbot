@@ -1,4 +1,4 @@
-import { Obj, statUses, Consumer, ReceiveProps, User, CustomRequest } from "./types";
+import { Obj, statUses, Consumer, ReceiveProps, User, CustomRequest, CustomSession } from "./types";
 import {
   MsgProps,
   SendText,
@@ -24,6 +24,7 @@ import {
 
 export {
   User,
+  CustomSession,
   CustomRequest,
   statUses,
   Obj,

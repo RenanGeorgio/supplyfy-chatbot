@@ -61,11 +61,11 @@ export const messageHandler = async (req: CustomRequest, res: Response) => {
         }
 
         if (entry?.messaging != undefined) {
-          entry?.messaging?.forEach(async function (webhookEvent: WebhookEventBase) {
+          entry?.messaging?.forEach(async function (webhookEvent: WebhookEventBase | any) {
             if (("message" in webhookEvent) && (webhookEvent?.message?.is_echo === true)) { // Discarta eventos que nao sao do interesse para a aplicacao
               res.status(400).send({ message: "Got an echo" });
             } else {
-              if (webhookEvent?.optin) {
+              if (webhookEvent?.option) {
                 receivedAuthentication(webhookEvent as WebhookMsgOptions);
               } else if (webhookEvent?.delivery) {
                 receivedDeliveryConfirmation(webhookEvent as WebhookMsgDeliveries);
@@ -108,7 +108,7 @@ export const messageHandler = async (req: CustomRequest, res: Response) => {
     } else {
       res.status(404).send({ message: "Unrecognized POST to webhook" });
     }
-  } catch (error) {
+  } catch (error: any) {
     return res.status(500).send({ message: error.message });
   }
 };
