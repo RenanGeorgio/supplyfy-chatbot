@@ -1,6 +1,8 @@
 import emailService from "./email/listener";
+//import emailService from "./email"; original
 import instagramService from "./instagram";
 import { telegramServiceController } from "./telegram";
+//import telegramService from "./telegram"; original
 import whatsappWebService from "./whatsapp-web";
 
 // import ChatService from "./chatSocket";
@@ -17,4 +19,5 @@ import { listAllBots } from "../repositories/bot";
   }
 })();
 
+// export { emailService, instagramService, telegramService, whatsappWebService }; original
 export { emailService, instagramService, telegramServiceController, whatsappWebService };
