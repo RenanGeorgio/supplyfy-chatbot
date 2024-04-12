@@ -11,7 +11,7 @@ export const create = async (
   next: NextFunction
 ) => {
   try {
-    const { services } = req.body;
+    const { services, socket } = req.body;
 
     if (!services) {
       return res.status(400).json({ message: "Campos obrigatórios ausentes" });
@@ -26,7 +26,7 @@ export const create = async (
     let bot = {} as any;
 
     if (existingBot) {
-      const { success, message } = await checkServices(existingBot as IBotData, services);
+      const { success, message } = await checkServices(existingBot as unknown as IBotData, services);
 
       if (success === false) {
         return res.status(400).json({ message });
@@ -34,7 +34,7 @@ export const create = async (
 
       bot = await updateBot({ companyId, services });
     } else {
-      bot = await createBot({ companyId, services });
+      bot = await createBot({ companyId, services, socket });
       // await checkServices({}, services);
     }
 

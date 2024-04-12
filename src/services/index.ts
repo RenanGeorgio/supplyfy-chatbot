@@ -1,10 +1,12 @@
 import { emailServiceController } from "./email";
 import { instagramServiceController } from "./instagram";
 import { telegramServiceController } from "./telegram";
+import { socketServiceController } from "./socket";
 import whatsappWebService from "./whatsapp-web";
 import { webhookPromiseHandler } from "./webhook/webhookHandler";
 // import ChatService from "./chatSocket";
 import { listAllBots } from "../repositories/bot";
+
 
 (async () => {
   const bots = await listAllBots();
@@ -26,7 +28,8 @@ import { listAllBots } from "../repositories/bot";
 const servicesActions = {
   telegram: telegramServiceController,
   email: emailServiceController,
-  instagram: instagramServiceController
+  instagram: instagramServiceController,
+  socket: socketServiceController
   // whastapp
 };
 

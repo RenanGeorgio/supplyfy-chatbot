@@ -6,6 +6,7 @@ import TelegramBot from "node-telegram-bot-api";
 import { Transporter } from "nodemailer";
 import { IMailListener } from "../services/email/lib/types";
 import { IgApiClientRealtime } from "instagram_mqtt";
+import { Socket } from "socket.io-client";
 
 export interface User {
   sub: Types.ObjectId | string;
@@ -100,6 +101,11 @@ export interface IInstagramService {
   ig: IgApiClientRealtime;
 }
 
+export interface ISocketService {
+  id: string;
+  socket: Socket;
+}
+
 export interface ITelegramServiceController {
   telegramServices: ITelegramService[];
   start: (
@@ -124,6 +130,12 @@ export interface IInstagramServiceController {
   // resume: (id: string) => void;
 }
 
+export interface  ISocketServiceController {
+  sockets: ISocketService[];
+  start: (credentials: ISocketCredentials) => void;
+  // stop: (credentials: ISocketCredentials) => void;
+}
+
 export type RegisterClient = {
   email: string;
   name: string;
@@ -139,18 +151,31 @@ export interface IEmailCredentials {
   smtpSecure?: boolean;
   emailUsername?: string;
   emailPassword?: string;
-  _id?: string;
+  _id: string;
 }
 
 export interface IInstagramCredentials {
   username: string;
   password: string;
-  _id?: string;
+  _id: string;
 }
 
 export interface ITelegramCredentials {
   token: string;
-  _id?: string;
+  _id: string;
+}
+
+export interface ITelegramCredentials {
+  token: string;
+  _id: string;
+}
+
+export interface ISocketCredentials {
+  url: string;
+  auth: {
+    token: string;
+  };
+  _id: string;
 }
 
 export interface IBotData {
@@ -161,6 +186,7 @@ export interface IBotData {
     telegram?: ITelegramCredentials;
     email?: IEmailCredentials;
   };
+  socket: ISocketCredentials;
 }
 
 export interface IMongoErrorHandler {

@@ -7,6 +7,7 @@ export const webhookTrigger = async ({ url, event, service, message }) => {
         event,
         service,
         message,
+        dateTime: new Date().toISOString()
       },
     });
   } catch (error) {

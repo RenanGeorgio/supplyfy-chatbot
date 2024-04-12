@@ -17,6 +17,7 @@ import {
   IEmailServiceController,
   ITelegramServiceController,
   IInstagramServiceController,
+  ISocketServiceController,
   IEvents,
   IWebhook
 } from "./types";
@@ -81,6 +82,7 @@ export {
   IEmailServiceController,
   ITelegramServiceController,
   IInstagramServiceController,
+  ISocketServiceController,
   IEvents,
   IWebhook
 };

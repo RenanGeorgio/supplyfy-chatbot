@@ -7,7 +7,7 @@ export const telegramServiceController: ITelegramServiceController = {
   telegramServices: [],
 
   async start(credentials, webhook) {
-    const id = credentials._id?.toString()!;
+    const id = credentials._id.toString();
     const token = credentials.token;
 
     const bot = findBot(id, this.telegramServices);

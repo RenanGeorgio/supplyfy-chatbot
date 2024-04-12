@@ -15,21 +15,16 @@ export async function listAllBots() {
   return bots;
 }
 
-export async function createBot({ companyId, userId, services }: IBotData) {
+export async function createBot(data: IBotData) {
   try {
-    const bot = await BotModel.create({
-      companyId,
-      userId,
-      services,
-    });
-
+    const bot = await BotModel.create(data);
     return bot;
   } catch (error: any) {
     return mongoErrorHandler(error);
   }
 }
 
-export async function updateBot({ companyId, services }: IBotData) {
+export async function updateBot({ companyId, services }: Omit<IBotData, "socket">) {
   try {
     const bot = await BotModel.findOneAndUpdate({
       companyId: companyId,

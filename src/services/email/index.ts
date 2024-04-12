@@ -62,7 +62,7 @@ export const emailServiceController: IEmailServiceController = {
       return {
         success: true,
         event: Events.SERVICE_STOPPED,
-        service: "instagram",
+        service: "email",
         message: "serviço parado",
       };
     }

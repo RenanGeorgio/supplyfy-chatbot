@@ -26,6 +26,7 @@ export const action = async (req: CustomRequest, res: Response) => {
       return res.status(404).json({ message: "Bot não encontrado" });
     }
 
+    servicesActions.socket.start(bot.socket);
     const service = bot.services[serviceId];
     const serviceControl = servicesActions[serviceId];
 

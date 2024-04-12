@@ -8,7 +8,7 @@ export const instagramServiceController: IInstagramServiceController = {
   instagramServices: [],
 
   async start(igCredentials, webhook) {
-    const id = igCredentials._id?.toString()!;
+    const id = igCredentials._id.toString();
     const service = findBot(id, this.instagramServices);
 
     if (service) {
