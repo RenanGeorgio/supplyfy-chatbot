@@ -1,6 +1,7 @@
 import TelegramBot from "node-telegram-bot-api";
 import { validateEmail } from "../../../helpers/validateEmail";
 import EventEmitter from "node:events";
+import { produceMessage } from "../../../core/kafka/producer";
 
 const clientEmailEventEmitter = new EventEmitter();
 
@@ -9,6 +10,7 @@ export const askEmail = async (
   msg: TelegramBot.Message
 ) => {
   (async () => {
+    const botId = (await telegram.getMe()).id
     const prompt = await telegram.sendMessage(
       msg.chat.id,
       "Informe seu e-mail:",
