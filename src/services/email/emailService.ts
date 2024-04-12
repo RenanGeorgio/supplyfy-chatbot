@@ -14,7 +14,7 @@ const errorMessages = {
 const emailService = async (credentials: IEmailCredentials, webhook: IWebhook | undefined) => {
   const { imapHost, imapPort, imapTls, smtpHost, smtpPort, smtpSecure, emailUsername, emailPassword } = credentials;
   const mailTransporter = emailTransporter({ smtpHost, smtpPort, emailUsername, emailPassword, smtpSecure });
-  const mailListener = emailListener({ emailUsername, emailPassword, imapHost, imapPort, imapTls: false });
+  const mailListener = emailListener({ emailUsername, emailPassword, imapHost, imapPort, imapTls });
   const mailListenerEventEmitter = new EventEmitter();
 
   mailListener.on("server:connected", function () {
