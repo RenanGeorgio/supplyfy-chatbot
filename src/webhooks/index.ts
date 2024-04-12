@@ -21,7 +21,7 @@ router.get('/', function (req: CustomRequest, res: Response, next: NextFunction)
 
 router.post('/', function (req: CustomRequest, res: Response, next: NextFunction) {
     try {
-        const service = req.session.service || "";
+        const service = req.session.service || null;
 
         switch (service) {
             case 'whasapp':

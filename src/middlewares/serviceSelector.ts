@@ -12,7 +12,7 @@ const serviceSelectorMiddleware = async (req: CustomRequest, res: Response, next
 
     try {
         if (req.session) {
-            const service = req.session.service || "";
+            const service = req.session.service || null;
             
             switch (service) {
                 case 'chat':
