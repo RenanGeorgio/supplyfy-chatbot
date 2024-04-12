@@ -5,6 +5,7 @@ dotenv.config();
 import "./database";
 import { serverHttp } from "./core/http";
 import "./core/kafka";
+// import "./websocket";
 
 const PORT = process.env.PORT || 8000;
 const HOST = process.env.HOST || "http://localhost";
