@@ -46,7 +46,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(cookieParser());
 
-// app.use(customSession);
+app.use(customSession);
 
 const schema = makeExecutableSchema({
   resolvers,
@@ -61,7 +61,7 @@ app.use(
   })
 );
 
-// app.use(sessionMiddleware, serviceSelectorMiddleware);
+app.use(sessionMiddleware, serviceSelectorMiddleware);
 
 //app.use('/incoming', sessionMiddleware, serviceSelectorMiddleware, webhookRouter);
 
