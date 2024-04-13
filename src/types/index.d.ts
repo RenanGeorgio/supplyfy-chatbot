@@ -38,7 +38,8 @@ import {
   WebhookMsgPostbacks,
   WebhookMsgReferral,
   WebhookMsgs,
-  EntryProps,
+  WebhookEventBase,
+  EntryProps
 } from "./meta";
 
 export {
@@ -67,7 +68,6 @@ export {
   WebhookMsgPostbacks,
   WebhookMsgReferral,
   WebhookMsgs,
-  EntryProps,
   IBotData,
   IEmailCredentials,
   IInstagramCredentials,
@@ -79,4 +79,6 @@ export {
   IEmailServiceController,
   ITelegramServiceController,
   IInstagramServiceController
+  WebhookEventBase,
+  EntryProps
 };

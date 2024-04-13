@@ -1,6 +1,13 @@
+/*
+FEITO PELO SAMUEL
 import { emailServiceController } from "./email";
 import { instagramServiceController } from "./instagram";
+*/
+import emailService from "./email/listener";
+//import emailService from "./email"; original
+import instagramService from "./instagram";
 import { telegramServiceController } from "./telegram";
+//import telegramService from "./telegram"; original
 import whatsappWebService from "./whatsapp-web";
 
 // import ChatService from "./chatSocket";
@@ -21,6 +28,8 @@ import { listAllBots } from "../repositories/bot";
   }
 })();
 
+*/
+FEITO PELO SAMUEL
 const servicesActions = {
   telegram: telegramServiceController,
   email: emailServiceController,
@@ -29,3 +38,7 @@ const servicesActions = {
 };
 
 export { whatsappWebService, servicesActions };
+*/
+
+// export { emailService, instagramService, telegramService, whatsappWebService }; original
+export { emailService, instagramService, telegramServiceController, whatsappWebService };

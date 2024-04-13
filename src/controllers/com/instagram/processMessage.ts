@@ -1,78 +1,78 @@
-// import { Consumer } from "../../../types";
+import { Consumer } from "../../../types";
 
-// class Response {
-//   static genQuickReply(text, quickReplies) {
-//     let response = {
-//       text: text,
-//       quick_replies: [],
-//     };
+class Response {
+  static genQuickReply(text, quickReplies) {
+    let response = {
+      text: text,
+      quick_replies: [],
+    };
 
-//     for (let quickReply of quickReplies) {
-//       response["quick_replies"].push({
-//         content_type: "text",
-//         title: quickReply["title"],
-//         payload: quickReply["payload"],
-//       });
-//     }
+    for (let quickReply of quickReplies) {
+      response["quick_replies"].push({
+        content_type: "text",
+        title: quickReply["title"],
+        payload: quickReply["payload"],
+      });
+    }
 
-//     return response;
-//   }
+    return response;
+  }
 
-//   static genImage(url) {
-//     let response = {
-//       attachment: {
-//         type: "image",
-//         payload: {
-//           url: url,
-//         },
-//       },
-//     };
+  static genImage(url) {
+    let response = {
+      attachment: {
+        type: "image",
+        payload: {
+          url: url,
+        },
+      },
+    };
 
-//     return response;
-//   }
+    return response;
+  }
 
-//   static genText(text) {
-//     let response = {
-//       text: text,
-//     };
+  static genText(text) {
+    let response = {
+      text: text,
+    };
 
-//     return response;
-//   }
+    return response;
+  }
 
-//   static genPostbackButton(title, payload) {
-//     let response = {
-//       type: "postback",
-//       title: title,
-//       payload: payload,
-//     };
+  static genPostbackButton(title, payload) {
+    let response = {
+      type: "postback",
+      title: title,
+      payload: payload,
+    };
 
-//     return response;
-//   }
+    return response;
+  }
 
-//   static genGenericTemplate(image_url, title, subtitle, buttons) {
-//     let response = {
-//       attachment: {
-//         type: "template",
-//         payload: {
-//           template_type: "generic",
-//           elements: [
-//             {
-//               title: title,
-//               subtitle: subtitle,
-//               image_url: image_url,
-//               buttons: buttons,
-//             },
-//           ],
-//         },
-//       },
-//     };
+  static genGenericTemplate(image_url, title, subtitle, buttons) {
+    let response = {
+      attachment: {
+        type: "template",
+        payload: {
+          template_type: "generic",
+          elements: [
+            {
+              title: title,
+              subtitle: subtitle,
+              image_url: image_url,
+              buttons: buttons,
+            },
+          ],
+        },
+      },
+    };
 
-//     return response;
-//   }
+    return response;
+  }
 
-//   static genNuxMessage(user: Consumer) {
+  static genNuxMessage(user: Consumer) {
     
 
-//     return [];
-//   }
-// };
+    return [];
+  }
+};

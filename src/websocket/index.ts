@@ -1,19 +1,34 @@
-// import { io } from '../core/http';
-// import { authMiddleware } from '../middlewares';
+import { io } from "../core/http";
+import { authMiddleware } from "../middlewares";
 
-// // middleware do JWT
-// io.use(authMiddleware.socketJWT);
+let users = [];
 
-// io.on("connection", async (socket) => {
-//   socket.on("send", async (data) => {
-//     console.log(data);
-//   });
+// middleware do JWT
+io.use(authMiddleware.socketJWT);
 
-//   socket.on("connect_error", (error) => {
-//     console.log(error);
-//   });
+io.on("connection", async (socket) => {
+  io.sockets.emit("users", users);
 
-//   socket.on("disconnect", () => {
-//     console.log("disconnect");
-//   });
-// });
+  users.push({
+    id: socket.id,
+    username: socket.handshake.query.username,
+  });
+   socket.on("send", async (data) => {
+     console.log(data);
+   });
+
+   socket.on("connect_error", (error) => {
+     console.log(error);
+   });
+
+   socket.on("disconnect", () => {
+    for (var i = 0, len = users.length; i < len; ++i) {
+      var user = users[i];
+      if (user.id == socket.id) {
+        users.splice(i, 1);
+        break;
+      }
+    }
+    io.sockets.emit("users", users);
+  });
+});

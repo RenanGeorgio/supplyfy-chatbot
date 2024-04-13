@@ -4,12 +4,15 @@ import { CustomRequest } from "../types";
 const sessionMiddleware = async (req: CustomRequest, res: Response, next: NextFunction) => {
     try {
         if (req.session && req.session.id) {
+            if (req.session.service == null || req.session.service == undefined || req.session.service == ""){
+                req.session.service = "cadastro"
+            }
             next();
         } else {
-            res.status(401).json({ error: 'Unauthorized' });
+            return res.status(401).json({ error: 'Unauthorized' });
         }
-    } catch (err: any) {
-        return res.status(500).send({ message: err.message });
+    } catch (error: any) {
+        next(error);
     }
 };
 

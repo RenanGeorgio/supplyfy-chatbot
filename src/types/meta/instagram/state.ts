@@ -54,10 +54,10 @@ export type WebhookMsgSee = {
     };
 }
 
-// export type WebhookStandby = Omit<WebhookEventBase, 'entry'> & {
-//     entry: {
-//         id: string;
-//         time: number | string;
-//         standby: Standy[];
-//     }[];
-// }
+export type WebhookStandby = Omit<WebhookEventBase, 'entry'> & {
+    entry: {
+        id: string;
+        time: number | string;
+        standby: Standy[];
+    }[];
+}

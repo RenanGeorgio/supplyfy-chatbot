@@ -9,7 +9,7 @@ import * as chatController from "../controllers/chat/chatController";
 // import * as whatsappController from "../controllers/com/whatsapp/whatsappController";
 // auth controller
 import * as authController from "../controllers/user/authController";
-
+// Bot controller
 import * as botController from "../controllers/bot/botController";
 import * as botStatusController from "../controllers/bot/botStatusController";
 
