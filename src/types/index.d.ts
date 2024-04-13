@@ -1,4 +1,24 @@
-import { Obj, statUses, Consumer, ReceiveProps, User, CustomRequest, CustomSession } from "./types";
+import {
+  Obj,
+  statUses,
+  Consumer,
+  ReceiveProps,
+  User,
+  CustomRequest,
+  CustomSession,
+  IBotData,
+  IEmailCredentials,
+  IInstagramCredentials,
+  ITelegramCredentials,
+  IMongoErrorHandler,
+  IEmailService,
+  IInstagramService,
+  ITelegramService,
+  IEmailServiceController,
+  ITelegramServiceController,
+  IInstagramServiceController
+} from "./types";
+
 import {
   MsgProps,
   SendText,
@@ -48,6 +68,17 @@ export {
   WebhookMsgPostbacks,
   WebhookMsgReferral,
   WebhookMsgs,
+  IBotData,
+  IEmailCredentials,
+  IInstagramCredentials,
+  ITelegramCredentials,
+  IMongoErrorHandler,
+  IEmailService,
+  IInstagramService,
+  ITelegramService,
+  IEmailServiceController,
+  ITelegramServiceController,
+  IInstagramServiceController
   WebhookEventBase,
   EntryProps
 };

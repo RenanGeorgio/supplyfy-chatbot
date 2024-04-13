@@ -1,8 +1,55 @@
 import { NextFunction, Request, Response } from "express";
 import BotModel from "../../models/bot/botModel";
 import { telegramServiceController } from "../../services/telegram";
-import { CustomRequest } from "../../types";
+import { botExist, createBot, updateBot } from "../../repositories/bot";
+import { userExist } from "../../repositories/user";
+import { checkServices } from "../../services/helpers/checkServices";
 import produce from "../../core/kafka/producer";
+import { CustomRequest, IBotData } from "../../types";
+
+export const create = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { services } = req.body;
+
+    if (!services) {
+      return res.status(400).json({ message: "Campos obrigatórios ausentes" });
+    }
+
+    const checkUser = await userExist(req.user?.sub as string);
+
+    const companyId = checkUser?.companyId as string;
+
+    const existingBot = await botExist("companyId", companyId);
+
+    let bot = {} as any;
+
+    if (existingBot) {
+      const { success, message } = await checkServices(existingBot as IBotData, services);
+
+      if (success === false) {
+        return res.status(400).json({ message });
+      }
+
+      bot = await updateBot({ companyId, services });
+    } else {
+      bot = await createBot({ companyId, services });
+      // await checkServices({}, services);
+    }
+
+    if (bot && "success" in bot && !bot.success) {
+      const { message, error } = bot;
+      throw new Error(`${message}, ${error}`);
+    }
+
+    return res.status(201).json({ message: "Bot criado" });
+  } catch (error) {
+    next(error);
+  }
+};
 
 export const createBot = async (req: CustomRequest, res: Response, next: NextFunction) => {
   try {
@@ -73,17 +120,18 @@ export const resumeBot = async (req: CustomRequest, res: Response, next: NextFun
   try {
     const { username } = req.body;
 
-    if(!username) {
-      return res.status(400).json({ message: "Missing bot username" });
+      bot = await updateBot({ companyId, services });
+    } else {
+      bot = await createBot({ companyId, services });
+      // await checkServices({}, services);
     }
 
-    const bot = await telegramServiceController.resume(username);
-    console.log(bot)
-    if(!bot) {
-      return res.status(404).json({ message: "Bot not found" });
+    if (bot && "success" in bot && !bot.success) {
+      const { message, error } = bot;
+      throw new Error(`${message}, ${error}`);
     }
 
-    return res.status(200).json({ message: `Bot ${username} resumed` });
+    return res.status(201).json({ message: "Bot criado" });
   } catch (error) {
     next(error);
   }

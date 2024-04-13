@@ -3,7 +3,7 @@ import { processQuestion } from "../../libs/trainModel";
 import { askEmail } from "./helpers/askEmail";
 import { botExist } from "../../repositories/bot";
 import { createClient } from "../../repositories/client";
-import { createChat } from "../../repositories/chat";
+import { chatOriginExist, createChat } from "../../repositories/chat";
 import { ignoredMessages } from "./helpers/ignoredMessages";
 import { crmSocketClient } from "../../core/http";
 import { createMessage } from "../../repositories/message";
@@ -22,26 +22,36 @@ const telegramService = async (token: string) => {
 
   telegram.onText(/\/start/, async (msg) => {
     const chatId = msg.chat.id;
+    const { first_name, last_name } = msg.chat;
 
-    await telegram.sendMessage(
-      msg.chat.id,
-      `Olá, seja bem-vindo! \n\nPara começar, por favor, informe seu e-mail.`
-    );
+    const checkIfClientOriginExist = await chatOriginExist({
+      platform: "telegram",
+      chatId: chatId.toString(),
+    });
 
-    const { clientEmailEventEmitter } = await askEmail(telegram, msg);
-
-    const createClientEvent = async (email: string) => {
-      const { first_name, last_name } = msg.chat;
-
-      const client = await createClient(email, first_name!, last_name || " ");
-      clientId = client?._id.toString()!;
+    if (checkIfClientOriginExist) {
       await telegram.sendMessage(chatId, `Olá, ${first_name}!`);
       enableChatBot = true;
-    };
+    } else {
+      await telegram.sendMessage(
+        msg.chat.id,
+        `Olá, seja bem-vindo! \n\nPara começar, por favor, informe seu e-mail.`
+      );
 
-    clientEmailEventEmitter.once("telegramClientEmail", (email) =>
-      createClientEvent(email)
-    );
+      const { clientEmailEventEmitter } = await askEmail(telegram, msg);
+
+      const createClientEvent = async (email: string) => {
+        const client = await createClient(email, first_name!, last_name || " ");
+        clientId = client?._id.toString()!;
+        await telegram.sendMessage(chatId, `Olá, ${first_name}!`);
+        
+      };
+
+      clientEmailEventEmitter.once("telegramClientEmail", (email) =>
+        createClientEvent(email)
+      );
+      enableChatBot = true;
+    }
 
     telegram.onText(/\/suporte/, async (msg) => {
       await telegram.sendMessage(chatId, `Aguarde um momento, por favor!`);
@@ -65,7 +75,7 @@ const telegramService = async (token: string) => {
 
           crmSocketClient.emit("newClientChat", chatRepo);
           crmSocketClient.emit("addNewUser", clientId);
-          
+
           crmSocketClient.on("disconnect", () => {
             crmSocketClient.disconnect();
           });
@@ -98,7 +108,9 @@ const telegramService = async (token: string) => {
   const messageHandler = async (msg: TelegramBot.Message) => {
     const { chat, text, date, from } = msg;
     if (text) {
+      console.log("Message received: ", text);
       if (!enableChatBot || ignoredMessages(text)) return;
+      console.log("enableChatBot: ", enableChatBot);
       if (from?.is_bot === false) {
         const answer = await processQuestion(text ?? "");
         telegram.sendMessage(chat.id, answer);

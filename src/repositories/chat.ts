@@ -11,6 +11,16 @@ export async function chatExist(
 
   return chatExist;
 }
+
+export async function chatOriginExist(origin: { platform: string, chatId: string }) {
+  const clientExist = await ChatModel.findOne({
+    origin: origin,
+  }).exec();
+  console.log(clientExist)
+  return !!clientExist;
+}
+
+
 export async function createChat({
   members,
   origin,

@@ -1,36 +1,38 @@
-import { GraphQLSubscriptions } from "instagram_mqtt";
-import { processQuestion } from "../../libs/trainModel";
+
 import instagramLogin from "./auth/session";
+import intagramService from "./instagram";
+import { IInstagramServiceController } from "../../types";
+import { findBot } from "../../helpers/findBot";
 
-const intagramService = async () => {
-    const { ig } = await instagramLogin();
+export const instagramServiceController: IInstagramServiceController = {
+  instagramServices: [],
 
-    if (ig) {
-        ig.realtime.on('message', async (msg) => {
-          if (!msg.realtime) {
-            const { message } = msg;
-            
-            const responseMessage = await processQuestion(message.text!);
-            const thread = ig.entity.directThread([message.user_id.toString()]);
+  async start(igCredentials) {
+    const id = igCredentials._id?.toString()!;
+    const service = findBot(id, this.instagramServices);
 
-            await thread.broadcastText(responseMessage);
-          }
-        });
-    
-        ig.realtime.on('error', console.error);
-
-        await ig.realtime.connect({
-            graphQlSubs: [
-              GraphQLSubscriptions.getAppPresenceSubscription(),
-              GraphQLSubscriptions.getDirectTypingSubscription(ig.state.cookieUserId),
-            ],
-            irisData: await ig.feed.directInbox().request(),
-        });
-
-        console.log('Connected to instagram realtime!');
-    } else {
-        console.error('Failed to log in');
+    if(service) {
+      return { success: false, message: "Bot já está rodando" };
     }
-}
 
-export default intagramService;
+    const session = await instagramLogin({
+      username: igCredentials.username,
+      password: igCredentials.password,
+    });
+
+    if (session?.success === false) {
+      return session;
+    }
+
+    const { ig } = session;
+
+    const { igClient } = await intagramService(ig!);
+
+    this.instagramServices.push({
+      id: igCredentials._id?.toString()!,
+      ig: igClient,
+    });
+
+    return { success: true };
+  },
+}

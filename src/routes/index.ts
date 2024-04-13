@@ -11,6 +11,7 @@ import * as chatController from "../controllers/chat/chatController";
 import * as authController from "../controllers/user/authController";
 // Bot controller
 import * as botController from "../controllers/bot/botController";
+import * as botStatusController from "../controllers/bot/botStatusController";
 
 const routes = Router();
 
@@ -38,8 +39,12 @@ routes
   // .post("/whatsapp/upload", whatsappController.uploadMedia)
   // .post("/whatsapp/send-doc", whatsappController.sendDocumentMessage)
     
-  .post("/telegram/bot", authMiddleware.JWT, botController.createBot)
-  .post("/telegram/bot/stop", authMiddleware.JWT, botController.stopBot)
-  .post("/telegram/bot/resume", authMiddleware.JWT, botController.resumeBot)
+  .post("/bot", authMiddleware.JWT, botController.create)
+  // .put("/bot", authMiddleware.JWT, botController.update)
+
+  // controle do serviço dos bots
+  .post("/bot/service/:serviceId/start", authMiddleware.JWT, botStatusController.start)
+  .post("/bot/service/:serviceId/stop", authMiddleware.JWT, botStatusController.stop)
+  .post("/bot/service/:serviceId/resume", authMiddleware.JWT, botStatusController.resume)
 
 export default routes;

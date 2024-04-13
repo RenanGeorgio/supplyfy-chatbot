@@ -27,4 +27,5 @@ build/
 
 .env
 
+*_session.json
 instagram-session.json
