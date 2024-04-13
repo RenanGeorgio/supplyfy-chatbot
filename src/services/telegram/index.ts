@@ -5,7 +5,7 @@ import telegramService from "./telegramService";
 export const telegramServiceController: ITelegramServiceController = {
   telegramServices: [],
 
-  async start(credentials) {
+  async start(credentials: any, token?: string) {
     const id = credentials._id?.toString()!;
 
     const token = credentials.token;
@@ -23,7 +23,7 @@ export const telegramServiceController: ITelegramServiceController = {
     return telegram;
   },
 
-  async stop(id) {
+  async stop(id: number | string) {
     const bot = findBot(id, this.telegramServices);
     if (bot) {
       bot.telegramBot.stopPolling();
@@ -32,7 +32,7 @@ export const telegramServiceController: ITelegramServiceController = {
     return false;
   },
 
-  async resume(id) {
+  async resume(id: number | string) {
     const bot = findBot(id, this.telegramServices);
     if (bot) {
       bot.telegramBot.startPolling();
