@@ -12,6 +12,7 @@ import whatsappWebService from "./whatsapp-web";
 
 // import ChatService from "./chatSocket";
 import { listAllBots } from "../repositories/bot";
+// import { telegramServiceController } from "./telegram"; OLD
 
 (async () => {
   const bots = await listAllBots();
