@@ -11,7 +11,7 @@ import { Events, IBotData } from "../../types/types";
 import { servicesActions } from "..";
 import { findBot } from "../../helpers/findBot";
 
-const telegramService = async (token: string, webhook) => {
+const telegramService = async (token: string, webhook: any) => {
   const telegram = new TelegramBot(token, { polling: true });
 
   try {
@@ -36,10 +36,19 @@ const telegramService = async (token: string, webhook) => {
     const chatId = msg.chat.id;
     const { first_name, last_name } = msg.chat;
 
-    await telegram.sendMessage(
-      msg.chat.id,
-      `Olá, seja bem-vindo! \n\nPara começar, por favor, informe seu e-mail.`
-    );
+    const checkIfClientOriginExist = await chatOriginExist({
+      platform: "telegram",
+      chatId: chatId.toString(),
+    });
+
+    if (checkIfClientOriginExist) {
+      await telegram.sendMessage(chatId, `Olá, ${first_name}!`);
+      enableChatBot = true;
+    } else {
+      await telegram.sendMessage(
+        msg.chat.id,
+        `Olá, seja bem-vindo! \n\nPara começar, por favor, informe seu e-mail.`
+      );
 
     const { clientEmailEventEmitter } = await askEmail(telegram, msg);
 
@@ -69,6 +78,8 @@ const telegramService = async (token: string, webhook) => {
       await telegram.sendMessage(chatId, `Aguarde um momento, por favor!`);
       telegram.removeListener("message", messageHandler);
       telegram.removeTextListener(/\/suporte/);
+
+      const bot = await botExist("services.telegram.token", token);
       enableChatBot = false;
 
       if (bot) {
