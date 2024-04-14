@@ -7,7 +7,9 @@ import produce from "./kafka/producer";
 const serverHttp = http.createServer(app);
 //const io = new Server(serverHttp);
 
-/*const crmSocketClient = io(process.env.CRM_SERVER_URL as string, {
+/*
+FEITO PELO SAMUEL
+const crmSocketClient = io(process.env.CRM_SERVER_URL as string, {
   auth: {
     token: process.env.CRM_SERVER_TOKEN,
   },
@@ -24,7 +26,8 @@ crmSocketClient.on("connect_error", (error) => {
   produce("chatbot-socket", {
     value: "Ocorreu um erro ao conectar com o CRM Server"
   })
-});*/
+});
+*/
 
-// export { serverHttp, io };
+// export { serverHttp, io }; OLD
 export { serverHttp, crmSocketClient };

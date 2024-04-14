@@ -43,7 +43,7 @@ const emailSchema = new Schema({
   },
   smtpSecure: {
     type: Boolean,
-    required: true
+    required: true,
   },
   emailUsername: {
     type: String,
@@ -52,6 +52,19 @@ const emailSchema = new Schema({
   emailPassword: {
     type: String,
     required: true,
+  },
+});
+
+const socketSchema = new Schema({
+  url: {
+    type: String,
+    required: true,
+  },
+  auth: {
+    token: {
+      type: String,
+      required: true,
+    },
   }
 });
 
@@ -73,6 +86,9 @@ const botSchema = new Schema({
       _id: { auto: false },
       type: emailSchema,
     },
+  },
+  socket: {
+    type: socketSchema
   },
   createdAt: {
     type: Date,

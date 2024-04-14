@@ -3,6 +3,7 @@ import { IgApiClient } from "instagram-private-api";
 import { withRealtime, IgApiClientRealtime } from "instagram_mqtt";
 import { customSession } from "../../../server";
 import { redisClient } from "../../../core/redis";
+import { Events } from "../../../types/types";
 
 const ERROR_MESSAGES = {
   CHALLENGE_REQUIRED: "É necessário resolver um desafio para continuar",
@@ -23,9 +24,8 @@ const instagramLogin = async ({ username, password }) => {
 
   const deserializeSession = async () => {
     await ig.state.deserialize(serialized_session);
-    await ig.user.info(ig.state.cookieUserId);
-    const user_info = await ig.user.info(ig.state.cookieUserId);
-    console.debug("Logged in as", user_info.username);
+    const userInfo = await ig.user.info(ig.state.cookieUserId);
+    console.debug("Logged in as", userInfo.username);
   };
 
   try {
@@ -45,17 +45,22 @@ const instagramLogin = async ({ username, password }) => {
         return {
           success: false,
           message: ERROR_MESSAGES.CHALLENGE_REQUIRED,
+          event: Events.SERVICE_ERROR,
+          service: "instagram",
         };
-      } else if (error?.cause.code === "ETIMEDOUT" || errorString.includes("ETIMEDOUT")) {
+      } else if (error?.cause?.code === "ETIMEDOUT" || errorString.includes("ETIMEDOUT")) {
+        console.log("dentro do timeout", error)
+        ig.destroy();
         const restoreSession = setTimeout(async () => {
           await deserializeSession();
           should_login = false;
           console.log(ERROR_MESSAGES.SESSION_RESTORED);
         }, 5000);
         clearTimeout(restoreSession);
+        return;
       } else {
         console.log("dentro do else");
-        should_login = true;
+        // should_login = true;
       }
     }
   }
@@ -73,7 +78,9 @@ const instagramLogin = async ({ username, password }) => {
     ig.state.generateDevice(username + "123");
 
     try {
+      await ig.simulate.preLoginFlow();
       const auth = await ig.account.login(username, password);
+      process.nextTick(async () => await ig.simulate.postLoginFlow());
     } catch (error) {
       console.error("Erro ao tentar fazer login", error);
     }

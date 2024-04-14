@@ -6,6 +6,7 @@ import {
   User,
   CustomRequest,
   CustomSession,
+  CustomMessageKafka,
   IBotData,
   IEmailCredentials,
   IInstagramCredentials,
@@ -16,7 +17,10 @@ import {
   ITelegramService,
   IEmailServiceController,
   ITelegramServiceController,
-  IInstagramServiceController
+  IInstagramServiceController,
+  ISocketServiceController,
+  IEvents,
+  IWebhook
 } from "./types";
 
 import {
@@ -46,6 +50,7 @@ export {
   User,
   CustomSession,
   CustomRequest,
+  CustomMessageKafka,
   statUses,
   Obj,
   Consumer,
@@ -78,7 +83,10 @@ export {
   ITelegramService,
   IEmailServiceController,
   ITelegramServiceController,
-  IInstagramServiceController
+  IInstagramServiceController,
+  ISocketServiceController,
+  IEvents,
+  IWebhook,
   WebhookEventBase,
   EntryProps
 };

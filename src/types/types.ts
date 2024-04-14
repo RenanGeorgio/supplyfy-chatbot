@@ -6,9 +6,18 @@ import TelegramBot from "node-telegram-bot-api";
 import { Transporter } from "nodemailer";
 import { IMailListener } from "../services/email/lib/types";
 import { IgApiClientRealtime } from "instagram_mqtt";
+import { Socket } from "socket.io-client";
 
 export interface User {
   sub: Types.ObjectId | string;
+}
+
+export interface CustomMessageKafka {
+  topic: string, 
+  text: string, 
+  from: string, 
+  to: string, 
+  service: string
 }
 
 export interface CustomSession extends Session {
@@ -100,27 +109,39 @@ export interface IInstagramService {
   ig: IgApiClientRealtime;
 }
 
+export interface ISocketService {
+  id: string;
+  socket: Socket;
+}
+
 export interface ITelegramServiceController {
   telegramServices: ITelegramService[];
   start: (
-    credentials: ITelegramCredentials
-  ) => Promise<TelegramBot | null>;
-  stop: (botUsername: string) => Promise<boolean | null>;
-  resume: (botUsername: string) => Promise<boolean | null>;
+    credentials: ITelegramCredentials,
+    webhook?: IWebhook
+  ) => Promise<IEvents>;
+  stop: (credentials: ITelegramCredentials) => Promise<IEvents>;
+  resume: (credentials: ITelegramCredentials) => Promise<IEvents>;
 }
 
 export interface IEmailServiceController {
   emailServices: IEmailService[];
-  start: (emailCredentials: IEmailCredentials) => any;
-  stop: (id: string) => void;
-  resume: (id: string) => void;
+  start: (emailCredentials: IEmailCredentials, webhook?: IWebhook) => any;
+  stop: (emailCredentials: IEmailCredentials) => void;
+  resume: (emailCredentials: IEmailCredentials) => void;
 }
 
 export interface IInstagramServiceController {
   instagramServices: IInstagramService[];
-  start: (credentials: IInstagramCredentials) => any;
-  // stop: (id: string) => void;
+  start: (credentials: IInstagramCredentials, webhook?: IWebhook) => any;
+  stop: (credentials: IInstagramCredentials) => void;
   // resume: (id: string) => void;
+}
+
+export interface  ISocketServiceController {
+  sockets: ISocketService[];
+  start: (credentials: ISocketCredentials) => void;
+  // stop: (credentials: ISocketCredentials) => void;
 }
 
 export type RegisterClient = {
@@ -138,18 +159,31 @@ export interface IEmailCredentials {
   smtpSecure?: boolean;
   emailUsername?: string;
   emailPassword?: string;
-  _id?: string;
+  _id: string;
 }
 
 export interface IInstagramCredentials {
   username: string;
   password: string;
-  _id?: string;
+  _id: string;
 }
 
 export interface ITelegramCredentials {
   token: string;
-  _id?: string;
+  _id: string;
+}
+
+export interface ITelegramCredentials {
+  token: string;
+  _id: string;
+}
+
+export interface ISocketCredentials {
+  url: string;
+  auth: {
+    token: string;
+  };
+  _id: string;
 }
 
 export interface IBotData {
@@ -160,6 +194,7 @@ export interface IBotData {
     telegram?: ITelegramCredentials;
     email?: IEmailCredentials;
   };
+  socket: ISocketCredentials;
 }
 
 export interface IMongoErrorHandler {
@@ -167,3 +202,24 @@ export interface IMongoErrorHandler {
   message: string;
   error: string[] | any;
 }
+
+export interface IEvents {
+  event: Events;
+  message: string;
+  success: boolean;
+  service: string;
+}
+
+export interface IWebhook {
+  url: string;
+  companyId: string;
+};
+
+export enum Events {
+  SERVICE_STARTED = "service_started",
+  SERVICE_STOPPED = "service_stopped",
+  SERVICE_DISCONNECTED = "service_disconnected",
+  SERVICE_ERROR = "service_error",
+  SERVICE_ALREADY_RUNNING = "service_already_running",
+  SERVICE_NOT_RUNNING = "service_not_running",
+} 

@@ -1,51 +1,79 @@
 import emailService from "./emailService";
-import { IEmailServiceController } from "../../types/types";
-import { findBot } from "../../helpers/findBot";
+import { Events, IEmailServiceController } from "../../types/types";
+import { findBot, removeBot } from "../../helpers/findBot";
 
 export const emailServiceController: IEmailServiceController = {
   emailServices: [],
 
-  async start(emailCredentials) {
-    const { mailListener, mailTransporter, mailListenerEventEmitter } = await emailService(emailCredentials);
+  async start(emailCredentials, webhook) {
+    const { 
+      mailListener, 
+      mailTransporter, 
+      mailListenerEventEmitter 
+    } = await emailService(emailCredentials, webhook);
 
-    mailListenerEventEmitter.on("error", (err: any) => {
-      if (err.source === "authentication") {
-        console.error("Erro de autenticação");
-        // enviar evento pelo kafka ?
-      } else {
-        console.error(err);
-      }
-    });
+    const id = emailCredentials._id?.toString()!;
 
-    mailListenerEventEmitter.on("email:connected", () => {
-      console.log("Email conectado");
-      this.emailServices.push({
-        id: emailCredentials._id?.toString()!,
-        mailListener: mailListener,
-        mailTransporter: mailTransporter,
+    const bot = findBot(id, this.emailServices);
+
+    if (bot) {
+      return {
+        success: false,
+        event: Events.SERVICE_ALREADY_RUNNING,
+        message: "serviço já está rodando",
+        service: "email",
+      };
+    }
+
+    const waitForConnect = () => {
+      return new Promise((resolve) => {
+        mailListenerEventEmitter.on("email:connected", () => {
+          this.emailServices.push({
+            id: emailCredentials._id?.toString()!,
+            mailListener: mailListener,
+            mailTransporter: mailTransporter,
+          });
+
+          resolve({
+            success: true,
+            event: Events.SERVICE_STARTED,
+            message: "serviço iniciado",
+            service: "email"
+          });
+        });
       });
-    });
-
+    };
+    
     mailListener.start();
+    const connect = await waitForConnect();
 
-    return {}
+    return connect;
   },
 
-  stop(id) {
-    const service = findBot(id, this.emailServices);
-    if (!service) return;
-    service.mailListener.stop();
+  stop(credentials) {
+    const id = credentials._id?.toString()!;
+    const service = findBot(id.toString(), this.emailServices);
+    if(service){
+      service.mailListener.stop();
+      service.mailListener.removeAllListeners();
+      service.mailTransporter.close();
+      service.mailTransporter.removeAllListeners();
+      removeBot(service, this.emailServices);
+      return {
+        success: true,
+        event: Events.SERVICE_STOPPED,
+        service: "email",
+        message: "serviço parado",
+      };
+    }
+    return {
+      success: false,
+      event: Events.SERVICE_NOT_RUNNING,
+      message: "serviço não está rodando",
+      service: "email",
+    };
   },
 
   resume(id) {
-    const service = findBot(id, this.emailServices);
-    if (!service) return;
-    try {
-      service.mailListener.start();
-      // todo: verificar o pq de não estar resumindo o listener
-    } catch (error) {
-      console.log(error)
-    }
-
   },
 };

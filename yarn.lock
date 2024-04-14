@@ -2519,7 +2519,7 @@ inherits@2, inherits@2.0.4, inherits@^2.0.3, inherits@^2.0.4, inherits@~2.0.0, i
   resolved "https://registry.npmjs.org/inherits/-/inherits-2.0.4.tgz"
   integrity sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==
 
-instagram-private-api@^1.45.1, instagram-private-api@^1.45.3:
+instagram-private-api@^1.45.1:
   version "1.45.3"
   resolved "https://registry.npmjs.org/instagram-private-api/-/instagram-private-api-1.45.3.tgz"
   integrity sha512-IybVclR0Ahh01rn/4r9sxRn4vkfbfMXAXFVljsGk51mfL/EyyP6Yn+aWIxbG/JboArR1POJzaFI5bQOR99R3xA==

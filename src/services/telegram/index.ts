@@ -1,18 +1,36 @@
-import { findBot } from "../../helpers/findBot";
+import { findBot, removeBot } from "../../helpers/findBot";
 import { ITelegramServiceController } from "../../types";
+import { Events } from "../../types/types";
 import telegramService from "./telegramService";
 
 export const telegramServiceController: ITelegramServiceController = {
   telegramServices: [],
 
-  async start(credentials: any, token?: string) {
+  async start(credentials: any, webhook: any, token?: string) {
     const id = credentials._id?.toString()!;
 
     const token = credentials.token;
-    const telegram = await telegramService(token);
-    
+
+    const bot = findBot(id, this.telegramServices);
+
+    if (bot) {
+      return {
+        success: false,
+        event: Events.SERVICE_ALREADY_RUNNING,
+        message: "serviço já está rodando",
+        service: "telegram",
+      };
+    }
+
+    const telegram = await telegramService(token, webhook);
+
     if (!telegram) {
-      return null; // enviar evento de erro
+      return {
+        success: false,
+        event: Events.SERVICE_ERROR,
+        message: "não autorizado",
+        service: "telegram",
+      };
     }
 
     this.telegramServices.push({
@@ -20,24 +38,56 @@ export const telegramServiceController: ITelegramServiceController = {
       telegramBot: telegram,
     });
 
-    return telegram;
+    return {
+      success: true,
+      event: Events.SERVICE_STARTED,
+      message: "serviço iniciado",
+      service: "telegram",
+    };
   },
 
-  async stop(id: number | string) {
-    const bot = findBot(id, this.telegramServices);
+  async stop(credentials: any, id?: number | string) {
+    const id = credentials._id?.toString()!;
+    const bot = findBot(id.toString(), this.telegramServices);
+
     if (bot) {
       bot.telegramBot.stopPolling();
-      return true;
+      bot.telegramBot.removeAllListeners();
+      removeBot(bot, this.telegramServices);
+      return {
+        success: true,
+        event: Events.SERVICE_STOPPED,
+        message: "serviço parado",
+        service: "telegram",
+      };
     }
-    return false;
+    return {
+      success: false,
+      event: Events.SERVICE_NOT_RUNNING,
+      message: "serviço não está rodando",
+      service: "telegram",
+    };
   },
 
-  async resume(id: number | string) {
-    const bot = findBot(id, this.telegramServices);
+  async resume(credentials: any, id?: number | string) {
+    const id = credentials._id?.toString()!;
+    const bot = findBot(id.toString(), this.telegramServices);
+
     if (bot) {
       bot.telegramBot.startPolling();
-      return true;
+      return {
+        success: true,
+        event: Events.SERVICE_STARTED,
+        message: "serviço iniciado",
+        service: "telegram",
+      };
     }
-    return false;
+
+    return {
+      success: false,
+      event: Events.SERVICE_NOT_RUNNING,
+      message: "serviço não encontrado",
+      service: "telegram",
+    };
   },
 };
