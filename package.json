@@ -44,7 +44,7 @@
     "express-validator": "^7.0.1",
     "graphql": "^16.8.1",
     "imap": "^0.8.19",
-    "instagram-private-api": "^1.45.1",
+    "instagram-private-api": "1.45.1",
     "instagram_mqtt": "^1.2.2",
     "jsonwebtoken": "^9.0.2",
     "kafkajs": "^2.2.4",
