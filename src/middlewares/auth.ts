@@ -19,11 +19,11 @@ const JWT = async (req: CustomRequest, res: Response, next: NextFunction) => {
         }
         req.user = user;
         next();
-    } catch (err: any) {
-        if (err.name === "JsonWebTokenError") {
+    } catch (error: any) {
+        if (error.name === "JsonWebTokenError") {
             return res.status(403).send({ message: "Invalid JWT." });
         }
-        return res.status(500).send({ message: err.message });
+        next(error);
     }
 };
 

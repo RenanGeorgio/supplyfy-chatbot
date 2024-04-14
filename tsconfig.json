@@ -2,10 +2,10 @@
   "include": ["src/**/*", "tests/**/*"],
   "compilerOptions": {
     "target": "es2016", 
+    "lib": ["es6"],
     "module": "commonjs",
     "rootDir": "src",
     "moduleResolution": "node", 
-    "typeRoots": ["src/types/**/*", "node_modules/@types/**/*"],
     "resolveJsonModule": true,
     "allowJs": true,
     "outDir": "build",
@@ -14,6 +14,7 @@
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "noImplicitAny": false, 
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "typeRoots": ["src/types/**/*", "node_modules/@types/**/*"]
   }
 }

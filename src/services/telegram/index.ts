@@ -6,8 +6,9 @@ import telegramService from "./telegramService";
 export const telegramServiceController: ITelegramServiceController = {
   telegramServices: [],
 
-  async start(credentials, webhook) {
-    const id = credentials._id.toString();
+  async start(credentials: any, webhook: any, token?: string) {
+    const id = credentials._id?.toString()!;
+
     const token = credentials.token;
 
     const bot = findBot(id, this.telegramServices);
@@ -45,7 +46,7 @@ export const telegramServiceController: ITelegramServiceController = {
     };
   },
 
-  async stop(credentials) {
+  async stop(credentials: any, id?: number | string) {
     const id = credentials._id?.toString()!;
     const bot = findBot(id.toString(), this.telegramServices);
 
@@ -68,7 +69,7 @@ export const telegramServiceController: ITelegramServiceController = {
     };
   },
 
-  async resume(credentials) {
+  async resume(credentials: any, id?: number | string) {
     const id = credentials._id?.toString()!;
     const bot = findBot(id.toString(), this.telegramServices);
 

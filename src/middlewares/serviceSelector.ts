@@ -1,5 +1,6 @@
 import { NextFunction, Response } from "express";
 import { CustomRequest } from "../types";
+import { instagramService, telegramService, emailService } from "../services";
 import mongoose from "mongoose";
 
 const serviceSelectorMiddleware = async (req: CustomRequest, res: Response, next: NextFunction) => {
@@ -11,7 +12,7 @@ const serviceSelectorMiddleware = async (req: CustomRequest, res: Response, next
 
     try {
         if (req.session) {
-            const service = req.session.service || "";
+            const service = req.session.service || null;
             
             switch (service) {
                 case 'chat':
@@ -30,6 +31,10 @@ const serviceSelectorMiddleware = async (req: CustomRequest, res: Response, next
                     next();
                     break;
                 case 'telegram':
+		    //telegramService();
+                    next();
+                    break;
+                case 'cadastro':
                     next();
                     break;
                 default:
@@ -37,10 +42,10 @@ const serviceSelectorMiddleware = async (req: CustomRequest, res: Response, next
                     break;
             }
         } else {
-            res.status(401).json({ error: 'Unauthorized' });
+            return res.status(401).json({ error: 'Unauthorized' });
         }
-    } catch (err: any) {
-        return res.status(500).send({ message: err.message });
+    } catch (error: any) {
+        next(error)
     }
 };
 

@@ -11,6 +11,7 @@ import { redisClient } from "./core/redis";
 import routes from "./routes";
 import resolvers from "./core/resolvers";
 import typeDefs from "./core/schemas";
+//import * as webhookRouter from "./webhooks";
 import { sessionMiddleware, serviceSelectorMiddleware } from "./middlewares";
 import { CustomRequest } from "./types/types";
 
@@ -45,7 +46,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(cookieParser());
 
-// app.use(customSession);
+app.use(customSession);
 
 const schema = makeExecutableSchema({
   resolvers,
@@ -60,19 +61,19 @@ app.use(
   })
 );
 
-// app.use(sessionMiddleware, serviceSelectorMiddleware);
+app.use(sessionMiddleware, serviceSelectorMiddleware);
 
 //app.use('/incoming', sessionMiddleware, serviceSelectorMiddleware, webhookRouter);
 
 app.use(routes);
 
 // catch not defined routes
-app.use((req: Request, res: Response, next: NextFunction) => {
+app.use(function (req: CustomRequest, res: Response, next: NextFunction) {
   next(createError(404));
 });
 
 // catch all errors
-app.use(((error: any, req: Request, res: Response, next: NextFunction) => {
+app.use(((error: any, req: CustomRequest, res: Response, next: NextFunction) => {
   res.locals.message = error.message;
   res.locals.error = req.app.get("env") === "development" ? error : {};
   res.status(error.status || 500).send({ message: error.message });
