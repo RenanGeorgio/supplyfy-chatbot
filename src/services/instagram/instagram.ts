@@ -3,7 +3,7 @@ import { processQuestion } from "../../libs/trainModel";
 import { Events } from "../../types/types";
 import { webhookTrigger } from "../webhook/webhookTrigger";
 
-const intagramService = async (ig: IgApiClientRealtime, webhook) => {
+const intagramService = async (ig: IgApiClientRealtime, webhook: any) => {
   if (ig) {
     const userId = ig.state.cookieUserId;
 
