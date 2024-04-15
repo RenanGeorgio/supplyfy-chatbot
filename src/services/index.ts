@@ -1,20 +1,11 @@
-/*
-FEITO PELO SAMUEL
-import { emailServiceController } from "./email";
-import { instagramServiceController } from "./instagram";
-*/
-import emailService from "./email/listener";
-//import emailService from "./email"; original
-import instagramService from "./instagram";
-import { telegramServiceController } from "./telegram";
-import { socketServiceController } from "./socket"; // SAMUEL
-//import telegramService from "./telegram"; original
 import whatsappWebService from "./whatsapp-web";
-import { webhookPromiseHandler } from "./webhook/webhookHandler";
 // import ChatService from "./chatSocket";
 import { listAllBots } from "../repositories/bot";
-// import { telegramServiceController } from "./telegram"; OLD
-
+import { telegramServiceController } from "./telegram";
+import { emailServiceController } from "./email";
+import { instagramServiceController } from "./instagram";
+import { socketServiceController } from "./socket";
+import { webhookPromiseHandler } from "./webhook/webhookHandler";
 
 (async () => {
   const bots = await listAllBots();
@@ -33,8 +24,6 @@ import { listAllBots } from "../repositories/bot";
   }
 })();
 
-*/
-FEITO PELO SAMUEL
 const servicesActions = {
   telegram: telegramServiceController,
   email: emailServiceController,
@@ -44,7 +33,3 @@ const servicesActions = {
 };
 
 export { whatsappWebService, servicesActions, webhookPromiseHandler };
-*/
-
-// export { emailService, instagramService, telegramService, whatsappWebService }; original
-export { emailService, instagramService, telegramServiceController, whatsappWebService };

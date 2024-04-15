@@ -2,7 +2,7 @@ import TelegramBot from "node-telegram-bot-api";
 import { processQuestion } from "../../libs/trainModel";
 import { askEmail } from "./helpers/askEmail";
 import { botExist } from "../../repositories/bot";
-import { clientExist, createClient } from "../../repositories/client";
+import { clientChatExist, createChatClient } from "../../repositories/chatClient";
 import { chatOriginExist, createChat } from "../../repositories/chat";
 import { ignoredMessages } from "./helpers/ignoredMessages";
 import { createMessage } from "../../repositories/message";
@@ -36,27 +36,18 @@ const telegramService = async (token: string, webhook: any) => {
     const chatId = msg.chat.id;
     const { first_name, last_name } = msg.chat;
 
-    const checkIfClientOriginExist = await chatOriginExist({
-      platform: "telegram",
-      chatId: chatId.toString(),
-    });
-
-    if (checkIfClientOriginExist) {
-      await telegram.sendMessage(chatId, `Olá, ${first_name}!`);
-      enableChatBot = true;
-    } else {
-      await telegram.sendMessage(
-        msg.chat.id,
-        `Olá, seja bem-vindo! \n\nPara começar, por favor, informe seu e-mail.`
-      );
+    await telegram.sendMessage(
+      msg.chat.id,
+      `Olá, seja bem-vindo! \n\nPara começar, por favor, informe seu e-mail.`
+    );
 
     const { clientEmailEventEmitter } = await askEmail(telegram, msg);
 
     const createClientEvent = async (email: string) => {
-      const checkClient = await clientExist(email);
+      const checkClient = await clientChatExist(email);
 
       if (!checkClient) {
-        const newClient = await createClient(
+        const newClient = await createChatClient(
           email,
           first_name!,
           last_name || " "
@@ -78,8 +69,6 @@ const telegramService = async (token: string, webhook: any) => {
       await telegram.sendMessage(chatId, `Aguarde um momento, por favor!`);
       telegram.removeListener("message", messageHandler);
       telegram.removeTextListener(/\/suporte/);
-
-      const bot = await botExist("services.telegram.token", token);
       enableChatBot = false;
 
       if (bot) {

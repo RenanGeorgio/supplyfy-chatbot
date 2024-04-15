@@ -45,8 +45,6 @@ routes
 
   // controle do serviço dos bots
   .post("/bot/:serviceId/:action", authMiddleware.JWT, botStatusController.action)
-  // .post("/bot/service/:serviceId/stop", authMiddleware.JWT, botStatusController.stop)
-  // .post("/bot/service/:serviceId/resume", authMiddleware.JWT, botStatusController.resume)
 
   // webhook
   .post("/webhook", authMiddleware.JWT, webhookController.create);
