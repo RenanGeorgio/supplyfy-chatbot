@@ -1,7 +1,5 @@
 import { NextFunction, Response } from "express";
 import { CustomRequest } from "../types";
-import { instagramService, telegramService, emailService } from "../services";
-import mongoose from "mongoose";
 
 const serviceSelectorMiddleware = async (req: CustomRequest, res: Response, next: NextFunction) => {
     const path = req.originalUrl;
@@ -22,18 +20,15 @@ const serviceSelectorMiddleware = async (req: CustomRequest, res: Response, next
                     next();
                     break;
                 case 'instagram':
-                    //instagramService(); OLD
                     next();
                     break;
                 case 'facebook':
                     next();
                     break;
                 case 'email':
-                    //emailService(); OLD
                     next();
                     break;
                 case 'telegram':
-		    //telegramService(); OLD
                     next();
                     break;
                 case 'cadastro':
