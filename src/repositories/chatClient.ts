@@ -1,6 +1,6 @@
 import chatClientModel from "../models/chat/chatClientModel";
 
-export async function clientExist(email: string) {
+export async function clientChatExist(email: string) {
   const clientExist = await chatClientModel.findOne({
     email: email,
   }).exec();
@@ -8,13 +8,13 @@ export async function clientExist(email: string) {
   return clientExist;
 }
 
-export async function createClient(
+export async function createChatClient(
   email: string,
   name: string,
   lastName: string
 ) {
   try {
-    const checkClient = await clientExist(email);
+    const checkClient = await clientChatExist(email);
     if (checkClient) {
       return checkClient;
     }
