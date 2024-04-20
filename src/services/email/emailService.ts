@@ -1,4 +1,6 @@
+import { produceMessage } from "../../core/kafka/producer";
 import { processQuestion } from "../../libs/trainModel";
+import { botExist } from "../../repositories/bot";
 import { IEmailCredentials, IWebhook } from "../../types";
 import { Events } from "../../types/types";
 import { webhookTrigger } from "../webhook/webhookTrigger";
@@ -16,6 +18,13 @@ const emailService = async (credentials: IEmailCredentials, webhook: IWebhook | 
   const mailTransporter = emailTransporter({ smtpHost, smtpPort, emailUsername, emailPassword, smtpSecure });
   const mailListener = emailListener({ emailUsername, emailPassword, imapHost, imapPort, imapTls });
   const mailListenerEventEmitter = new EventEmitter();
+
+  const botInfo = await botExist("services.email.emailUsername", emailUsername);
+
+  const kafkaMessage = {
+    topic: botInfo?.companyId + ".messages",
+    service: "email"
+  }
 
   mailListener.on("server:connected", function () {
     console.log("imapConnected");
@@ -60,6 +69,7 @@ const emailService = async (credentials: IEmailCredentials, webhook: IWebhook | 
     const emailText = mail.text.split(/\r?\n/).join(" "); // adicionar algum tratamento para a mensagem
 
     (async () => {
+      await produceMessage({ text: emailText, from: mail.from.value[0].address, to: emailUsername, ...kafkaMessage })
       const responseMessage = await processQuestion(emailText);
       if (!responseMessage) return;
 
@@ -71,6 +81,7 @@ const emailService = async (credentials: IEmailCredentials, webhook: IWebhook | 
         inReplyTo: mail.messageId,
         references: mail.messageId,
       });
+      await produceMessage({ text: responseMessage, from: emailUsername, to: mail.from.value[0].address, ...kafkaMessage })
     })();
 
     console.info("E-mail enviado para: ", mail.from.value[0].address);

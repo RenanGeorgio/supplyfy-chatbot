@@ -2,7 +2,6 @@ import http from "http";
 import { io } from "socket.io-client";
 //import { Server } from "socket.io";
 import { app } from "../server";
-import produce from "./kafka/producer";
 
 const serverHttp = http.createServer(app);
 //const io = new Server(serverHttp);
@@ -30,4 +29,4 @@ crmSocketClient.on("connect_error", (error) => {
 */
 
 // export { serverHttp, io }; OLD
-export { serverHttp, crmSocketClient };
+export { serverHttp };

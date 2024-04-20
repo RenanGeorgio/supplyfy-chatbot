@@ -10,6 +10,7 @@ import { webhookTrigger } from "../webhook/webhookTrigger";
 import { Events, IBotData } from "../../types/types";
 import { servicesActions } from "..";
 import { findBot } from "../../helpers/findBot";
+import { produceMessage } from "../../core/kafka/producer";
 
 const telegramService = async (token: string, webhook: any) => {
   const telegram = new TelegramBot(token, { polling: true });
@@ -22,6 +23,11 @@ const telegramService = async (token: string, webhook: any) => {
 
   const bot = await botExist("services.telegram.token", token);
 
+  const kafkaMessage = {
+    topic: bot?.companyId + ".messages",
+    service: "telegram"
+  }
+
   const socketInfo = bot?.socket as IBotData["socket"];
 
   const { socket } = findBot(
@@ -31,14 +37,18 @@ const telegramService = async (token: string, webhook: any) => {
 
   let clientId: string | null = null;
   let enableChatBot = false;
+  const botId = (await telegram.getMe()).id
 
   telegram.onText(/\/start/, async (msg) => {
     const chatId = msg.chat.id;
     const { first_name, last_name } = msg.chat;
+    await produceMessage({ text: "/start", from: chatId.toString(), to: botId.toString(), ...kafkaMessage })
 
+    const greetingsTextEmail = `Olá, seja bem-vindo! \n\nPara começar, por favor, informe seu e-mail.`
+    await produceMessage({ text: greetingsTextEmail, from: botId.toString(), to: chatId.toString(), ...kafkaMessage })
     await telegram.sendMessage(
       msg.chat.id,
-      `Olá, seja bem-vindo! \n\nPara começar, por favor, informe seu e-mail.`
+      greetingsTextEmail
     );
 
     const { clientEmailEventEmitter } = await askEmail(telegram, msg);
@@ -56,8 +66,10 @@ const telegramService = async (token: string, webhook: any) => {
       } else {
         clientId = checkClient?._id.toString()!;
       }
+      const greetingsText = `Olá, ${first_name}!`
 
-      await telegram.sendMessage(chatId, `Olá, ${first_name}!`);
+      await produceMessage({ text: greetingsText, from: botId.toString(), to: chatId.toString(), ...kafkaMessage })
+      await telegram.sendMessage(chatId, greetingsText);
       enableChatBot = true;
     };
 
@@ -66,7 +78,10 @@ const telegramService = async (token: string, webhook: any) => {
     );
 
     telegram.onText(/\/suporte/, async (msg) => {
-      await telegram.sendMessage(chatId, `Aguarde um momento, por favor!`);
+      await produceMessage({ text: "/suporte", from: chatId.toString(), to: botId.toString(), ...kafkaMessage });
+      const waitText = `Aguarde um momento, por favor!`;
+      await telegram.sendMessage(chatId, waitText);
+      await produceMessage({ text: waitText, from: botId.toString(), to: chatId.toString(), ...kafkaMessage });
       telegram.removeListener("message", messageHandler);
       telegram.removeTextListener(/\/suporte/);
       enableChatBot = false;
@@ -102,12 +117,14 @@ const telegramService = async (token: string, webhook: any) => {
             const newMessage = { ...message, recipientId };
 
             if (newMessage) {
+              await produceMessage({ text: newMessage.text ?? "", from: clientId ?? "", to: chatId.toString(), ...kafkaMessage })
               socket.emit("sendMessage", newMessage);
             }
           });
 
-          socket.on("getMessage", (msg) => {
-            telegram.sendMessage(chatId, msg.text);
+          socket.on("getMessage", async (msg) => {
+            await produceMessage({ text: msg.text, from: chatId.toString(), to: clientId ?? "", ...kafkaMessage })
+            await telegram.sendMessage(chatId, msg.text);
           });
         }
       }
@@ -120,8 +137,10 @@ const telegramService = async (token: string, webhook: any) => {
       console.log("Message received: ", text);
       if (!enableChatBot || ignoredMessages(text)) return;
       if (from?.is_bot === false) {
+        await produceMessage({ text, from: chat.id.toString(), to: botId.toString(), ...kafkaMessage })
         const answer = await processQuestion(text ?? "");
         telegram.sendMessage(chat.id, answer);
+        await produceMessage({ text: answer, from: botId.toString(), to: chat.id.toString(), ...kafkaMessage })
       }
     }
   };
