@@ -34,6 +34,7 @@ const serviceSelectorMiddleware = async (req: CustomRequest, res: Response, next
                 case 'telegram':
 		            //telegramService(); OLD
                     next();
+		    break;
                 case 'cadastro':
                     next();
                     break;
