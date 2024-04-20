@@ -21,17 +21,19 @@ const serviceSelectorMiddleware = async (req: CustomRequest, res: Response, next
                     next();
                     break;
                 case 'instagram':
+                    //instagramService(); OLD
                     next();
                     break;
                 case 'facebook':
                     next();
                     break;
                 case 'email':
+                    //emailService(); OLD
                     next();
                     break;
                 case 'telegram':
+		            //telegramService(); OLD
                     next();
-                    break;
                 case 'cadastro':
                     next();
                     break;
