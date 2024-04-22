@@ -10,6 +10,7 @@ import {
   SendDoc
 } from "../../../types";
 import { msgStatusChange, sendMsg } from "../service";
+import { whatsappCloudApi } from "../../../api";
 
 export const markMessageAsRead = async (
     req: CustomRequest,
@@ -204,11 +205,14 @@ export const uploadMedia = async (
         data.append("messaging_product", "whatsapp");
         data.append("file", createReadStream(filePath));
 
-        const response = await whatsappCloudAp("/messages", {
+        const useWhatsappApi = whatsappCloudApi("v19.0", "+16315551234");
+
+        const response = await useWhatsappApi("/messages", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${this.bearerToken}`,
+                "Authorization": `Bearer ${process.env.ACCESS_TOKEN}`,
+                // @ts-ignore
                 ...data.getHeaders()
             },
             data: data

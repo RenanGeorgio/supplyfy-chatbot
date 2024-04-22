@@ -10,7 +10,7 @@ export const sendMsg = async (data: MsgProps) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${this.bearerToken}`,
+        Authorization: `Bearer ${process.env.ACCESS_TOKEN}`,
       },
       data: data,
     });
