@@ -1,11 +1,7 @@
 import axios from "axios";
 import https from "https";
 
-interface Props {
-    version?: string;
-}
-
-const instagramApi = ({ version='v19.0' }: Props) => {
+const instagramApi = (version: string ='v19.0') => {
     const useInstagramApi = axios.create({
         baseURL: `https://graph.facebook.com/${version}`,
         withCredentials: true,
