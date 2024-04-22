@@ -28,7 +28,7 @@ export const sendMsg = async (data: MsgProps) => {
 
 export const msgStatusChange = async (messageId: string | number) => {
   const data = {
-    messaging_product: this.messagingProduct,
+    messaging_product: "whatsapp",
     status: 'read',
     //to: this.recipientPhoneNumber,
     message_id: messageId
@@ -69,10 +69,8 @@ export const getUserProfile = async (senderIgsid: string) => {
   if (response) {
     let userProfile = await response.json();
 
-    return {
-      name: userProfile.name,
-      profilePic: userProfile.profile_pic
-    };
+    // @ts-ignore
+    return { name: userProfile.name, profilePic: userProfile.profile_pic };
   } else {
     console.warn(`Could not load profile for ${senderIgsid}: ${response}`);
   }

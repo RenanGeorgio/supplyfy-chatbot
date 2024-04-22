@@ -42,13 +42,15 @@ const Receive = class<ReceiveProps> {
     let responses: Obj = {};
 
     try {
-      if (event?.postback) {
-        responses = this.handlePostback(event?.postback);
-      } else if (event?.referral) {
-        responses = this.handleReferral(event?.referral);
+      // @ts-ignore
+      if (event?.postback) { responses = this.handlePostback(event?.postback); 
+      } // @ts-ignore
+      else if (event?.referral) { responses = this.handleReferral(event?.referral);
       } else {
+        // @ts-ignore
         if (event?.message) {
-          const message: MsgEventProp = event.message;
+          // @ts-ignore
+          const message: MsgEventProp = event?.message;
 
           if (message?.is_echo) {
             console.log("Received echo for message %s with metadata %s", message?.mid, message?.metadata);
@@ -202,7 +204,9 @@ const Receive = class<ReceiveProps> {
   handleAttachmentMessage() {
     let response: any;
 
+    // @ts-ignore
     if (this?.webhookEvent?.message != undefined) {
+      // @ts-ignore
       const attachment: Attachment = this.webhookEvent.message.attachments[0];
 
       response = Response.genQuickReply(i18n.__("fallback.attachment"), [

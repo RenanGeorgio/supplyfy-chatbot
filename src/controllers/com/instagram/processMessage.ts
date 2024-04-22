@@ -8,11 +8,8 @@ export default class Response {
     };
 
     for (let quickReply of quickReplies) {
-      response["quick_replies"].push({
-        content_type: "text",
-        title: quickReply["title"],
-        payload: quickReply["payload"],
-      });
+      // @ts-ignore
+      response["quick_replies"].push({ content_type: "text", title: quickReply["title"], payload: quickReply["payload"] });
     }
 
     return response;
@@ -71,7 +68,6 @@ export default class Response {
   }
 
   static genNuxMessage(user: Consumer) {
-    
 
     return [];
   }

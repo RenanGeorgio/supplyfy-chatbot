@@ -232,7 +232,7 @@ export const sendDocumentMessage = async (
     try {
         const { documentPath, caption } = req.body;
 
-        const docId = await uploadMedia(documentPath);
+        const docId: any = await uploadMedia(documentPath);
 
         const data: SendDoc = {
           messaging_product: "whatsapp",
