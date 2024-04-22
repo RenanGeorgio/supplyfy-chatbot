@@ -209,16 +209,16 @@ const Receive = class<ReceiveProps> {
       // @ts-ignore
       const attachment: Attachment = this.webhookEvent.message.attachments[0];
 
-      response = Response.genQuickReply(i18n.__("fallback.attachment"), [
+      /*response = Response.genQuickReply(i18n.__("fallback.attachment"), [
         {
-          //title: i18n.__("menu.help"),
+          title: i18n.__("menu.help"),
           payload: "CARE_HELP",
         },
         {
-        // title: i18n.__("menu.start_over"),
+         title: i18n.__("menu.start_over"),
           payload: "GET_STARTED",
         },
-      ]);
+      ]);*/
     }
 
     return response;

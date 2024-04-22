@@ -1,4 +1,4 @@
-import { sendTextMessage } from '../sendMessageActions';
+import sendTextMessage from '../data/textMessage';
 import { WebhookMsgOptions } from "../../../../../types";
 
 export default function receivedAuthentication(event: WebhookMsgOptions) {

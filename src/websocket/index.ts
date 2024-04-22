@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { io } from "../core/http";
 import { authMiddleware } from "../middlewares";
 
