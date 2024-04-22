@@ -1,10 +1,10 @@
 import http from "http";
-import { io } from "socket.io-client";
-//import { Server } from "socket.io";
+//import { io } from "socket.io-client"; SAMUEL
+import { Server } from "socket.io";
 import { app } from "../server";
 
 const serverHttp = http.createServer(app);
-//const io = new Server(serverHttp);
+const io = new Server(serverHttp);
 
 /*
 FEITO PELO SAMUEL
@@ -28,5 +28,4 @@ crmSocketClient.on("connect_error", (error) => {
 });
 */
 
-// export { serverHttp, io }; OLD
-export { serverHttp };
+export { serverHttp, io };

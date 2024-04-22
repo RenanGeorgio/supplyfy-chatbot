@@ -11,7 +11,7 @@ import { redisClient } from "./core/redis";
 import routes from "./routes";
 import resolvers from "./core/resolvers";
 import typeDefs from "./core/schemas";
-//import * as webhookRouter from "./webhooks";
+import * as webhookRouter from "./webhooks";
 import { sessionMiddleware, serviceSelectorMiddleware } from "./middlewares";
 import { CustomRequest } from "./types/types";
 
@@ -63,7 +63,7 @@ app.use(
 
 app.use(sessionMiddleware, serviceSelectorMiddleware);
 
-//app.use('/incoming', sessionMiddleware, serviceSelectorMiddleware, webhookRouter);
+app.use('/incoming', webhookRouter);
 
 app.use(routes);
 

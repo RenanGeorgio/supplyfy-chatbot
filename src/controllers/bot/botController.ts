@@ -1,7 +1,7 @@
 import { NextFunction, Response } from "express";
 import { botExist, createBot, updateBot } from "../../repositories/bot";
 import { userExist } from "../../repositories/user";
-import { checkServices } from "../../services/helpers/checkServices";
+import { checkServices } from "../../helpers/services/checkServices";
 import { CustomRequest, IBotData } from "../../types";
 
 export const create = async (
