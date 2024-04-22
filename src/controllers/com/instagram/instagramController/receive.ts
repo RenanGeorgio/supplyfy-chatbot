@@ -36,7 +36,8 @@ const Receive = class<ReceiveProps> {
   }
 
   handleMessage() {
-    const event: WebhookMsgPostbacks | WebhookMsgReferral | WebhookMsgs | undefined = this.webhookEvent;
+    // @ts-ignore
+    const event: WebhookMsgPostbacks | WebhookMsgReferral | WebhookMsgs = this.webhookEvent;
 
     let responses: Obj = {};
 
@@ -187,7 +188,7 @@ const Receive = class<ReceiveProps> {
           response = Response.genNuxMessage(this.user);
         }
       } else {
-        const answer = await processQuestion(msgData.text);
+        const answer = await processQuestion(msgData.text as string);
 
         response = { message: answer };
       }
@@ -199,48 +200,59 @@ const Receive = class<ReceiveProps> {
   }
 
   handleAttachmentMessage() {
-    const attachment: Attachment = this.webhookEvent.message.attachments[0];
+    let response: any;
 
-    const response = Response.genQuickReply(i18n.__("fallback.attachment"), [
-      {
-        title: i18n.__("menu.help"),
-        payload: "CARE_HELP",
-      },
-      {
-        title: i18n.__("menu.start_over"),
-        payload: "GET_STARTED",
-      },
-    ]);
+    if (this?.webhookEvent?.message != undefined) {
+      const attachment: Attachment = this.webhookEvent.message.attachments[0];
+
+      response = Response.genQuickReply(i18n.__("fallback.attachment"), [
+        {
+          //title: i18n.__("menu.help"),
+          payload: "CARE_HELP",
+        },
+        {
+        // title: i18n.__("menu.start_over"),
+          payload: "GET_STARTED",
+        },
+      ]);
+    }
 
     return response;
   }
 
   handleQuickReply() {
+    // @ts-ignore
     const payload = this.webhookEvent.message.quick_reply.payload;
 
     return this.handlePayload(payload);
   }
 
   handlePostback(event: WebhookMsgPostbacks) {
-    const postback = event.value.postback;
-    const senderID = event.value.sender.user_ref;
-    const recipientID = event.value.recipient.id;
-    const timeOfPostback = event.value.timestamp;
-
     let payload: any;
-    if (postback.referral && postback.referral.type == "OPEN_THREAD") {
-      payload = postback.referral.ref;
-    } else {
-      payload = postback.payload;
-    }
 
+    if (event!= undefined) {
+      const postback = event.postback;
+      const senderID = event.sender.user_ref;
+      const recipientID = event.recipient.id;
+      const timeOfPostback = event.timestamp;
+
+      if (postback.referral && postback.referral.type == "OPEN_THREAD") {
+        payload = postback.referral.ref;
+      } else {
+        payload = postback.payload;
+      }
+    }
 
     // sendTextMessage(senderID, 'Postback called');
     return this.handlePayload(payload.toUpperCase());
   }
 
   handleReferral(event: WebhookMsgReferral) {
-    const payload = event.referral.ref.toUpperCase();
+    let payload;
+
+    if (event.referral.ref != undefined) {
+      payload = event.referral.ref.toUpperCase();
+    }
 
     return this.handlePayload(payload);
   }
