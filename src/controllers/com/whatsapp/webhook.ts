@@ -32,8 +32,8 @@ export const messageHandler = async (
 
         if (body.changes[0].value.hasOwnProperty("messages")) {
             try { // Marca msg como lida
-                let sendReadStatus: statUses = messageStatuses?.read;
-                sendReadStatus?.message_id = body.value.messages[0].id;
+                let sendReadStatus = messageStatuses?.read;
+                sendReadStatus.message_id = body.value.messages[0].id;
 
                 const response = await msgStatusChange(sendReadStatus?.message_id);
 
@@ -46,7 +46,7 @@ export const messageHandler = async (
         }
 
         res.sendStatus(200);
-    } catch (error) {
+    } catch (error: any) {
         return res.status(500).send({ message: error.message });
     }           
 };

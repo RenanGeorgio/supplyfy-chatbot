@@ -39,6 +39,7 @@ export const messageHandler = async (req: CustomRequest, res: Response) => {
           // Evento de mudança em pagina
           const receiveMessage = new Receive();
 
+          // @ts-ignore
           if (entry?.changes[0]?.field === "comments") {
             const values: Obj = entry.changes[0];
 

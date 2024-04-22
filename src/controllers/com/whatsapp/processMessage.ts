@@ -1,6 +1,8 @@
 import { processQuestion } from "../../../libs/trainModel";
 import { sendTextMessage } from "./whatsappController";
-import { MsgProps, SendInterativeButton, SendInterativeList } from "../../../types";
+import { SendContacts, SendDoc, SendImg, SendInterativeButton, SendInterativeList, SendText } from "../../../types";
+
+type MsgTypes = SendDoc | SendImg | SendContacts | SendInterativeList | SendInterativeButton | SendText;
 
 function interactiveMessage(message: SendInterativeList | SendInterativeButton) {
   const interactiveType = message.interactive.type;
@@ -34,40 +36,36 @@ function interactiveMessage(message: SendInterativeList | SendInterativeButton) 
   return;
 }
 
-export async function processMessage(message: MsgProps) {
+export async function processMessage(message: MsgTypes) {
   const customerPhoneNumber = message.from;
-  const messageType = message.type;
 
   try {
-    switch (messageType) {
-      case "text":
-        const textMessage = message.text.body;
+    if ("text" in message) {
+      const textMessage = message.text.body;
 
-        try {
-          const answer = await processQuestion(textMessage);
+      try {
+        const answer = await processQuestion(textMessage);
 
-          const response = await sendTextMessage(answer);
+        const response = await sendTextMessage(answer);
 
-          /*let replyButtonMessage = interactiveReplyButton;
-          replyButtonMessage.to = process.env.RECIPIENT_PHONE_NUMBER;
+        /*let replyButtonMessage = interactiveReplyButton;
+        replyButtonMessage.to = process.env.RECIPIENT_PHONE_NUMBER;
 
-          const replyButtonSent = await sendWhatsAppMessage(replyButtonMessage);
-          console.log(replyButtonSent);*/
-        } catch (error) {
-          console.log(error);
-        }
-        break;
-      case "interactive":
-        interactiveMessage(message);
-        break;
-      case "contacts":
-        break;
-      case "image":
-        break;
-      case "document":
-        break;
-      default:
-        break;
+        const replyButtonSent = await sendWhatsAppMessage(replyButtonMessage);
+        console.log(replyButtonSent);*/
+      } catch (error) {
+        console.log(error);
+      }
+    } else if ("interactive" in message) {
+      interactiveMessage(message as SendInterativeButton | SendInterativeList);
+    } else if ("contacts" in message) {
+      // TODO
+    } else if ("image" in message) {
+      // TODO
+    } else if ("document" in message) {
+      // TODO
+    } else {
+      // TODO
     }
   } catch (error) {
     console.log(error);

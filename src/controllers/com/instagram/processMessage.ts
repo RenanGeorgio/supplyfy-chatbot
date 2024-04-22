@@ -1,6 +1,6 @@
 import { Consumer } from "../../../types";
 
-class Response {
+export default class Response {
   static genQuickReply(text, quickReplies) {
     let response = {
       text: text,

@@ -15,6 +15,7 @@ import {
   sendTypingOff, 
   sendAccountLinking, 
   sendTextMessage } from "./data";
+import Response from "../processMessage";
 import { 
   Consumer, 
   WebhookEventBase, 
@@ -35,23 +36,21 @@ const Receive = class<ReceiveProps> {
   }
 
   handleMessage() {
-    const event: WebhookEventBase | undefined = this.webhookEvent;
+    const event: WebhookMsgPostbacks | WebhookMsgReferral | WebhookMsgs | undefined = this.webhookEvent;
 
     let responses: Obj = {};
 
     try {
       if (event?.postback) {
         responses = this.handlePostback(event?.postback);
-        //responses = this.handlePostback(this.webhookEvent);
       } else if (event?.referral) {
         responses = this.handleReferral(event?.referral);
-        //responses = this.handleReferral(this.webhookEvent);
       } else {
         if (event?.message) {
           const message: MsgEventProp = event.message;
 
           if (message?.is_echo) {
-            console.log("Received echo for message %s and app %d with metadata %s", message?.mid, message?.app_id, message?.metadata);
+            console.log("Received echo for message %s with metadata %s", message?.mid, message?.metadata);
             return;
           } else if (message?.quick_reply) {
             responses = this.handleQuickReply();
@@ -65,60 +64,89 @@ const Receive = class<ReceiveProps> {
               
               switch (messageText.replace(/[^\w\s]/gi, '').trim().toLowerCase()) {
                 case 'image':
-                  data = sendImageMessage(this.user.igsid, process.env.SERVER_URL + "/assets/rift.png");
-                  responses = data;
+                  if (this.user != undefined) {
+                    data = sendImageMessage(this.user.igsid, process.env.SERVER_URL + "/assets/rift.png");
+                    responses = data;
+                  }
                   break;
                 case 'gif':
-                  data = sendGifMessage(this.user.igsid);
-                  responses = data;
+                  if (this.user != undefined) {
+                    data = sendGifMessage(this.user.igsid);
+                    responses = data;
+                  }
                   break;
                 case 'audio':
-                  data = sendAudioMessage(this.user.igsid);
-                  responses = data;
+                  if (this.user != undefined) {
+                    data = sendAudioMessage(this.user.igsid);
+                    responses = data;
+                  }
                   break;
                 case 'video':
-                  data = sendVideoMessage(this.user.igsid);
-                  responses = data;
+                  if (this.user != undefined) {
+                    data = sendVideoMessage(this.user.igsid);
+                    responses = data;
+                  }
                   break;
                 case 'file':
-                  data = sendFileMessage(this.user.igsid);
-                  responses = data;
+                  if (this.user != undefined) {
+                    data = sendFileMessage(this.user.igsid);
+                    responses = data;
+                  }
                   break;
                 case 'button':
-                  data = sendButtonMessage(this.user.igsid);
-                  responses = data;
+                  if (this.user != undefined) {
+                    data = sendButtonMessage(this.user.igsid);
+                    responses = data;
+                  }
                   break;
                 case 'generic':
-                  data = sendGenericMessage(this.user.igsid);
-                  responses = data;
+                  if (this.user != undefined) {
+                    data = sendGenericMessage(this.user.igsid);
+                    responses = data;
+                  }
                   break;
                 case 'receipt':
-                  data = sendReceiptMessage(this.user.igsid);
-                  responses = data;
+                  if (this.user != undefined) {
+                    data = sendReceiptMessage(this.user.igsid);
+                    responses = data;
+                  }
                   break;
                 case 'quick reply':
-                  data = sendQuickReply(this.user.igsid);
-                  responses = data;
+                  if (this.user != undefined) {
+                    data = sendQuickReply(this.user.igsid);
+                    responses = data;
+                  }
                   break;
                 case 'read receipt':
-                  data = sendReadReceipt(this.user.igsid);
-                  responses = data;
+                  if (this.user != undefined) {
+                    data = sendReadReceipt(this.user.igsid);
+                    responses = data;
+                  }
                   break;
                 case 'typing on':
-                  data = sendTypingOn(this.user.igsid);
-                  responses = data;
+                  if (this.user != undefined) {
+                    data = sendTypingOn(this.user.igsid);
+                    responses = data;
+                  }
                   break;
                 case 'typing off':
-                  data = sendTypingOff(this.user.igsid);
-                  responses = data;
+                  if (this.user != undefined) {
+                    data = sendTypingOff(this.user.igsid);
+                    responses = data;
+                  }
                   break;
                 case 'account linking':
-                  data = sendAccountLinking(this.user.igsid);
-                  responses = data;
+                  if (this.user != undefined) {
+                    data = sendAccountLinking(this.user.igsid);
+                    responses = data;
+                  }
                   break;
                 default:
-                  data = this.handleTextMessage(this.webhookEvent);
-                  responses = sendTextMessage(this.user.igsid, data.message);
+                  if (this.user != undefined) {
+                    data = this.handleTextMessage(this.webhookEvent as any);
+                    responses = sendTextMessage(this.user.igsid, data.message);
+                  }
+                  break;
               }
             }
           }
@@ -155,7 +183,9 @@ const Receive = class<ReceiveProps> {
       let response;
 
       if (message.includes("start over") || message.includes("get started") || message.includes("hi")) {
-        response = Response.genNuxMessage(this.user);
+        if (this.user != undefined) {
+          response = Response.genNuxMessage(this.user);
+        }
       } else {
         const answer = await processQuestion(msgData.text);
 
