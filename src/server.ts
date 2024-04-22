@@ -5,7 +5,7 @@ import express, { ErrorRequestHandler, Response, Request, NextFunction } from "e
 import createError from "http-errors";
 import session from "express-session";
 import RedisStore from "connect-redis";
-import { graphqlHTTP } from "express-graphql";
+// import { graphqlHTTP } from "express-graphql"; // Deprecated - substituir por graphql-http
 import { makeExecutableSchema } from "@graphql-tools/schema";
 import { redisClient } from "./core/redis";
 import routes from "./routes";
@@ -53,13 +53,13 @@ const schema = makeExecutableSchema({
   typeDefs,
 });
 
-app.use(
-  "/models",
-  graphqlHTTP({
-    schema,
-    graphiql: true,
-  })
-);
+// app.use(
+//   "/models",
+//   graphqlHTTP({
+//     schema,
+//     graphiql: true,
+//   })
+// );
 
 app.use(sessionMiddleware, serviceSelectorMiddleware);
 

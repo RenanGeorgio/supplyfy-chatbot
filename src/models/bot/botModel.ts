@@ -65,7 +65,22 @@ const socketSchema = new Schema({
       type: String,
       required: true,
     },
-  }
+  },
+});
+
+const messengerSchema = new Schema({
+  pageId: {
+    type: String,
+    required: true,
+  },
+  pageToken: {
+    type: String,
+    required: true,
+  },
+  verifyToken: {
+    type: String,
+    required: true,
+  },
 });
 
 const botSchema = new Schema({
@@ -86,9 +101,13 @@ const botSchema = new Schema({
       _id: { auto: false },
       type: emailSchema,
     },
+    facebook: {
+      _id: { auto: false },
+      type: messengerSchema,
+    },
   },
   socket: {
-    type: socketSchema
+    type: socketSchema,
   },
   createdAt: {
     type: Date,

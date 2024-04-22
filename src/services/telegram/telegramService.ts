@@ -2,7 +2,10 @@ import TelegramBot from "node-telegram-bot-api";
 import { processQuestion } from "../../libs/trainModel";
 import { askEmail } from "./helpers/askEmail";
 import { botExist } from "../../repositories/bot";
-import { clientChatExist, createChatClient } from "../../repositories/chatClient";
+import {
+  clientChatExist,
+  createChatClient,
+} from "../../repositories/chatClient";
 import { chatOriginExist, createChat } from "../../repositories/chat";
 import { ignoredMessages } from "./helpers/ignoredMessages";
 import { createMessage } from "../../repositories/message";
@@ -10,9 +13,11 @@ import { webhookTrigger } from "../webhook/webhookTrigger";
 import { Events, IBotData } from "../../types/types";
 import { servicesActions } from "..";
 import { findBot } from "../../helpers/findBot";
+import Queue from "../../libs/Queue";
 
 const telegramService = async (token: string, webhook: any) => {
   const telegram = new TelegramBot(token, { polling: true });
+  let chatStarted = false; // testando
 
   try {
     await telegram.getMe();
@@ -33,6 +38,7 @@ const telegramService = async (token: string, webhook: any) => {
   let enableChatBot = false;
 
   telegram.onText(/\/start/, async (msg) => {
+    chatStarted = true;
     const chatId = msg.chat.id;
     const { first_name, last_name } = msg.chat;
 
@@ -65,10 +71,12 @@ const telegramService = async (token: string, webhook: any) => {
       createClientEvent(email)
     );
 
+    telegram.on("message",  messageHandler);
+
     telegram.onText(/\/suporte/, async (msg) => {
       await telegram.sendMessage(chatId, `Aguarde um momento, por favor!`);
-      telegram.removeListener("message", messageHandler);
       telegram.removeTextListener(/\/suporte/);
+      telegram.removeListener("message", messageHandler);
       enableChatBot = false;
 
       if (bot) {
@@ -117,16 +125,19 @@ const telegramService = async (token: string, webhook: any) => {
   const messageHandler = async (msg: TelegramBot.Message) => {
     const { chat, text, date, from } = msg;
     if (text) {
-      console.log("Message received: ", text);
       if (!enableChatBot || ignoredMessages(text)) return;
       if (from?.is_bot === false) {
         const answer = await processQuestion(text ?? "");
-        telegram.sendMessage(chat.id, answer);
+        await telegram.sendMessage(chat.id, answer);
+        //teste
+        // Queue.add("TelegramService",{ id: chat.id, message: answer }, telegram.sendMessage);
       }
     }
   };
 
-  telegram.on("message", messageHandler);
+  // telegram.on("message", (msg) => {
+  //   Queue.add("TelegramService", msg, messageHandler);
+  // });
 
   telegram.on("polling_error", () => {
     if (webhook) {

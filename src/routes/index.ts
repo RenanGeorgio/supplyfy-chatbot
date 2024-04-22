@@ -13,6 +13,7 @@ import * as authController from "../controllers/user/authController";
 import * as botController from "../controllers/bot/botController";
 import * as botStatusController from "../controllers/bot/botStatusController";
 import * as webhookController from "../controllers/webhook/webhookController";
+import * as facebookController from "../controllers/meta/facebookController";
 
 const routes = Router();
 
@@ -47,6 +48,9 @@ routes
   .post("/bot/:serviceId/:action", authMiddleware.JWT, botStatusController.action)
 
   // webhook
-  .post("/webhook", authMiddleware.JWT, webhookController.create);
+  .post("/webhook", authMiddleware.JWT, webhookController.create)
+
+  .get("/facebook/:userId", facebookController.verifyWebhook)
+  .post("/facebook/:useId", facebookController.eventsHandler)
 
 export default routes;
