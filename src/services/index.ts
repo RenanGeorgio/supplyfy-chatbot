@@ -26,7 +26,7 @@ import { webhookPromiseHandler } from "./webhook/webhookHandler";
 const servicesActions = {
   telegram: telegramServiceController,
   email: emailServiceController,
-  instagramWeb: instagramServiceController, // AVISAR SAMUEL DA TROCA DESTA LABEL
+  instagramWeb: instagramServiceController,
   socket: socketServiceController
   // whastapp
 };

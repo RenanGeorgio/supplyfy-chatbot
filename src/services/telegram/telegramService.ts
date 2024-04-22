@@ -3,7 +3,7 @@ import { processQuestion } from "../../libs/trainModel";
 import { askEmail } from "./helpers/askEmail";
 import { botExist } from "../../repositories/bot";
 import { clientChatExist, createChatClient } from "../../repositories/chatClient";
-import { chatOriginExist, createChat } from "../../repositories/chat";
+import { createChat } from "../../repositories/chat";
 import { ignoredMessages } from "./helpers/ignoredMessages";
 import { createMessage } from "../../repositories/message";
 import { webhookTrigger } from "../webhook/webhookTrigger";

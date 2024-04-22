@@ -1,8 +1,6 @@
 import { readFileSync, writeFileSync } from "fs";
 import { IgApiClient } from "instagram-private-api";
 import { withRealtime, IgApiClientRealtime } from "instagram_mqtt";
-import { customSession } from "../../../server";
-import { redisClient } from "../../../core/redis";
 import { Events } from "../../../types/types";
 
 const ERROR_MESSAGES = {
