@@ -28,6 +28,8 @@ const telegramService = async (token: string, webhook: any) => {
   const bot = await botExist("services.telegram.token", token);
 
   const socketInfo = bot?.socket as IBotData["socket"];
+  const telegramInfo = bot?.services
+    ?.telegram as IBotData["services"]["telegram"];
 
   const { socket } = findBot(
     socketInfo._id.toString(),
@@ -71,7 +73,7 @@ const telegramService = async (token: string, webhook: any) => {
       createClientEvent(email)
     );
 
-    telegram.on("message",  messageHandler);
+    telegram.on("message", messageHandler);
 
     telegram.onText(/\/suporte/, async (msg) => {
       await telegram.sendMessage(chatId, `Aguarde um momento, por favor!`);
@@ -115,7 +117,11 @@ const telegramService = async (token: string, webhook: any) => {
           });
 
           socket.on("getMessage", (msg) => {
-            telegram.sendMessage(chatId, msg.text);
+            Queue.add(
+              "TelegramService",
+              { id: chatId, message: msg.text },
+              telegramInfo?._id
+            );
           });
         }
       }
@@ -128,16 +134,16 @@ const telegramService = async (token: string, webhook: any) => {
       if (!enableChatBot || ignoredMessages(text)) return;
       if (from?.is_bot === false) {
         const answer = await processQuestion(text ?? "");
-        await telegram.sendMessage(chat.id, answer);
+        // await telegram.sendMessage(chat.id, answer);
         //teste
-        // Queue.add("TelegramService",{ id: chat.id, message: answer }, telegram.sendMessage);
+        Queue.add(
+          "TelegramService",
+          { id: chat.id, message: answer },
+          telegramInfo?._id
+        );
       }
     }
   };
-
-  // telegram.on("message", (msg) => {
-  //   Queue.add("TelegramService", msg, messageHandler);
-  // });
 
   telegram.on("polling_error", () => {
     if (webhook) {

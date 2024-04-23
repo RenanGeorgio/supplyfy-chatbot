@@ -1,10 +1,19 @@
+import { findBot } from "../../helpers/findBot";
+import { telegramServiceController } from "./index";
+
 export default {
   key: "TelegramService",
   async handle({ data }) {
+    const telegramService = findBot(
+      data.serviceId,
+      telegramServiceController.telegramServices
+    );
 
-    const { id, message, callback } = data;
-    await JSON.parse(callback).call(this, id, message);
-    return true
+    if (!telegramService) {
+      return false;
+    }
+
+    await telegramService.telegramBot.sendMessage(data.id, data.message);
   },
   options: {
     attempts: 3,

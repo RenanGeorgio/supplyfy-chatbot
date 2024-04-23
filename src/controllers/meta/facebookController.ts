@@ -5,6 +5,7 @@ import { userExist } from "../../repositories/user";
 import { messengerServiceController } from "../../services/facebook";
 import { findBot } from "../../helpers/findBot";
 import { botExist } from "../../repositories/bot";
+import Queue from "../../libs/Queue";
 
 export const verifyWebhook = async (
   req: CustomRequest,
@@ -62,7 +63,8 @@ export const eventsHandler = async (
     }
 
     const id = req.body.entry[0].id;
-    messengerServiceController.sendMessage({ id, messages: req.body.entry });
+ 
+   Queue.add("MessengerService", { id, messages: req.body.entry });
 
     res.sendStatus(200);
   } catch (error: any) {

@@ -1,12 +1,9 @@
 import Queue from "bull";
-// import { redisConfig } from '../core/configs/redis';
 import * as jobs from "../jobs";
 
 const redisConfig: any = {
-  // redis: {
   host: process.env.REDIS_HOST,
   port: process.env.REDIS_PORT,
-  // },
 };
 
 const queues = Object.values(jobs).map((job) => ({
@@ -21,11 +18,13 @@ const queues = Object.values(jobs).map((job) => ({
 
 export default {
   queues,
-  add(name, data, cb?) {
+  add(name: string, data: any, serviceId?: string) {
     const queue = this.queues.find((queue) => queue.name === name);
+    console.log(queue?.options);
     if (queue) {
-      return queue.bull.add({...data, callback: cb}, queue.options);
-      // todo: resolver o problema de passar o callback ou alterar a abordagem
+      return queue.bull.add({...data, serviceId}, queue.options);
+      // estou adicionando o serviceId para poder identificar qual bot está enviando a mensagem
+      // para funções mais simples, não é necessário passar o serviceId
     }
   },
   process() {

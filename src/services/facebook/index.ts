@@ -51,23 +51,5 @@ export const messengerServiceController: any = {
       service: "facebook",
       message: "serviço parado",
     };
-  },
-
-  async sendMessage({ id, messages }) {
-    const service = this.mensengerServices.find(
-      (service: any) => service.pageId === id
-    );
-
-    if (!service) {
-      return {
-        success: false,
-        event: Events.SERVICE_NOT_RUNNING,
-        service: "facebook",
-        message: "serviço não está rodando",
-      };
-    }
-
-    // await messengerService.handle({ credentials: service, messages });
-    await Queue.add("MessengerService", { credentials: service, messages });
-  },
+  }
 };
