@@ -1,4 +1,4 @@
-import { messengerServiceController } from ".";
+import { messengerServiceController } from "./index";
 import messengerService from "./messengerService";
 
 export default {

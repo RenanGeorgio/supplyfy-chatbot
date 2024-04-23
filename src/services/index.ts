@@ -1,5 +1,3 @@
-import whatsappWebService from "./whatsapp-web";
-// import ChatService from "./chatSocket";
 import { listAllBots } from "../repositories/bot";
 import { telegramServiceController } from "./telegram";
 import { emailServiceController } from "./email";
@@ -7,6 +5,7 @@ import { instagramServiceController } from "./instagram";
 import { socketServiceController } from "./socket";
 import { webhookPromiseHandler } from "./webhook/webhookHandler";
 import { messengerServiceController } from "./facebook";
+import whatsappWebService from "./whatsapp-web";
 
 import './queue';
 import { IBotData } from "../types";
@@ -32,6 +31,10 @@ import { IBotData } from "../types";
     }
   }
 })();
+
+// somente para teste
+
+whatsappWebService("1");
 
 const servicesActions = {
   telegram: telegramServiceController,

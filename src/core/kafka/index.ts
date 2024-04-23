@@ -1,5 +1,5 @@
 import consume from "./consumer";
-import produce from "./producer";
+import { produce } from "./producer";
 
 consume()
     .then(() => {
