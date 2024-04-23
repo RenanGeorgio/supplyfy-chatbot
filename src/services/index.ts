@@ -5,6 +5,7 @@ import { emailServiceController } from "./email";
 import { instagramServiceController } from "./instagram";
 import { socketServiceController } from "./socket";
 import { webhookPromiseHandler } from "./webhook/webhookHandler";
+import WhatsappService from "./whatsapp";
 
 (async () => {
   const bots = await listAllBots();
@@ -31,4 +32,4 @@ const servicesActions = {
   // whastapp
 };
 
-export { whatsappWebService, servicesActions, webhookPromiseHandler };
+export { whatsappWebService, servicesActions, webhookPromiseHandler, WhatsappService };

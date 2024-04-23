@@ -4,6 +4,7 @@ import { CustomRequest, statUses } from "../../../types";
 import { messageStatuses } from "../../../helpers/messageStatuses";
 import { processMessage } from "./processMessage";
 import { msgStatusChange } from "../service";
+import { WhatsappService } from "../../../services";
 
 const appSecret = process.env.APP_SECRET;
 const xhub = new XHubSignature("SHA256", appSecret);
@@ -30,10 +31,18 @@ export const messageHandler = async (
             res.sendStatus(400);
         }
 
-        if (body.changes[0].value.hasOwnProperty("messages")) {
+        const data = body.value;
+
+        if (data.hasOwnProperty("messages")) {
+            const whatsappInstance = new WhatsappService(
+                data.metadata.phone_number_id,
+                data.contacts[0].profile.name,
+                data.messages[0].from
+            );
+
             try { // Marca msg como lida
                 let sendReadStatus = messageStatuses?.read;
-                sendReadStatus.message_id = body.value.messages[0].id;
+                sendReadStatus.message_id = data.messages[0].id;
 
                 const response = await msgStatusChange(sendReadStatus?.message_id);
 
@@ -42,7 +51,7 @@ export const messageHandler = async (
                 console.log(error);
             }
         
-            body.value.messages.forEach(processMessage);
+            data.messages.forEach(message => processMessage(message));
         }
 
         res.sendStatus(200);
