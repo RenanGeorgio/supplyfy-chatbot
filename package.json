@@ -28,6 +28,7 @@
     "typescript": "^5.3.3"
   },
   "dependencies": {
+    "@bull-board/express": "^5.16.0",
     "@graphql-tools/load-files": "^7.0.0",
     "@graphql-tools/merge": "^9.0.3",
     "@graphql-tools/schema": "^10.0.3",
@@ -45,8 +46,8 @@
     "express-validator": "^7.0.1",
     "graphql": "^16.8.1",
     "imap": "^0.8.19",
-    "instagram_mqtt": "^1.2.2",
     "instagram-private-api": "1.45.3",
+    "instagram_mqtt": "^1.2.2",
     "jsonwebtoken": "^9.0.2",
     "kafkajs": "^2.2.4",
     "mail-listener5": "^2.1.2",

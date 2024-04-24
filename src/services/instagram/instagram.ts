@@ -56,10 +56,8 @@ const intagramService = async (ig: IgApiClientRealtime, webhook: any) => {
           event: Events.SERVICE_DISCONNECTED,
           message: "Erro no serviço de Instagram",
           service: "instagram"
-        })
-      
+        });
       }
-
     });
 
     console.log(igConnect, "Connected to the Instagram Realtime API")

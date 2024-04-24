@@ -1,3 +1,4 @@
+import Queue from "../../libs/Queue";
 import { processQuestion } from "../../libs/trainModel";
 import { IEmailCredentials, IWebhook } from "../../types";
 import { Events } from "../../types/types";
@@ -7,28 +8,73 @@ import emailTransporter from "./lib/transporter";
 import EventEmitter from "node:events";
 
 const errorMessages = {
-  authentication: "erro de autenticação",
+  authentication: "erro de autenticação imap",
   "timeout-auth": "timeout de autenticação",
-}
+};
 
-const emailService = async (credentials: IEmailCredentials, webhook: IWebhook | undefined) => {
-  const { imapHost, imapPort, imapTls, smtpHost, smtpPort, smtpSecure, emailUsername, emailPassword } = credentials;
-  const mailTransporter = emailTransporter({ smtpHost, smtpPort, emailUsername, emailPassword, smtpSecure });
-  const mailListener = emailListener({ emailUsername, emailPassword, imapHost, imapPort, imapTls });
+const emailService = async (
+  credentials: IEmailCredentials,
+  webhook: IWebhook | undefined
+) => {
+  const {
+    imapHost,
+    imapPort,
+    imapTls,
+    smtpHost,
+    smtpPort,
+    smtpSecure,
+    emailUsername,
+    emailPassword,
+  } = credentials;
   const mailListenerEventEmitter = new EventEmitter();
 
-  mailListener.on("server:connected", function () {
-    console.log("imapConnected");
-    mailListenerEventEmitter.emit("email:connected");
+  const mailTransporter = emailTransporter({
+    smtpHost,
+    smtpPort,
+    emailUsername,
+    emailPassword,
+    smtpSecure,
   });
 
-  mailListener.on("server:disconnected", function () {
+  mailTransporter.verify((error, success) => {
+    if (error) {
+      console.log(webhook)
+      if(webhook){
+
+        webhookTrigger({
+          url: webhook.url,
+          event: Events.SERVICE_ERROR,
+          message: "erro de autenticação smtp",
+          service: "email",
+        });
+      }
+      console.log("Server is not ready to take our messages: ", error);
+    } else {
+      console.log(`SMPT conectado: ${smtpHost}`);
+    }
+  });
+
+  const mailListener = emailListener({
+    emailUsername,
+    emailPassword,
+    imapHost,
+    imapPort,
+    imapTls,
+  });
+
+  mailListener.on("server:connected", function () {
+    mailListenerEventEmitter.emit("email:connected");
+    console.log(`IMAP conectado: ${imapHost}`);
+  });
+
+  mailListener.on("server:disconnected", function (e) {
+    console.log(e)
     console.log("imapDisconnected");
     if (webhook) {
       webhookTrigger({
         url: webhook.url,
         event: Events.SERVICE_DISCONNECTED,
-        message: "serviço de email desconectado",
+        message: "imap desconectado",
         service: "email",
       });
     }
@@ -43,8 +89,10 @@ const emailService = async (credentials: IEmailCredentials, webhook: IWebhook | 
           message: errorMessages[err.source],
           service: "email",
         });
-      }
-      else {
+        if(err.code === "ECONNRESET"){
+          mailListener.start();
+        }
+      } else {
         console.error(err);
         webhookTrigger({
           url: webhook.url,
@@ -63,17 +111,19 @@ const emailService = async (credentials: IEmailCredentials, webhook: IWebhook | 
       const responseMessage = await processQuestion(emailText);
       if (!responseMessage) return;
 
-      await mailTransporter.sendMail({
+      Queue.add("EmailService", {
         from: emailUsername,
         to: mail.from.value[0].address,
-        subject: "Re: " + (mail.subject || attributes.uid),
+        subject: mail.subject,
         text: responseMessage,
         inReplyTo: mail.messageId,
         references: mail.messageId,
+        service: {
+          type: "email",
+          id: credentials._id?.toString(),
+        },
       });
     })();
-
-    console.info("E-mail enviado para: ", mail.from.value[0].address);
   });
 
   return { mailListener, mailTransporter, mailListenerEventEmitter };

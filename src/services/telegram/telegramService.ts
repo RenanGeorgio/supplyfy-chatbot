@@ -10,14 +10,15 @@ import { chatOriginExist, createChat } from "../../repositories/chat";
 import { ignoredMessages } from "./helpers/ignoredMessages";
 import { createMessage } from "../../repositories/message";
 import { webhookTrigger } from "../webhook/webhookTrigger";
-import { Events, IBotData } from "../../types/types";
+import { Events, IBotData, ITelegramCredentials, ITelegramService, IWebhook } from "../../types/types";
 import { servicesActions } from "..";
 import { findBot } from "../../helpers/findBot";
 import Queue from "../../libs/Queue";
 import { produceMessage } from "../../core/kafka/producer";
 
-const telegramService = async (token: string, webhook: any) => {
-  const telegram = new TelegramBot(token, { polling: true });
+const telegramService = async (credentials: ITelegramCredentials, webhook: IWebhook | undefined)  => {
+  const token = credentials.token;
+  const telegram = new TelegramBot(token, { polling: true }); // verficar depois
   let chatStarted = false; // testando
 
   try {
@@ -29,8 +30,6 @@ const telegramService = async (token: string, webhook: any) => {
   const bot = await botExist("services.telegram.token", token);
 
   const socketInfo = bot?.socket as IBotData["socket"];
-  const telegramInfo = bot?.services
-    ?.telegram as IBotData["services"]["telegram"];
 
   const { socket } = findBot(
     socketInfo._id.toString(),
@@ -136,7 +135,7 @@ const telegramService = async (token: string, webhook: any) => {
             Queue.add(
               "TelegramService",
               { id: chatId, message: msg.text },
-              telegramInfo?._id
+              credentials._id
             );
           });
         }
@@ -157,7 +156,7 @@ const telegramService = async (token: string, webhook: any) => {
         Queue.add(
           "TelegramService",
           { id: chat.id, message: answer },
-          telegramInfo?._id
+          credentials._id
         );
       }
     }
@@ -175,7 +174,7 @@ const telegramService = async (token: string, webhook: any) => {
   });
 
   const botName = (await telegram.getMe()).username;
-  console.info(`Telegram bot - ${botName} is running...`);
+  console.info(`Telegram bot conectado: ${botName}`);
 
   return telegram;
 };

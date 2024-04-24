@@ -21,7 +21,7 @@ export const socketServiceController: ISocketServiceController = {
         id: id,
         socket: socket,
       });
-      console.log("Conectado ao socket server", socket.id)
+      console.log(`Socket conectado: ${socket.id}`);
     });
     
     socket.on("connect_error", (error) => {

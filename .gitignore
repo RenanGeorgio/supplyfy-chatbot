@@ -29,3 +29,4 @@ build/
 
 *_session.json
 instagram-session.json
+.wwebjs_auth/
