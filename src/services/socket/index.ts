@@ -1,16 +1,17 @@
 import { findBot } from "../../helpers/findBot";
 import { ISocketServiceController } from "../../types";
+import { Events } from "../../types/types";
 import { webhookTrigger } from "../webhook/webhookTrigger";
-import { socketService } from "./socketService"
+import { socketService } from "./socketService";
 
 export const socketServiceController: ISocketServiceController = {
   sockets: [],
   // os dados do socket vão ficar dentro do modelo do bot
-  start(credentials) {
+  start(credentials, webhook) {
     const id = credentials._id.toString();
     const socketInstance = findBot(id, this.sockets);
 
-    if(socketInstance){
+    if (socketInstance) {
       return null;
     }
 
@@ -22,10 +23,26 @@ export const socketServiceController: ISocketServiceController = {
         socket: socket,
       });
       console.log(`Socket conectado: ${socket.id}`);
+      if (webhook) {
+        webhookTrigger({
+          url: webhook.url,
+          event: Events.SERVICE_CONNECTED,
+          message: "socket conectado",
+          service: "socket",
+        });
+      }
     });
-    
+
     socket.on("connect_error", (error) => {
       console.log("Sem conexão com o socket server");
+      if (webhook) {
+        webhookTrigger({
+          url: webhook.url,
+          event: "SERVICE_DISCONNECTED",
+          message: "socket desconectado",
+          service: "socket",
+        });
+      }
     });
   },
-}
+};

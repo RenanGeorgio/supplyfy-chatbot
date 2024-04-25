@@ -30,11 +30,13 @@ const telegramService = async (credentials: ITelegramCredentials, webhook: IWebh
   const bot = await botExist("services.telegram.token", token);
 
   const socketInfo = bot?.socket as IBotData["socket"];
-
-  const { socket } = findBot(
+  
+  const socketService = findBot(
     socketInfo._id.toString(),
     servicesActions.socket.sockets
   )!;
+
+  const socket = socketService?.socket;
 
   let clientId: string | null = null;
   let enableChatBot = false;

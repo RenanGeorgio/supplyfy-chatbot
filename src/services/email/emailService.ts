@@ -114,7 +114,7 @@ const emailService = async (
       Queue.add("EmailService", {
         from: emailUsername,
         to: mail.from.value[0].address,
-        subject: mail.subject,
+        subject: mail.subject || attributes.uid,
         text: responseMessage,
         inReplyTo: mail.messageId,
         references: mail.messageId,

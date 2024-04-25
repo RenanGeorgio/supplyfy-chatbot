@@ -16,7 +16,7 @@ import { getWebhook } from "../repositories/webhook";
     const webhook = await getWebhook({ companyId: bot.companyId } as any);
     // inicializar os serviços quando o servidor iniciar ?
     if (bot.socket) {
-      socketServiceController.start(bot.socket as any);
+      socketServiceController.start(bot.socket as any, webhook as IWebhook);
     }
     if (bot?.services?.telegram) {
       telegramServiceController.start(bot.services.telegram as any, webhook as IWebhook);

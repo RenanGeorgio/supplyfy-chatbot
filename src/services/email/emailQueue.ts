@@ -4,7 +4,7 @@ import { findBot } from "../../helpers/findBot";
 export default {
   key: "EmailService",
   async handle({ data }) {
-    const { to, service } = data;
+    const { from, to, subject, text, inReplyTo, references, service } = data;
 
     const emailService = findBot(
       service.id,
@@ -14,7 +14,15 @@ export default {
       return false;
     }
 
-    const send = await emailService?.mailTransporter.sendMail(data);
+    const send = await emailService?.mailTransporter.sendMail({
+      from,
+      to,
+      subject: "Re: " + subject,
+      text,
+      inReplyTo,
+      references,
+    });
+
     console.info("E-mail enviado para: ", to);
     return send;
   },
