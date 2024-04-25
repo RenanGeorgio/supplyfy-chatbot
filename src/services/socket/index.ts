@@ -38,7 +38,7 @@ export const socketServiceController: ISocketServiceController = {
       if (webhook) {
         webhookTrigger({
           url: webhook.url,
-          event: "SERVICE_DISCONNECTED",
+          event: Events.SERVICE_DISCONNECTED,
           message: "socket desconectado",
           service: "socket",
         });
