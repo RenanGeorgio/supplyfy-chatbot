@@ -44,14 +44,14 @@ export const messageHandler = async (
                 let sendReadStatus = messageStatuses?.read;
                 sendReadStatus.message_id = data.messages[0].id;
 
-                const response = await msgStatusChange(sendReadStatus?.message_id);
+                const response = await msgStatusChange(sendReadStatus?.message_id, whatsappInstance.getApi());
 
                 console.log(response);
             } catch (error) {
                 console.log(error);
             }
         
-            data.messages.forEach(message => processMessage(message));
+            data.messages.forEach(message => processMessage(message, whatsappInstance));
         }
 
         res.sendStatus(200);

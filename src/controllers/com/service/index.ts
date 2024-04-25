@@ -1,10 +1,8 @@
 import { Response } from "express";
-import { whatsappCloudApi, instagramApi } from "../../../api";
+import { instagramApi } from "../../../api";
 import { MsgProps, Obj } from "../../../types";
 
-export const sendMsg = async (data: MsgProps) => {
-  const useWhatsappApi = whatsappCloudApi("v19.0", "+16315551234");
-
+export const sendMsg = async (data: MsgProps, useWhatsappApi: any) => {
   try {
     const response = await useWhatsappApi("/messages", {
       method: "POST",
@@ -26,7 +24,7 @@ export const sendMsg = async (data: MsgProps) => {
   }
 };
 
-export const msgStatusChange = async (messageId: string | number) => {
+export const msgStatusChange = async (messageId: string | number, wbApi: any) => {
   const data = {
     messaging_product: "whatsapp",
     status: 'read',
@@ -34,7 +32,7 @@ export const msgStatusChange = async (messageId: string | number) => {
     message_id: messageId
   }
 
-  const response = await sendMsg(data);
+  const response = await sendMsg(data, wbApi);
 
   return response;
 }

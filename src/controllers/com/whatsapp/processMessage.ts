@@ -36,7 +36,7 @@ function interactiveMessage(message: SendInterativeList | SendInterativeButton) 
   return;
 }
 
-export async function processMessage(message: MsgTypes) {
+export async function processMessage(message: MsgTypes, wb: any) {
   const customerPhoneNumber = message.from;
 
   try {
@@ -46,7 +46,7 @@ export async function processMessage(message: MsgTypes) {
       try {
         const answer = await processQuestion(textMessage);
 
-        const response = await sendTextMessage(answer);
+        const response = await sendTextMessage(answer, wb);
 
         /*let replyButtonMessage = interactiveReplyButton;
         replyButtonMessage.to = process.env.RECIPIENT_PHONE_NUMBER;
