@@ -28,7 +28,7 @@ router.post('/', async function (req: CustomRequest, res: Response, next: NextFu
             case 'whasapp':
                 wbMessageHandler(req, res);
                 break;
-            case 'whasapp':
+            case 'instagram':
                 igMessageHandler(req, res);
                 break;
             case 'facebook':

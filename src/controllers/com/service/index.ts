@@ -1,6 +1,6 @@
 import { Response } from "express";
-import { instagramApi } from "../../../api";
-import { FaceMsgData, MsgProps, Obj, SendFaceMsgBody } from "../../../types";
+import { facebookApi, instagramApi } from "../../../api";
+import { FaceMsgData, MsgProps, Obj } from "../../../types";
 
 export const sendMsg = async (data: MsgProps, useWhatsappApi: any) => {
   try {
@@ -115,25 +115,52 @@ export const setPageSubscriptions = async (pageId: string) => {
   }
 }
 
-export const sendFaceAction = (messageData: FaceMsgData) => {
-  request({
-    uri: 'https://graph.facebook.com/v2.6/me/messages',
-    qs: { access_token: PAGE_ACCESS_TOKEN },
-    method: 'POST',
-    json: messageData
+export const sendFaceAction = (message: FaceMsgData) => {
+  const useFacebookApi = facebookApi();
 
-  }, function (error: any, response: Response, body: SendFaceMsgBody) {
-    if (!error && response.statusCode == 200) {
-      const recipientId = body.recipient_id;
-      const messageId = body.message_id;
+  (async () => {
+    let response: Response | undefined;
+    try {
+      response = await useFacebookApi(`/me/messages?access_token=${process.env.ACCESS_TOKEN}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        data: JSON.stringify(message)
+      });
 
-      if (messageId) {
-        console.log("Successfully sent message with id %s to recipient %s", messageId, recipientId);
-      } else {
-        console.log("Successfully called Send API for recipient %s", recipientId);
+      if (response?.statusCode == 200) {
+        console.log("Success");
       }
-    } else {
-      console.error("Failed calling Send API", response.statusCode, response.statusMessage, body.error);
+    } catch (error: any) {
+      console.error("Failed calling Send API", response?.statusCode, response?.statusMessage, error);
     }
-  });
+  })();
+  
+  return;
+}
+
+export const repplyFaceAction = (comment_id: string, message: Obj) => {
+  const useFacebookApi = facebookApi();
+
+  (async () => {
+    let response: Response | undefined;
+    try {
+      response = await useFacebookApi(`/${comment_id}/private_replies?access_token=${process.env.ACCESS_TOKEN}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        data: JSON.stringify(message)
+      });
+
+      if (response) {
+        console.log("Success");
+      }
+    } catch (error: any) {
+      console.error("Failed calling Send API", response?.statusCode, response?.statusMessage, error);
+    }
+  })();
+  
+  return;
 }

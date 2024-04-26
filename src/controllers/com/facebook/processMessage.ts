@@ -1,17 +1,22 @@
+import { repplyFaceAction, sendFaceAction } from "../service";
 import { FaceMsgData } from "../../../types";
+import { processQuestion } from "../../../libs/trainModel";
 
 export function sendFacebookText(recipientId: string, messageText: string) {
+  const data = processQuestion(messageText);
+  
   const messageData: FaceMsgData = {
     recipient: {
       id: recipientId
     },
+    messaging_type: 'RESPONSE',
     message: {
-      text: messageText,
-      metadata: 'DEVELOPER_DEFINED_METADATA'
+      text: data,
+      metadata: process.env.FACEBOOK_METADATA
     }
   };
 
-  callSendAPI(messageData);
+  sendFaceAction(messageData);
 }
 
 export function processComments(comment) { // Processes incoming posts to page to get ID of the poster
@@ -30,14 +35,5 @@ export function processComments(comment) { // Processes incoming posts to page t
     "message": message_body
   };
 
-  request({
-      "uri": `https://graph.facebook.com/v2.12/${comment_id}/private_replies`,
-      "qs": {"access_token": access_token},
-      "method": "POST",
-      "json": request_body
-  }, (err, res) => {
-      if (!err) {
-          console.log("Private reply sent");
-      }
-  });
+  repplyFaceAction(comment_id, request_body);
 }
