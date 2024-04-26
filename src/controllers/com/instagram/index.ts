@@ -14,6 +14,8 @@ import {
   WebhookMsgSee, 
   WebhookMsgAccLink,
   WebhookMsgOptions } from "../../../types";
+import { handlePrivateReply } from "./instagramController";
+import { ConsumerData } from "./consumer";
 
 const appSecret = process.env.APP_SECRET;
 const xhub = new XHubSignature("SHA256", appSecret);
@@ -35,10 +37,7 @@ export const messageHandler = async (req: CustomRequest, res: Response) => {
       res.status(200).send("EVENT_RECEIVED");
 
       body.entry.forEach(async function (entry: EntryProps) {
-        if ("changes" in entry) {
-          // Evento de mudança em pagina
-          const receiveMessage = new Receive();
-
+        if ("changes" in entry) { // Evento de mudança em pagina
           // @ts-ignore
           if (entry?.changes[0]?.field === "comments") {
             const values: Obj = entry.changes[0];
@@ -50,7 +49,7 @@ export const messageHandler = async (req: CustomRequest, res: Response) => {
                 console.log("Got a comments event");
                 const commentId = change.comment_id;
 
-                return receiveMessage.handlePrivateReply("comment_id", change.id, commentId);
+                return handlePrivateReply("comment_id", change.id, commentId);
               }
             }
           }
@@ -78,17 +77,16 @@ export const messageHandler = async (req: CustomRequest, res: Response) => {
                 const senderIgsid: string | number = webhookEvent.sender.id;
 
                 if (!(senderIgsid in users)) { // Primeira vez que interage com o usuario
-                  const user: Consumer = {
+                  const user = new ConsumerData({
                     igsid: senderIgsid,
                     name: undefined,
                     profilePic: undefined,
-                  };
+                  });
 
                   let userProfile = await getUserProfile(senderIgsid.toString());
 
                   if (userProfile) {
-                    user.name = userProfile.name;
-                    user.profilePic = userProfile.profilePic;
+                    user.setProfile(userProfile.name, userProfile.profilePic);
 
                     if (typeof senderIgsid == 'string') {
                       users[parseInt(senderIgsid, 10)] = user;
