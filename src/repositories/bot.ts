@@ -33,9 +33,11 @@ export async function updateBot({ companyId, services }: Omit<IBotData, "socket"
         "services.telegram": services.telegram,
         "services.instagram": services.instagram,
         "services.email": services.email,
+        "services.facebook": services.facebook,
       }
     }, {
       new: true,
+      runValidators: true
     }).exec();
     
     return bot;

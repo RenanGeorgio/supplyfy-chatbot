@@ -4,7 +4,7 @@ import { io } from "socket.io-client";
 import { app } from "../server";
 
 const serverHttp = http.createServer(app);
-//const io = new Server(serverHttp);
+//const io = new Server(serverHttp)
 
 /*
 FEITO PELO SAMUEL

@@ -11,6 +11,6 @@ export const webhookTrigger = async ({ url, event, service, message }) => {
       },
     });
   } catch (error) {
-    console.error(error);
+    // console.error(error);
   }
 };

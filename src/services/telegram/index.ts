@@ -8,9 +8,6 @@ export const telegramServiceController: ITelegramServiceController = {
 
   async start(credentials, webhook) {
     const id = credentials._id?.toString()!;
-
-    const token = credentials.token;
-
     const bot = findBot(id, this.telegramServices);
 
     if (bot) {
@@ -22,7 +19,7 @@ export const telegramServiceController: ITelegramServiceController = {
       };
     }
 
-    const telegram = await telegramService(token, webhook);
+    const telegram = await telegramService(credentials, webhook);
 
     if (!telegram) {
       return {
@@ -48,7 +45,7 @@ export const telegramServiceController: ITelegramServiceController = {
 
   async stop(credentials) {
     const id = credentials._id?.toString()!;
-    const bot = findBot(id.toString(), this.telegramServices);
+    const bot = findBot(id, this.telegramServices);
 
     if (bot) {
       bot.telegramBot.stopPolling();
@@ -71,7 +68,7 @@ export const telegramServiceController: ITelegramServiceController = {
 
   async resume(credentials) {
     const id = credentials._id?.toString()!;
-    const bot = findBot(id.toString(), this.telegramServices);
+    const bot = findBot(id, this.telegramServices);
 
     if (bot) {
       bot.telegramBot.startPolling();

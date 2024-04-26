@@ -14,6 +14,7 @@ import typeDefs from "./core/schemas";
 //import * as webhookRouter from "./webhooks";
 import { sessionMiddleware, serviceSelectorMiddleware } from "./middlewares";
 import { CustomRequest } from "./types/types";
+import BullBoard from "./libs/BullBoard";
 
 const store = new RedisStore({ client: redisClient, prefix: "chatbot:" });
 
@@ -66,6 +67,10 @@ app.use(sessionMiddleware, serviceSelectorMiddleware);
 //app.use('/incoming', sessionMiddleware, serviceSelectorMiddleware, webhookRouter);
 
 app.use(routes);
+
+if(process.env.NODE_ENV === "development") {
+  BullBoard(routes);
+}
 
 // catch not defined routes
 app.use(function (req: CustomRequest, res: Response, next: NextFunction) {

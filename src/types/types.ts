@@ -138,9 +138,16 @@ export interface IInstagramServiceController {
   // resume: (id: string) => void;
 }
 
+export interface  IMessengerServiceController { // alterar os tipos
+  mensengerServices: any[];
+  start: (credentials: any) => any;
+  stop: (credentials: any) => any;
+  sendMessage: (id: string, messages: string[]) => any;
+}
+
 export interface  ISocketServiceController {
   sockets: ISocketService[];
-  start: (credentials: ISocketCredentials) => void;
+  start: (credentials: ISocketCredentials, webhook?: IWebhook) => void;
   // stop: (credentials: ISocketCredentials) => void;
 }
 
@@ -193,6 +200,7 @@ export interface IBotData {
     instagram?: IInstagramCredentials;
     telegram?: ITelegramCredentials;
     email?: IEmailCredentials;
+    facebook?: any;
   };
   socket: ISocketCredentials;
 }
@@ -218,6 +226,7 @@ export interface IWebhook {
 export enum Events {
   SERVICE_STARTED = "service_started",
   SERVICE_STOPPED = "service_stopped",
+  SERVICE_CONNECTED = "service_connected",
   SERVICE_DISCONNECTED = "service_disconnected",
   SERVICE_ERROR = "service_error",
   SERVICE_ALREADY_RUNNING = "service_already_running",

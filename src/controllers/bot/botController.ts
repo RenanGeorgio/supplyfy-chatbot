@@ -11,7 +11,7 @@ export const create = async (
 ) => {
   try {
     const { services, socket } = req.body;
-
+    console.log(services, socket);
     if (!services) {
       return res.status(400).json({ message: "Campos obrigatórios ausentes" });
     }
