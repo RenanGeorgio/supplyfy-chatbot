@@ -29,6 +29,11 @@ const telegramService = async (credentials: ITelegramCredentials, webhook: IWebh
 
   const bot = await botExist("services.telegram.token", token);
 
+  const kafkaMessage = {
+    topic: bot?.companyId + ".messages",
+    service: "telegram"
+  }
+
   const socketInfo = bot?.socket as IBotData["socket"];
   
   const socketService = findBot(
@@ -40,6 +45,7 @@ const telegramService = async (credentials: ITelegramCredentials, webhook: IWebh
 
   let clientId: string | null = null;
   let enableChatBot = false;
+  const botId = (await telegram.getMe()).id
 
   const kafkaMessage = {
     topic: "diamond.messages",
@@ -53,6 +59,7 @@ const telegramService = async (credentials: ITelegramCredentials, webhook: IWebh
     const chatId = msg.chat.id;
     const { first_name, last_name } = msg.chat;
     await produceMessage({ text: "/start", from: chatId.toString(), to: botId.toString(), ...kafkaMessage })
+
     const greetingsTextEmail = `Olá, seja bem-vindo! \n\nPara começar, por favor, informe seu e-mail.`
     await produceMessage({ text: greetingsTextEmail, from: botId.toString(), to: chatId.toString(), ...kafkaMessage })
     await telegram.sendMessage(
@@ -76,6 +83,7 @@ const telegramService = async (credentials: ITelegramCredentials, webhook: IWebh
         clientId = checkClient?._id.toString()!;
       }
       const greetingsText = `Olá, ${first_name}!`
+
       await produceMessage({ text: greetingsText, from: botId.toString(), to: chatId.toString(), ...kafkaMessage })
       await telegram.sendMessage(chatId, greetingsText);
       enableChatBot = true;
@@ -92,6 +100,8 @@ const telegramService = async (credentials: ITelegramCredentials, webhook: IWebh
       const waitText = `Aguarde um momento, por favor!`;
       await telegram.sendMessage(chatId, waitText);
       await produceMessage({ text: waitText, from: botId.toString(), to: chatId.toString(), ...kafkaMessage });
+
+      //telegram.removeListener("message", messageHandler);
       telegram.removeTextListener(/\/suporte/);
       telegram.removeListener("message", messageHandler);
       enableChatBot = false;

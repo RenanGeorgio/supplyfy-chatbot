@@ -11,8 +11,8 @@ services:
     command: >
       --include /usr/local/etc/redis/redis.conf
     volumes:
-      - "/home/thomasafg/Documentos/diamondbigger/supplyfy-chatbot/src/core/configs/data:/root/redis"
-      - "/home/thomasafg/Documentos/diamondbigger/supplyfy-chatbot/src/core/configs/redis.conf:/usr/local/etc/redis/redis.conf"
+      - "/src/core/configs/data:/root/redis"
+      - "/src/core/configs/redis.conf:/usr/local/etc/redis/redis.conf"
     networks:
       - mynetwork
 

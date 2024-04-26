@@ -1,7 +1,7 @@
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import bodyParser from "body-parser";
-import express, { ErrorRequestHandler, Response, Request, NextFunction } from "express";
+import express, { ErrorRequestHandler, Response, NextFunction } from "express";
 import createError from "http-errors";
 import session from "express-session";
 import RedisStore from "connect-redis";

@@ -1,5 +1,7 @@
 import Queue from "../../libs/Queue";
+import { produceMessage } from "../../core/kafka/producer";
 import { processQuestion } from "../../libs/trainModel";
+import { botExist } from "../../repositories/bot";
 import { IEmailCredentials, IWebhook } from "../../types";
 import { Events } from "../../types/types";
 import { webhookTrigger } from "../webhook/webhookTrigger";
@@ -62,6 +64,13 @@ const emailService = async (
     imapTls,
   });
 
+  const botInfo = await botExist("services.email.emailUsername", emailUsername);
+
+  const kafkaMessage = {
+    topic: botInfo?.companyId + ".messages",
+    service: "email"
+  }
+
   mailListener.on("server:connected", function () {
     mailListenerEventEmitter.emit("email:connected");
     console.log(`IMAP conectado: ${imapHost}`);
@@ -108,6 +117,7 @@ const emailService = async (
     const emailText = mail.text.split(/\r?\n/).join(" "); // adicionar algum tratamento para a mensagem
 
     (async () => {
+      await produceMessage({ text: emailText, from: mail.from.value[0].address, to: emailUsername, ...kafkaMessage })
       const responseMessage = await processQuestion(emailText);
       if (!responseMessage) return;
 
@@ -123,6 +133,7 @@ const emailService = async (
           id: credentials._id?.toString(),
         },
       });
+      await produceMessage({ text: responseMessage, from: emailUsername, to: mail.from.value[0].address, ...kafkaMessage })
     })();
   });
 

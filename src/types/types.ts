@@ -164,8 +164,8 @@ export interface IEmailCredentials {
   smtpHost?: string;
   smtpPort?: number;
   smtpSecure?: boolean;
-  emailUsername?: string;
-  emailPassword?: string;
+  emailUsername: string;
+  emailPassword: string;
   _id: string;
 }
 
