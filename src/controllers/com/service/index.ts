@@ -1,6 +1,6 @@
 import { Response } from "express";
 import { instagramApi } from "../../../api";
-import { MsgProps, Obj } from "../../../types";
+import { FaceMsgData, MsgProps, Obj, SendFaceMsgBody } from "../../../types";
 
 export const sendMsg = async (data: MsgProps, useWhatsappApi: any) => {
   try {
@@ -113,4 +113,27 @@ export const setPageSubscriptions = async (pageId: string) => {
   } else {
     console.warn(`Error setting page subscriptions`, response);
   }
+}
+
+export const sendFaceAction = (messageData: FaceMsgData) => {
+  request({
+    uri: 'https://graph.facebook.com/v2.6/me/messages',
+    qs: { access_token: PAGE_ACCESS_TOKEN },
+    method: 'POST',
+    json: messageData
+
+  }, function (error: any, response: Response, body: SendFaceMsgBody) {
+    if (!error && response.statusCode == 200) {
+      const recipientId = body.recipient_id;
+      const messageId = body.message_id;
+
+      if (messageId) {
+        console.log("Successfully sent message with id %s to recipient %s", messageId, recipientId);
+      } else {
+        console.log("Successfully called Send API for recipient %s", recipientId);
+      }
+    } else {
+      console.error("Failed calling Send API", response.statusCode, response.statusMessage, body.error);
+    }
+  });
 }
