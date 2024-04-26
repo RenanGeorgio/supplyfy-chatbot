@@ -1,7 +1,10 @@
 import http from "http";
+import { io } from "socket.io-client";
+//import { Server } from "socket.io";
 import { app } from "../server";
 
 const serverHttp = http.createServer(app);
+//const io = new Server(serverHttp)
 
 /*
 FEITO PELO SAMUEL
