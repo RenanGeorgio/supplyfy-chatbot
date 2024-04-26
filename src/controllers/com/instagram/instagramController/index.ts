@@ -1,4 +1,5 @@
 import { processQuestion } from "../../../../libs/trainModel";
+import { Obj } from "../../../../types";
 import { callSendApi, getUserComment } from "../../service";
 
 export const handlePrivateReply = (type: string, object_id: string, commentId: string) => {
@@ -19,6 +20,21 @@ export const handlePrivateReply = (type: string, object_id: string, commentId: s
       await callSendApi(requestBody);
     }
   })();
+
+  return;
+}
+
+export const sendMessage = (response: Obj, delay = 0) => {
+  if ("delay" in response) {
+    delay = response["delay"];
+    delete response["delay"];
+  }
+
+  const requestBody = response;
+
+  setTimeout(async () => {
+    await callSendApi(requestBody)
+  }, delay);
 
   return;
 }

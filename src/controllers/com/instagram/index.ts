@@ -1,6 +1,6 @@
 import { Response } from "express";
 import XHubSignature from "x-hub-signature";
-import Receive from "./instagramController/receive";
+import Receive from "./receive";
 import { getUserProfile } from "../service";
 import { receivedAuthentication, receivedDeliveryConfirmation, receivedMessageRead, receivedAccountLink } from "./instagramController/received";
 import { 

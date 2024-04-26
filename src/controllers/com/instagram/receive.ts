@@ -1,6 +1,5 @@
-import { processQuestion } from "../../../../libs/trainModel";
-import { callSendApi } from "../../service";
-import Response, { processMessage } from "../processMessage";
+import { processQuestion } from "../../../libs/trainModel";
+import Response, { processMessage } from "./processMessage";
 import { 
   Consumer, 
   WebhookEventBase, 
@@ -9,7 +8,8 @@ import {
   Attachment, 
   WebhookMsgPostbacks, 
   WebhookMsgReferral, 
-  WebhookMsgs } from "../../../../types";
+  WebhookMsgs } from "../../../types";
+import { sendMessage } from "./instagramController";
 
 const Receive = class<ReceiveProps> {
   user: Consumer;
@@ -41,11 +41,11 @@ const Receive = class<ReceiveProps> {
     if (Array.isArray(responses)) {
       let delay = 0;
       for (let response of responses) {
-        this.sendMessage(response, delay * 2000);
+        sendMessage(response, delay * 2000);
         delay++;
       }
     } else {
-      this.sendMessage(responses);
+      sendMessage(responses);
     }
   }
 
@@ -135,19 +135,6 @@ const Receive = class<ReceiveProps> {
     let response;
 
     return response;
-  }
-
-  sendMessage(response: Obj, delay = 0) {
-    if ("delay" in response) {
-      delay = response["delay"];
-      delete response["delay"];
-    }
-
-    const requestBody = response;
-
-    setTimeout(async () => {
-      await callSendApi(requestBody)
-    }, delay);
   }
 }
 
