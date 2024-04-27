@@ -50,7 +50,7 @@ import { listAllBots } from "../repositories/bot";
 const servicesActions = {
   telegram: telegramServiceController,
   email: emailServiceController,
-  instagram: instagramServiceController,
+  instagramWeb: instagramServiceController,
   socket: socketServiceController,
   facebook: messengerServiceController,
   // whastapp
