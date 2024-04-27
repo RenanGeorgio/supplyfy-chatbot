@@ -1,11 +1,8 @@
 import { Response, NextFunction } from "express";
-import { CustomRequest } from "../../types";
-// import { handleMessages } from "../../services/facebook/facebookService";
 import { userExist } from "../../repositories/user";
-import { messengerServiceController } from "../../services/facebook";
-import { findBot } from "../../helpers/findBot";
 import { botExist } from "../../repositories/bot";
 import Queue from "../../libs/Queue";
+import { CustomRequest } from "../../types";
 
 export const verifyWebhook = async (
   req: CustomRequest,
@@ -14,6 +11,7 @@ export const verifyWebhook = async (
 ) => {
   try {
     const { userId } = req.params;
+
     const user = await userExist(userId);
 
     if (!user) {
@@ -58,13 +56,14 @@ export const eventsHandler = async (
 ) => {
   try {
     console.log(req.body);
+
     if (req.body.object !== "page") {
       res.sendStatus(404);
     }
 
     const id = req.body.entry[0].id;
  
-   Queue.add("MessengerService", { id, messages: req.body.entry });
+    Queue.add("MessengerService", { id, messages: req.body.entry });
 
     res.sendStatus(200);
   } catch (error: any) {
