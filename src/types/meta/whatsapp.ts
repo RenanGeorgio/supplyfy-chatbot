@@ -13,6 +13,7 @@ interface DataProps {
     recipient_type?: string;
     preview_url?: boolean;
     to: string | number;
+    from?: string | number;
     type: "text";
 };
 

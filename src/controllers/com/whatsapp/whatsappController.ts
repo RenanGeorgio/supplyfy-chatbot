@@ -1,4 +1,5 @@
 import { Response, NextFunction } from "express";
+import { createReadStream } from "fs";
 import {
   CustomRequest,
   SendText,
@@ -9,6 +10,7 @@ import {
   SendDoc
 } from "../../../types";
 import { msgStatusChange, sendMsg } from "../service";
+import { whatsappCloudApi } from "../../../api";
 
 export const markMessageAsRead = async (
     req: CustomRequest,
@@ -17,10 +19,12 @@ export const markMessageAsRead = async (
 ) => {
     try {
         const { messageId } = req.body;
+        
+        const useWhatsappApi = whatsappCloudApi("v19.0", req.body.entry[0].changes[0].value.metadata.phone_number_id);
 
-        const response = await msgStatusChange(messageId);
+        const response = await msgStatusChange(messageId, useWhatsappApi);
 
-        if (response.status === 200) {
+        if (response?.status === 200) {
             return res.status(200).send(response);
         }
 
@@ -30,12 +34,12 @@ export const markMessageAsRead = async (
     }           
 };
 
-export const sendTextMessage = async (messageText: string) => {
+export const sendTextMessage = async (messageText: string, wb: any) => {
     try {
         const data: SendText = {
-            messaging_product: this.messagingProduct,
+            messaging_product: "whatsapp",
             recipient_type: "individual",
-            to: this.recipientPhoneNumber,
+            to: wb.getRecipientPhoneNumber(),
             type: "text",
             text: {
                 preview_url: false,
@@ -43,7 +47,7 @@ export const sendTextMessage = async (messageText: string) => {
             }
         };
 
-        const response = await sendMsg(data);
+        const response = await sendMsg(data, wb.getApi());
 
         return response;
     } catch (error) {
@@ -59,11 +63,13 @@ export const sendButtonsMessage = async (
     try {
         const { messageText, buttonsList } = req.body;
 
+        const useWhatsappApi = whatsappCloudApi("v19.0", req.body.entry[0].changes[0].value.metadata.phone_number_id);
+
         const data: SendInterativeButton = {
-          messaging_product: this.messagingProduct,
+          messaging_product: "whatsapp",
           recipient_type: "individual",
-          to: this.recipientPhoneNumber,
-          type: "interactive",
+          to: req.body.entry[0].changes[0].value.messages[0],
+          type: "text",
           interactive: {
             type: "button",
             body: {
@@ -81,9 +87,9 @@ export const sendButtonsMessage = async (
           },
         };
 
-        const response = await sendMsg(data);
+        const response = await sendMsg(data, useWhatsappApi);
 
-        if (response.status === 200) {
+        if (response?.status === 200) {
             return res.status(200).send(response);
         }
 
@@ -101,16 +107,18 @@ export const sendContacts = async (
     try {
         const { contactsList } = req.body;
 
+        const useWhatsappApi = whatsappCloudApi("v19.0", req.body.entry[0].changes[0].value.metadata.phone_number_id);
+
         const data: SendContacts = {
-          messaging_product: this.messagingProduct,
-          to: this.recipientPhoneNumber,
-          type: "contacts",
+          messaging_product: "whatsapp",
+          to: req.body.entry[0].changes[0].value.messages[0],
+          type: "text",
           contacts: contactsList,
         };
 
-        const response = await sendMsg(data);
+        const response = await sendMsg(data, useWhatsappApi);
 
-        if (response.status === 200) {
+        if (response?.status === 200) {
             return res.status(200).send(response);
         }
 
@@ -128,11 +136,13 @@ export const sendRadioButtons = async (
     try {
         const { headerText, bodyText, footerText, sectionsList } = req.body;
 
+        const useWhatsappApi = whatsappCloudApi("v19.0", req.body.entry[0].changes[0].value.metadata.phone_number_id);
+
         const data: SendInterativeList = {
-          messaging_product: this.messagingProduct,
+          messaging_product: "whatsapp",
           recipient_type: "individual",
-          to: this.recipientPhoneNumber,
-          type: "interactive",
+          to: req.body.entry[0].changes[0].value.messages[0],
+          type: "text",
           interactive: {
             type: "list",
             header: {
@@ -152,9 +162,9 @@ export const sendRadioButtons = async (
           },
         };
 
-        const response = await sendMsg(data);
+        const response = await sendMsg(data, useWhatsappApi);
 
-        if (response.status === 200) {
+        if (response?.status === 200) {
             return res.status(200).send(response);
         }
 
@@ -172,20 +182,22 @@ export const sendImageByLink = async (
     try {
         const { imageLink, caption } = req.body;
 
+        const useWhatsappApi = whatsappCloudApi("v19.0", req.body.entry[0].changes[0].value.metadata.phone_number_id);
+
         const data: SendImg = {
-          messaging_product: this.messagingProduct,
+          messaging_product: "whatsapp",
           recipient_type: "individual",
-          to: this.recipientPhoneNumber,
-          type: "image",
+          to: req.body.entry[0].changes[0].value.messages[0],
+          type: "text",
           image: {
             link: imageLink,
             caption: caption,
           },
         };
 
-        const response = await sendMsg(data);
+        const response = await sendMsg(data, useWhatsappApi);
 
-        if (response.status === 200) {
+        if (response?.status === 200) {
             return res.status(200).send(response);
         }
 
@@ -196,34 +208,28 @@ export const sendImageByLink = async (
 };
 
 export const uploadMedia = async (
-    req: CustomRequest,
-    res: Response,
-    next: NextFunction
+    filePath: string,
+    useWhatsappApi: any
 ) => {
     try {
-        const { filePath } = req.body;
-
         const data = new FormData();
-        data.append("messaging_product", this.messagingProduct);
-        data.append("file", fs.createReadStream(filePath));
+        data.append("messaging_product", "whatsapp");
+        data.append("file", createReadStream(filePath));
 
-        const response = await whatsappCloudAp("/messages", {
+        const response = await useWhatsappApi("/messages", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${this.bearerToken}`,
+                "Authorization": `Bearer ${process.env.ACCESS_TOKEN}`,
+                // @ts-ignore
                 ...data.getHeaders()
             },
             data: data
         });
 
-        if (response.status === 200) {
-            return res.status(200).send({ message: response.data.id });
-        }
-
-        return res.status(501).send({ message: "Server problem" });
+        return response;
     } catch (error) {
-        next(error);
+        console.log(error);
     }           
 };
 
@@ -235,13 +241,15 @@ export const sendDocumentMessage = async (
     try {
         const { documentPath, caption } = req.body;
 
-        const docId = await this.uploadMedia(documentPath);
+        const useWhatsappApi = whatsappCloudApi("v19.0", req.body.entry[0].changes[0].value.metadata.phone_number_id);
+
+        const docId: any = await uploadMedia(documentPath, useWhatsappApi);
 
         const data: SendDoc = {
-          messaging_product: this.messagingProduct,
+          messaging_product: "whatsapp",
           recipient_type: "individual",
-          to: this.recipientPhoneNumber,
-          type: "document",
+          to: req.body.entry[0].changes[0].value.messages[0],
+          type: "text",
           document: {
             caption: caption,
             filename: documentPath.split("./")[1],
@@ -249,9 +257,9 @@ export const sendDocumentMessage = async (
           },
         };
 
-        const response = await sendMsg(data);
+        const response = await sendMsg(data, useWhatsappApi);
 
-        if (response.status === 200) {
+        if (response?.status === 200) {
             return res.status(200).send(response);
         }
 

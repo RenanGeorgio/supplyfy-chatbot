@@ -22,6 +22,15 @@ import {
   SendDoc,
   MsgStatus
 } from "./whatsapp";
+import { 
+  FaceMsgData, 
+  SendFaceMsgBody, 
+  FaceMessagingEvent, 
+  PageEntry, 
+  FaceMsgSender, 
+  FaceMsgRecipient, 
+  FaceMessage 
+} from "./facebook";
 
 export {
   WebhookEventType,
@@ -43,5 +52,12 @@ export {
   SendContacts,
   SendImg,
   SendDoc,
-  MsgStatus
+  MsgStatus,
+  FaceMsgData, 
+  SendFaceMsgBody, 
+  FaceMessagingEvent, 
+  PageEntry, 
+  FaceMsgSender, 
+  FaceMsgRecipient, 
+  FaceMessage
 }

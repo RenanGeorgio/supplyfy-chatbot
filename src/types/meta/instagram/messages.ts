@@ -73,23 +73,21 @@ export type WebhookMsgs = {
 
 export type WebhookMsgPostbacks = {
     field: any;
-    value: {
-        sender: {
-          user_ref: string;
-        };
-        recipient: {
-          id: string;
-        };
-        timestamp: string | number;
-        postback: {
-          mid: string | number;
-          title: string;
-          payload?: any;
-          referral?: {
-            ref: any;
-            source: string;
-            type: 'OPEN_THREAD' | string;
-          };
+    sender: {
+        user_ref: string;
+    };
+    recipient: {
+        id: string;
+    };
+    timestamp: string | number;
+    postback: {
+        mid: string | number;
+        title: string;
+        payload?: any;
+        referral?: {
+        ref: any;
+        source: string;
+        type: 'OPEN_THREAD' | string;
         };
     };
 }

@@ -1,6 +1,5 @@
 import { NextFunction, Response } from "express";
 import { CustomRequest } from "../types";
-// import { instagramService, telegramService, emailService } from "../services";
 
 const serviceSelectorMiddleware = async (req: CustomRequest, res: Response, next: NextFunction) => {
     const path = req.originalUrl;
@@ -20,21 +19,24 @@ const serviceSelectorMiddleware = async (req: CustomRequest, res: Response, next
                 case 'whatsapp':
                     next();
                     break;
+                case 'whatsappWeb':
+                    next();
+                    break;
                 case 'instagram':
-                    //instagramService(); OLD
+                    next();
+                    break;
+                case 'instagramWeb':
                     next();
                     break;
                 case 'facebook':
                     next();
                     break;
                 case 'email':
-                    //emailService(); OLD
                     next();
                     break;
                 case 'telegram':
-		            //telegramService(); OLD
                     next();
-		    break;
+		            break;
                 case 'cadastro':
                     next();
                     break;

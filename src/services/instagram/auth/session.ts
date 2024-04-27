@@ -1,8 +1,6 @@
 import { readFileSync, writeFileSync } from "fs";
 import { IgApiClient } from "instagram-private-api";
 import { withRealtime, IgApiClientRealtime } from "instagram_mqtt";
-import { customSession } from "../../../server";
-import { redisClient } from "../../../core/redis";
 import { Events } from "../../../types/types";
 
 const ERROR_MESSAGES = {
@@ -16,6 +14,7 @@ const ERROR_MESSAGES = {
 // todo: tratar o erro "RequestError: Error: connect ETIMEDOUT 157.240.222.63:443", causando crash no servidor
 const instagramLogin = async ({ username, password }) => {
   const IG_SESSION_KEY = `${username}_session.json`;
+  // @ts-ignore
   const ig: IgApiClientRealtime = withRealtime(new IgApiClient());
 
   let should_login = true;

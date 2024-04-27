@@ -1,7 +1,7 @@
-import sendTextMessage from "../data/textMessage";
-import { WebhookMsgOptions } from "../../../../../types";
+import { sendFacebookText } from "../processMessage";
+import { FaceMessagingEvent } from "../../../../types";
 
-export default function receivedAuthentication(event: WebhookMsgOptions) {
+export default function receivedAuthentication(event: FaceMessagingEvent) {
   const senderID = event.sender.id;
   const recipientID = event.recipient.id;
   const timeOfAuth = event.timestamp;
@@ -14,7 +14,6 @@ export default function receivedAuthentication(event: WebhookMsgOptions) {
       timeOfAuth
     );
 
-
-    sendTextMessage(senderID, "Authentication successful");
+    sendFacebookText(senderID, "Authentication successful");
   }
 }

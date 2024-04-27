@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { app } from "../../server";
 
 app.post("/outbound_message", (requset, response) => {

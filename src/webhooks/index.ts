@@ -1,6 +1,7 @@
 import { Response, NextFunction, Router } from "express";
-// import { messageHandler } from "../controllers/com/whatsapp/webhook";
+import { messageHandler as wbMessageHandler } from "../controllers/com/whatsapp/webhook";
 import { eventsHandler } from "../controllers/com/facebook";
+import { messageHandler as igMessageHandler } from "../controllers/com/instagram";
 import { CustomRequest } from "../types";
 
 const verificationToken = process.env.WEBHOOK_VERIFICATION_TOKEN;
@@ -19,16 +20,20 @@ router.get('/', function (req: CustomRequest, res: Response, next: NextFunction)
     }
 });
 
-router.post('/', function (req: CustomRequest, res: Response, next: NextFunction) {
+router.post('/', async function (req: CustomRequest, res: Response, next: NextFunction) {
     try {
         const service = req.session.service || null;
 
         switch (service) {
             case 'whasapp':
-                // messageHandler(req, res);
+                wbMessageHandler(req, res);
+                break;
+            case 'instagram':
+                igMessageHandler(req, res);
                 break;
             case 'facebook':
                 eventsHandler(req, res, next);
+                break;
             default:
                 res.status(404).json({ error: 'Service not defined' });
                 break;
