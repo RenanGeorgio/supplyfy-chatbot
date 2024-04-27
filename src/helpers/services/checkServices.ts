@@ -5,6 +5,7 @@ const STATUS_MESSAGES = {
   TELEGRAM_EXISTS: "Bot do telegram já existe",
   EMAIL_EXISTS: "Bot do e-mail já existe",
   INSTAGRAM_EXISTS: "Bot do instagram já existe",
+  FACEBOOK_EXISTS: "Bot do facebook já existe",
   BOT_NOT_INITIALIZED: "O bot não foi inicializaço",
 };
 
@@ -16,6 +17,7 @@ export const checkServices = async (
     telegram: STATUS_MESSAGES.TELEGRAM_EXISTS,
     email: STATUS_MESSAGES.EMAIL_EXISTS,
     instagram: STATUS_MESSAGES.INSTAGRAM_EXISTS,
+    facebook: STATUS_MESSAGES.FACEBOOK_EXISTS,
   };
 
   for (const service in services) {
