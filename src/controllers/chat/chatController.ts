@@ -1,6 +1,6 @@
 import { Response, NextFunction } from "express";
-import { CustomRequest } from "../../helpers/customRequest";
-import { processQuestion } from "../../helpers/trainModel";
+import { CustomRequest } from "../../types";
+import { processQuestion } from "../../libs/trainModel";
 import Message from "../../models/chat/messageModel";
 import User from "../../models/user/User";
 
@@ -18,6 +18,7 @@ export const create = async (
             return res.status(403).send({ message: "Unauthorized" });
         }
         const { chat, text, date } = req.body;  
+
         const response = await processQuestion(text);
 
         const message = new Message({
@@ -27,6 +28,7 @@ export const create = async (
             answer: response,
             date: date
         });
+
         await message.save();
 
         return res.status(200).send(message);
@@ -49,7 +51,9 @@ export const list = async (
             return res.status(403).send({ message: "Unauthorized" });
         }
         const { id } = req.params;
+
         const messages = await Message.find({ chatId: id });
+
         return res.status(200).send(messages);
     } catch (error) {
         next(error);

@@ -1,10 +1,10 @@
-import { OpenAI } from "openai";
+// import { OpenAI } from "openai";
 
-const openAI = new OpenAI({
-  apiKey: process.env.OPENAIAPI,
-});
+// const openAI = new OpenAI({
+//   apiKey: process.env.OPENAIAPI,
+// });
 
-const openaiApi = openAI;
+// const openaiApi = openAI;
 
-export default openaiApi;
+// export default openaiApi;
 

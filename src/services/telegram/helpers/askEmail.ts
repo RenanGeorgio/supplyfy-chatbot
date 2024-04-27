@@ -9,6 +9,7 @@ export const askEmail = async (
   msg: TelegramBot.Message
 ) => {
   (async () => {
+    const botId = (await telegram.getMe()).id
     const prompt = await telegram.sendMessage(
       msg.chat.id,
       "Informe seu e-mail:",
