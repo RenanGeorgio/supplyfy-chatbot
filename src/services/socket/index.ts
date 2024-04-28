@@ -1,7 +1,7 @@
 import { findBot } from "../../helpers/findBot";
 import { ISocketServiceController } from "../../types";
 import { Events } from "../../types/types";
-import { webhookTrigger } from "../webhook/webhookTrigger";
+import { webhookTrigger } from "../../webhooks/custom/webhookTrigger";
 import { socketService } from "./socketService";
 
 export const socketServiceController: ISocketServiceController = {

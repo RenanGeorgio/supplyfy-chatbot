@@ -1,17 +1,18 @@
-import { Response } from "express";
+import { NextFunction, Response } from "express";
 import XHubSignature from "x-hub-signature";
 import { CustomRequest, statUses } from "../../../types";
 import { messageStatuses } from "../../../helpers/messageStatuses";
 import { processMessage } from "./processMessage";
 import { msgStatusChange } from "../service";
-import { WhatsappService } from "../../../services";
+import WhatsappService from "../../../services/whatsapp";
 
 const appSecret = process.env.APP_SECRET;
 const xhub = new XHubSignature("SHA256", appSecret);
 
 export const messageHandler = async (
     req: CustomRequest,
-    res: Response
+    res: Response,
+    next: NextFunction
 ) => {
     try {
         // Calcula o valor da assinatura x-hub para comparar com o valor no request header

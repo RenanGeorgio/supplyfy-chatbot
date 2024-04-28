@@ -4,7 +4,7 @@ import { processQuestion } from "../../libs/trainModel";
 import { botExist } from "../../repositories/bot";
 import { IEmailCredentials, IWebhook } from "../../types";
 import { Events } from "../../types/types";
-import { webhookTrigger } from "../webhook/webhookTrigger";
+import { webhookTrigger } from "../../webhooks/custom/webhookTrigger";
 import emailListener from "./lib/listener";
 import emailTransporter from "./lib/transporter";
 import EventEmitter from "node:events";

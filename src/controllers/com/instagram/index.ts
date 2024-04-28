@@ -1,4 +1,4 @@
-import { Response } from "express";
+import { NextFunction, Response } from "express";
 import XHubSignature from "x-hub-signature";
 import Receive from "./receive";
 import { getUserProfile } from "../service";
@@ -22,7 +22,11 @@ const xhub = new XHubSignature("SHA256", appSecret);
 
 let users: Consumer[] = []; // TO-DO: jogar isso para o Redis
 
-export const messageHandler = async (req: CustomRequest, res: Response) => {
+export const messageHandler = async (
+  req: CustomRequest, 
+  res: Response,
+  next: NextFunction
+) => {
   // Calcula o valor da assinatura x-hub para comparar com o valor no request header
   const calcXHubSignature = xhub.sign(req?.rawBody).toLowerCase();
 

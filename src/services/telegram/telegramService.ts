@@ -9,7 +9,7 @@ import {
 import { chatOriginExist, createChat } from "../../repositories/chat";
 import { ignoredMessages } from "./helpers/ignoredMessages";
 import { createMessage } from "../../repositories/message";
-import { webhookTrigger } from "../webhook/webhookTrigger";
+import { webhookTrigger } from "../../webhooks/custom/webhookTrigger";
 import { Events, IBotData, ITelegramCredentials, ITelegramService, IWebhook } from "../../types/types";
 import { servicesActions } from "..";
 import { findBot } from "../../helpers/findBot";
