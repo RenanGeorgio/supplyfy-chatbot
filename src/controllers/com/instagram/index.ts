@@ -112,6 +112,6 @@ export const messageHandler = async (
       res.status(404).send({ message: "Unrecognized POST to webhook" });
     }
   } catch (error: any) {
-    return res.status(500).send({ message: error.message });
+    next(error);
   }
 };

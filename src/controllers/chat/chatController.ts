@@ -13,10 +13,13 @@ export const create = async (
         if (!req.user) {
             return res.status(403).send({ message: "Unauthorized" });
         }
+
         const user = await User.findById(req.user.sub);
+
         if (!user) {
             return res.status(403).send({ message: "Unauthorized" });
         }
+
         const { chat, text, date } = req.body;  
 
         const response = await processQuestion(text);
@@ -46,10 +49,13 @@ export const list = async (
         if (!req.user) {
             return res.status(403).send({ message: "Unauthorized" });
         }
+
         const user = await User.findById(req.user.sub);
+
         if (!user) {
             return res.status(403).send({ message: "Unauthorized" });
         }
+        
         const { id } = req.params;
 
         const messages = await Message.find({ chatId: id });

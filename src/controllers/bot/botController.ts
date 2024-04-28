@@ -11,7 +11,7 @@ export const create = async (
 ) => {
   try {
     const { services, socket } = req.body;
-    console.log(services, socket);
+    
     if (!services) {
       return res.status(400).json({ message: "Campos obrigatórios ausentes" });
     }
@@ -39,6 +39,7 @@ export const create = async (
 
     if (bot && "success" in bot && !bot.success) {
       const { message, error } = bot;
+      
       throw new Error(`${message}, ${error}`);
     }
 

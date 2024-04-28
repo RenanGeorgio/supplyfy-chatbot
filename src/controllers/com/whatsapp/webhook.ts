@@ -57,6 +57,6 @@ export const messageHandler = async (
 
         res.sendStatus(200);
     } catch (error: any) {
-        return res.status(500).send({ message: error.message });
+        next(error);
     }           
 };
