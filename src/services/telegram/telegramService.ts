@@ -45,14 +45,7 @@ const telegramService = async (credentials: ITelegramCredentials, webhook: IWebh
 
   let clientId: string | null = null;
   let enableChatBot = false;
-  const botId = (await telegram.getMe()).id
-
-  const kafkaMessage = {
-    topic: "diamond.messages",
-    service: "telegram"
-  }
-
-  const botId = (await telegram.getMe()).id
+  const botId = (await telegram.getMe()).id;
 
   telegram.onText(/\/start/, async (msg) => {
     chatStarted = true;
