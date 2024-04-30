@@ -84,6 +84,7 @@ export async function processMessage(event: WebhookEventBase, receive: any) {
   } else {
     // @ts-ignore
     if (event?.message != undefined) {
+      // @ts-ignore
       const message: MsgEventProp = event?.message;
 
       if ("is_echo" in message) {

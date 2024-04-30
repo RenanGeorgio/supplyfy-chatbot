@@ -9,7 +9,7 @@ import {
 import { chatOriginExist, createChat } from "../../repositories/chat";
 import { ignoredMessages } from "./helpers/ignoredMessages";
 import { createMessage } from "../../repositories/message";
-import { webhookTrigger } from "../webhook/webhookTrigger";
+import { webhookTrigger } from "../../webhooks/custom/webhookTrigger";
 import { Events, IBotData, ITelegramCredentials, ITelegramService, IWebhook } from "../../types/types";
 import { servicesActions } from "..";
 import { findBot } from "../../helpers/findBot";
@@ -45,14 +45,7 @@ const telegramService = async (credentials: ITelegramCredentials, webhook: IWebh
 
   let clientId: string | null = null;
   let enableChatBot = false;
-  const botId = (await telegram.getMe()).id
-
-  const kafkaMessage = {
-    topic: "diamond.messages",
-    service: "telegram"
-  }
-
-  const botId = (await telegram.getMe()).id
+  const botId = (await telegram.getMe()).id;
 
   telegram.onText(/\/start/, async (msg) => {
     chatStarted = true;

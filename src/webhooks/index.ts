@@ -21,22 +21,23 @@ router.get('/', function (req: CustomRequest, res: Response, next: NextFunction)
 });
 
 router.post('/', async function (req: CustomRequest, res: Response, next: NextFunction) {
+    const data = req.body;
+    
     try {
-        const service = req.session.service || null;
+        if (data != undefined) {
+            next();
+        }
 
-        switch (service) {
-            case 'whasapp':
-                wbMessageHandler(req, res);
-                break;
-            case 'instagram':
-                igMessageHandler(req, res);
-                break;
-            case 'facebook':
-                eventsHandler(req, res, next);
-                break;
-            default:
+        if (data.object === "page") {
+            eventsHandler(req, res, next);
+        } else if (data.object === "instagram") {
+            igMessageHandler(req, res, next);
+        } else {
+            if ((data.object != undefined) || (data.entry != undefined)) {
+                wbMessageHandler(req, res, next);
+            } else {
                 res.status(404).json({ error: 'Service not defined' });
-                break;
+            }
         }
 
         res.sendStatus(200);
