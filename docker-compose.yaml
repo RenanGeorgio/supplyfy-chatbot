@@ -16,13 +16,13 @@ services:
     networks:
       - mynetwork
 
-  chatbot:
+  supplyfy-chatbot:
     build: 
       context: .
       args:
         ENV: ${ENV}
-    hostname: chatbot
-    container_name: chatbot
+    hostname: supplyfy-chatbot
+    container_name: supplyfy-chatbot
     restart: always
     depends_on:
       - redis
