@@ -96,7 +96,7 @@ export async function processMessage(event: WebhookEventBase, receive: any) {
       } else if (("text" in message) && (message?.text != undefined)) {
         const messageText: string | Obj = message.text;
         
-        switch (messageText.replace(/[^\w\s]/gi, '').trim().toLowerCase()) {
+        /*switch (messageText.replace(/[^\w\s]/gi, '').trim().toLowerCase()) {
           case 'image':
             responses = sendImageMessage(receive.user.igsid, process.env.SERVER_URL + "/assets/rift.png");
             break;
@@ -140,7 +140,10 @@ export async function processMessage(event: WebhookEventBase, receive: any) {
             const data = receive.handleTextMessage(messageText);
             responses = sendTextMessage(receive.user.igsid, data.message);
             break;
-        }
+        }*/
+        
+        const data = receive.handleTextMessage(messageText);
+        responses = sendTextMessage(receive.user.igsid, data.message);
       } else {
         responses = null
       }

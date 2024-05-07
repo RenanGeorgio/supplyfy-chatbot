@@ -1,5 +1,5 @@
 import { readFileSync, writeFileSync } from "fs";
-import { IgApiClient } from "instagram-private-api";
+//import { IgApiClient } from "instagram-private-api";
 import { withRealtime, IgApiClientRealtime } from "instagram_mqtt";
 import { Events } from "../../../types/types";
 
@@ -15,7 +15,7 @@ const ERROR_MESSAGES = {
 const instagramLogin = async ({ username, password }) => {
   const IG_SESSION_KEY = `${username}_session.json`;
   // @ts-ignore
-  const ig: IgApiClientRealtime = withRealtime(new IgApiClient());
+  const ig: IgApiClientRealtime = withRealtime({});
 
   let should_login = true;
   let serialized_session: string | null = null;
