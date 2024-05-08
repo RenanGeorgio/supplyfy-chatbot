@@ -12,7 +12,6 @@ RUN apk add dumb-init git
 WORKDIR /usr/src/app
 COPY --chown=node:node --from=build /usr/src/app/build /usr/src/app/build
 COPY --chown=node:node package.json /usr/src/app/
-COPY --chown=node:node package-lock.json /usr/src/app/
 COPY --chown=node:node tsconfig.json /usr/src/app/
 COPY --chown=node:node declarations.d.ts /usr/src/app/
 RUN yarn install --production
