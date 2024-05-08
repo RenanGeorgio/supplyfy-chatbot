@@ -3,13 +3,19 @@ import { messageHandler as wbMessageHandler } from "../controllers/com/whatsapp/
 import { eventsHandler } from "../controllers/com/facebook";
 import { messageHandler as igMessageHandler } from "../controllers/com/instagram";
 import { CustomRequest } from "../types";
-
-const verificationToken = process.env.WEBHOOK_VERIFICATION_TOKEN;
  
 const router = Router();
 
 router.get('/', function (req: CustomRequest, res: Response, next: NextFunction) {
+    let verificationToken;
+
     try {
+        if (process.env.WEBHOOK_VERIFICATION_TOKEN) {
+            verificationToken = process.env.WEBHOOK_VERIFICATION_TOKEN;
+        } else {
+            verificationToken = null;
+        }
+        
         if (req.query['hub.mode'] == 'subscribe' && req.query['hub.verify_token'] == verificationToken) {
             res.status(200).send(req.query['hub.challenge']);
         } else {
