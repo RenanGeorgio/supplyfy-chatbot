@@ -3,18 +3,18 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import express, { ErrorRequestHandler, Response, NextFunction } from "express";
 import createError from "http-errors";
-import session from "express-session";
-import RedisStore from "connect-redis";
+// import session from "express-session";
+// import RedisStore from "connect-redis";
 import { graphqlHTTP } from "express-graphql";
 import { makeExecutableSchema } from "@graphql-tools/schema";
-import { redisClient } from "./core/redis";
+// import { redisClient } from "./core/redis";
 import routes from "./routes";
 import resolvers from "./core/resolvers";
 import typeDefs from "./core/schemas";
 import { fbWebhookRouter, igWebhookRouter, waWebhookRouter } from "./webhooks";
 import { sessionMiddleware, serviceSelectorMiddleware } from "./middlewares";
 import { CustomRequest } from "./types/types";
-import BullBoard from "./libs/BullBoard";
+// import BullBoard from "./libs/BullBoard";
 
 // const store = new RedisStore({ client: redisClient, prefix: "chatbot:" });
 
@@ -70,9 +70,9 @@ app.use('/facebook-incoming', fbWebhookRouter);
 
 app.use(routes);
 
-if(process.env.NODE_ENV === "development") {
-  BullBoard(routes);
-}
+// if(process.env.NODE_ENV === "development") {
+//   BullBoard(routes);
+// }
 
 // catch not defined routes
 app.use(function (req: CustomRequest, res: Response, next: NextFunction) {
