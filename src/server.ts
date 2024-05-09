@@ -16,15 +16,15 @@ import { sessionMiddleware, serviceSelectorMiddleware } from "./middlewares";
 import { CustomRequest } from "./types/types";
 import BullBoard from "./libs/BullBoard";
 
-const store = new RedisStore({ client: redisClient, prefix: "chatbot:" });
+// const store = new RedisStore({ client: redisClient, prefix: "chatbot:" });
 
-const customSession = session({
-  secret: process.env.SESSION_TOKEN || "secret", // Replace with your actual secret key
-  resave: false,
-  saveUninitialized: true,
-  store: store,
-  cookie: { secure: false } // Set secure to true if using HTTPS
-})
+// const customSession = session({
+//   secret: process.env.SESSION_TOKEN || "secret", // Replace with your actual secret key
+//   resave: false,
+//   saveUninitialized: true,
+//   store: store,
+//   cookie: { secure: false } // Set secure to true if using HTTPS
+// })
 
 const app = express();
 
@@ -47,7 +47,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(cookieParser());
 
-app.use(customSession);
+// app.use(customSession);
 
 const schema = makeExecutableSchema({
   resolvers,
@@ -86,4 +86,4 @@ app.use(((error: any, req: CustomRequest, res: Response, next: NextFunction) => 
   res.status(error.status || 500).send({ message: error.message });
 }) as ErrorRequestHandler);
 
-export { app, customSession };
+export { app };
