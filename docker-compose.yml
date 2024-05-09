@@ -39,4 +39,4 @@ services:
       SFDC_USERNAME: ${{ secrets.SFDC_USERNAME }}
       SFDC_PASSWORD: ${{ secrets.SFDC_PASSWORD }}
     ports:
-     - "8000:8000"
+     - "80:8000"
