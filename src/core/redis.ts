@@ -1,10 +1,12 @@
 import * as redis from 'redis';
 
+console.log("Trying to connect on " + process.env.REDIS_HOST + ":" process.env.REDIS_PORT)
+
 const redisClient = redis.createClient({
   password: process.env.REDIS_PASSWORD,
   socket:{
-    host: process.env.REDIS_HOST,
-    port: Number(process.env.REDIS_PORT),
+    host: process.env.REDIS_HOST ?? "redis",
+    port: Number(process.env.REDIS_PORT ?? 6379),
   },    
 });
 
