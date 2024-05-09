@@ -11,7 +11,7 @@ import { redisClient } from "./core/redis";
 import routes from "./routes";
 import resolvers from "./core/resolvers";
 import typeDefs from "./core/schemas";
-import webhookRouter from "./webhooks";
+import { fbWebhookRouter, igWebhookRouter, waWebhookRouter } from "./webhooks";
 import { sessionMiddleware, serviceSelectorMiddleware } from "./middlewares";
 import { CustomRequest } from "./types/types";
 import BullBoard from "./libs/BullBoard";
@@ -64,7 +64,9 @@ app.use(
 
 app.use(sessionMiddleware, serviceSelectorMiddleware);
 
-app.use('/incoming', webhookRouter);
+app.use('/whatsapp-incoming', waWebhookRouter);
+app.use('/instagram-incoming', igWebhookRouter);
+app.use('/facebook-incoming', fbWebhookRouter);
 
 app.use(routes);
 
