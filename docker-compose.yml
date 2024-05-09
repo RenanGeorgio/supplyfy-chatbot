@@ -18,5 +18,25 @@ services:
     restart: always
     depends_on:
       - redis
+    env:
+      SESSION_TOKEN: ${{ secrets.SESSION_TOKEN }}
+      NODE_ENV: ${{ secrets.NODE_ENV }}
+      USER_CONTROL: ${{ secrets.USER_CONTROL }}
+      FACEBOOK_METADATA: ${{ secrets.FACEBOOK_METADATA }}
+      APP_SECRET: ${{ secrets.APP_SECRET }}
+      SERVER_URL: ${{ secrets.SERVER_URL }}
+      ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+      REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
+      REDIS_HOST: ${{ secrets.REDIS_HOST }}
+      REDIS_PORT: ${{ secrets.REDIS_PORT }}
+      KAFKA_BROKERS: ${{ secrets.KAFKA_BROKERS }}
+      MONGO_URL: ${{ secrets.MONGO_URL }}
+      VERSION: ${{ secrets.VERSION }}
+      PHONE_NUMBER_ID: ${{ secrets.PHONE_NUMBER_ID }}
+      WEBHOOK_VERIFICATION_TOKEN: ${{ secrets.WEBHOOK_VERIFICATION_TOKEN }}
+      SFDC_CONSUMER_KEY: ${{ secrets.SFDC_CONSUMER_KEY }}
+      SFDC_CONSUMER_SECRET: ${{ secrets.SFDC_CONSUMER_SECRET }}
+      SFDC_USERNAME: ${{ secrets.SFDC_USERNAME }}
+      SFDC_PASSWORD: ${{ secrets.SFDC_PASSWORD }}
     ports:
      - "8000:8000"
