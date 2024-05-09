@@ -38,5 +38,6 @@ services:
       SFDC_CONSUMER_SECRET: ${{ secrets.SFDC_CONSUMER_SECRET }}
       SFDC_USERNAME: ${{ secrets.SFDC_USERNAME }}
       SFDC_PASSWORD: ${{ secrets.SFDC_PASSWORD }}
+      WEBHOOK_VERIFY_TOKEN: ${{ secrets.WEBHOOK_VERIFY_TOKEN }}
     ports:
      - "8000:8000"
