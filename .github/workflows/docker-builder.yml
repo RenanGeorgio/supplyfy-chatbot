@@ -63,7 +63,7 @@ jobs:
           password: ${{ secrets.REGISTRY_PASSWORD }}
 
       - run: |
-          docker build . -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/redis:latest
+          docker build ./redis/ -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/redis:latest
           docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/redis:latest
 
       - name: Deploy to Azure Web App

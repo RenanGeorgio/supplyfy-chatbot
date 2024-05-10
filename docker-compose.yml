@@ -20,7 +20,7 @@ services:
     restart: always
     depends_on:
       - redis
-    env:
+    environment:
       SESSION_TOKEN: ${{ secrets.SESSION_TOKEN }}
       NODE_ENV: ${{ secrets.NODE_ENV }}
       USER_CONTROL: ${{ secrets.USER_CONTROL }}
