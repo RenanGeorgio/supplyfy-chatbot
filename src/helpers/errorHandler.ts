@@ -13,4 +13,4 @@ export function mongoErrorHandler(error: any): IMongoErrorHandler {
   } else {
     return { success: false, message: "Internal server error", error };
   }
-}
+} 
