@@ -98,7 +98,7 @@ manager.addAnswer("pt", "user.back", "Bom te ver de volta, em que posso ajudá-l
 
 (async () => {
     await manager.train();
-    manager.save();
+    // manager.save();
 })();
 
 export async function processQuestion(pergunta: string): Promise<string> {
