@@ -5,7 +5,7 @@ on:
     types:
       - closed
     branches:
-      - main
+      - teste
   workflow_dispatch:
 
 jobs:

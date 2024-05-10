@@ -3,16 +3,25 @@ import BotModel from "../models/bot/botModel";
 import { IBotData } from "../types/types";
 
 export async function botExist(path: string, value: string) {
-  const botExist = await BotModel.findOne({
-    [path]: value,
-  });
-
-  return botExist;
+  try{
+    const botExist = await BotModel.findOne({
+      [path]: value,
+    });
+  
+    return botExist;
+  }
+  catch(error: any){
+    throw error;
+  }
 }
 
 export async function listAllBots() {
-  const bots = await BotModel.find().exec();
-  return bots;
+  try{
+    const bots = await BotModel.find().exec();
+    return bots;
+  } catch (error: any) {
+    throw error;
+  }
 }
 
 export async function createBot(data: IBotData) {
@@ -20,7 +29,7 @@ export async function createBot(data: IBotData) {
     const bot = await BotModel.create(data);
     return bot;
   } catch (error: any) {
-    return mongoErrorHandler(error);
+    throw error;
   }
 }
 
@@ -43,6 +52,6 @@ export async function updateBot({ companyId, services }: Omit<IBotData, "socket"
     return bot;
 
   } catch (error: any) {
-    return mongoErrorHandler(error);
+    throw error;
   }
 }
