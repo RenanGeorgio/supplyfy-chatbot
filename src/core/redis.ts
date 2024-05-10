@@ -5,7 +5,7 @@ console.log("Redis Port: " + process.env.REDIS_PORT)
 console.log("Redis Password: " + process.env.REDIS_PASSWORD)
 
 const redisConfig: any = {
-    host: process.env.REDIS_HOST || 'redis',
+    host: process.env.REDIS_HOST || 'localhost',
     port: process.env.REDIS_PORT || '6379',
     password: process.env.REDIS_PASSWORD || ""
 };
@@ -13,7 +13,8 @@ const redisConfig: any = {
 const redisClient = redis.createClient({
     password: redisConfig.password.replace(/[\\"]/g, ''),
     socket: {
-        host: redisConfig.host.replace(/[\\"]/g, ''),
+        // host: redisConfig.host.replace(/[\\"]/g, ''),
+        host: "localhost",
         port: parseInt(redisConfig.port.replace(/[\\"]/g, '')),
     },
 });
