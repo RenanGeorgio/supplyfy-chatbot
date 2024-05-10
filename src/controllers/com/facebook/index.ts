@@ -1,4 +1,4 @@
-import { NextFunction, Response } from "express";
+import { NextFunction, Response, Request } from "express";
 import { 
     receivedAccountLink, 
     receivedAuthentication, 
@@ -8,10 +8,10 @@ import {
     receivedPostback 
 } from "./received";
 import { processComments } from "./processMessage";
-import { CustomRequest, FaceMessagingEvent, PageEntry } from "../../../types";
+import { FaceMessagingEvent, PageEntry } from "../../../types";
 
 export const eventsHandler = async (
-    req: CustomRequest,
+    req: Request,
     res: Response,
     next: NextFunction
 ) => {

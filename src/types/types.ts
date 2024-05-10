@@ -1,35 +1,3 @@
-import { Request } from "express";
-import { Types } from "mongoose";
-// import { WebhookEventBase } from "./meta";
-import { Session } from "express-session";
-import TelegramBot from "node-telegram-bot-api";
-import { Transporter } from "nodemailer";
-import { IMailListener } from "../services/email/lib/types";
-import { IgApiClientRealtime } from "instagram_mqtt";
-import { Socket } from "socket.io-client";
-
-export interface User {
-  sub: Types.ObjectId | string;
-}
-
-export interface CustomMessageKafka {
-  topic: string, 
-  text: string, 
-  from: string, 
-  to: string, 
-  service: string
-}
-
-export interface CustomSession extends Session {
-  service?: string;
-}
-
-export interface CustomRequest extends Request {
-  user?: User;
-  rawBody?: Buffer;
-  session: CustomSession;
-}
-
 export type Obj = {
   [key: string]: any;
 };
@@ -51,7 +19,6 @@ export interface Consumer {
 
 export type ReceiveProps = {
   user: Consumer;
-  // webhookEvent: WebhookEventBase;
 };
 
 export type ContactsData = {
@@ -93,62 +60,11 @@ export type ContactsData = {
   }[];
 };
 
-export interface IEmailService {
-  id: string;
-  mailListener: IMailListener;
-  mailTransporter: Transporter;
-}
-
-export interface ITelegramService {
-  id: string;
-  telegramBot: TelegramBot;
-}
-
-export interface IInstagramService {
-  id: string;
-  ig: IgApiClientRealtime;
-}
-
-export interface ISocketService {
-  id: string;
-  socket: Socket;
-}
-
-export interface ITelegramServiceController {
-  telegramServices: ITelegramService[];
-  start: (
-    credentials: ITelegramCredentials,
-    webhook?: IWebhook
-  ) => Promise<IEvents>;
-  stop: (credentials: ITelegramCredentials) => Promise<IEvents>;
-  resume: (credentials: ITelegramCredentials) => Promise<IEvents>;
-}
-
-export interface IEmailServiceController {
-  emailServices: IEmailService[];
-  start: (emailCredentials: IEmailCredentials, webhook?: IWebhook) => any;
-  stop: (emailCredentials: IEmailCredentials) => void;
-  resume: (emailCredentials: IEmailCredentials) => void;
-}
-
-export interface IInstagramServiceController {
-  instagramServices: IInstagramService[];
-  start: (credentials: IInstagramCredentials, webhook?: IWebhook) => any;
-  stop: (credentials: IInstagramCredentials) => void;
-  // resume: (id: string) => void;
-}
-
 export interface  IMessengerServiceController { // alterar os tipos
   mensengerServices: any[];
   start: (credentials: any) => any;
   stop: (credentials: any) => any;
   sendMessage: (id: string, messages: string[]) => any;
-}
-
-export interface  ISocketServiceController {
-  sockets: ISocketService[];
-  start: (credentials: ISocketCredentials, webhook?: IWebhook) => void;
-  // stop: (credentials: ISocketCredentials) => void;
 }
 
 export type RegisterClient = {

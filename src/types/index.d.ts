@@ -37,7 +37,7 @@ import {
   Attachment,
   WebhookMsgAccLink,
   WebhookMsgOptions,
-  WebhookMsgDeliveries,
+  WebhookMsgDeliveries, 
   WebhookMsgSee,
   WebhookMsgPostbacks,
   WebhookMsgReferral,

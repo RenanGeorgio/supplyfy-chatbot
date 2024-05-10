@@ -1,13 +1,11 @@
-import { NextFunction, Response } from "express";
+import { NextFunction, Response, Request } from "express";
 import XHubSignature from "x-hub-signature";
 import Receive from "./receive";
 import { getUserProfile } from "../service";
 import { receivedAuthentication, receivedDeliveryConfirmation, receivedMessageRead, receivedAccountLink } from "./instagramController/received";
 import { 
   Consumer, 
-  WebhookEventType, 
   WebhookEventBase, 
-  CustomRequest, 
   Obj, 
   EntryProps, 
   WebhookMsgDeliveries, 
@@ -23,19 +21,19 @@ const xhub = new XHubSignature("SHA256", appSecret);
 let users: Consumer[] = []; // TO-DO: jogar isso para o Redis
 
 export const messageHandler = async (
-  req: CustomRequest, 
+  req: Request, 
   res: Response,
   next: NextFunction
 ) => {
   // Calcula o valor da assinatura x-hub para comparar com o valor no request header
-  const calcXHubSignature = xhub.sign(req?.rawBody).toLowerCase();
+  const calcXHubSignature = xhub.sign(req.body).toLowerCase();
 
   if (req?.headers["x-hub-signature-256"] != calcXHubSignature) {
     res.status(401).send({ message: "Warning - request header X-Hub-Signature not present or invalid" });
   }
 
   try {
-    const body: WebhookEventType = req.body;
+    const body = req.body;
 
     if (body?.object === "instagram") {
       res.status(200).send("EVENT_RECEIVED");

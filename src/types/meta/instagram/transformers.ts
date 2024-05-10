@@ -1,5 +1,3 @@
-import { FREQUENCY, NOTIFICATIONS, TOKENSTATUS } from "../../../helpers/constants";
-
 export type WebhookMsgAccLink = {
     sender: {
         id: string;
@@ -26,11 +24,11 @@ export type WebhookMsgOptions = {
         type: 'notification_messages'; 
         payload?: string;
         notification_messages_token: string; 
-        notification_messages_frequency?: FREQUENCY;  
+        notification_messages_frequency?: string;  
         notification_messages_timezone: string;
         token_expiry_timestamp: any;
-        user_token_status: TOKENSTATUS;  
-        notification_messages_status: NOTIFICATIONS;
+        user_token_status: string;  
+        notification_messages_status: string;
         title: string; 
         ref?: any;
     };
