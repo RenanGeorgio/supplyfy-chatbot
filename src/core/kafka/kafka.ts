@@ -1,7 +1,9 @@
 import { Kafka, KafkaConfig } from 'kafkajs';
 
+const brokers = process.env.KAFKA_BROKERS ? process.env.KAFKA_BROKERS.replace(/[\\"]/g, '') : ""
+
 const kafkaConfig: KafkaConfig = {
-    brokers: [process.env.KAFKA_BROKERS || ""],
+    brokers: [brokers],
     sasl: {
         mechanism: 'scram-sha-512',
         username: 'admin-user',
