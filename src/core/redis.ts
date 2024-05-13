@@ -1,9 +1,5 @@
 import * as redis from 'redis';
 
-console.log("Redis Host: " + process.env.REDIS_HOST)
-console.log("Redis Port: " + process.env.REDIS_PORT)
-console.log("Redis Password: " + process.env.REDIS_PASSWORD)
-
 const redisConfig: any = {
     host: process.env.REDIS_HOST || 'localhost',
     port: process.env.REDIS_PORT || '6379',
