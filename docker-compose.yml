@@ -7,7 +7,7 @@ services:
     container_name: redis
     restart: always
     ports:
-      - "6379:6379"
+      - "443:6379"
     environment:
       WEBSITES_ENABLE_APP_SERVICE_STORAGE: TRUE
       
