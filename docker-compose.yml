@@ -8,8 +8,6 @@ services:
     restart: always
     environment:
       WEBSITES_ENABLE_APP_SERVICE_STORAGE: TRUE
-    networks:
-      - redis_network
       
   supplyfy-chatbot:
     image: ignaichatbotassets.azurecr.io/supplyfy-chatbot:latest
@@ -20,8 +18,3 @@ services:
       - redis
     ports:
      - "80:8000"
-    networks:
-      - redis_network
-
-networks:
-    redis_network:
