@@ -9,12 +9,12 @@ services:
     environment:
       WEBSITES_ENABLE_APP_SERVICE_STORAGE: TRUE
       
-  supplyfy-chatbot:
-    image: ignaichatbotassets.azurecr.io/supplyfy-chatbot:latest
-    hostname: supplyfy-chatbot
-    container_name: supplyfy-chatbot
-    restart: always
-    depends_on:
-      - redis
-    ports:
-     - "80:8000"
+  # supplyfy-chatbot:
+  #   image: ignaichatbotassets.azurecr.io/supplyfy-chatbot:latest
+  #   hostname: supplyfy-chatbot
+  #   container_name: supplyfy-chatbot
+  #   restart: always
+  #   depends_on:
+  #     - redis
+  #   ports:
+  #    - "80:8000"
