@@ -1,22 +1,20 @@
 version: "3.9"
 
 services:
-  redis:
-    image: ignaichatbotassets.azurecr.io/redis:latest
-    hostname: redis
-    container_name: redis
+  # redis:
+  #   image: ignaichatbotassets.azurecr.io/redis:latest
+  #   hostname: redis
+  #   container_name: redis
+  #   restart: always
+  #   ports:
+  #     - "443:6379"
+  #   environment:
+  #     WEBSITES_ENABLE_APP_SERVICE_STORAGE: TRUE
+      
+  supplyfy-chatbot:
+    image: ignaichatbotassets.azurecr.io/supplyfy-chatbot:latest
+    hostname: supplyfy-chatbot
+    container_name: supplyfy-chatbot
     restart: always
     ports:
-      - "443:6379"
-    environment:
-      WEBSITES_ENABLE_APP_SERVICE_STORAGE: TRUE
-      
-  # supplyfy-chatbot:
-  #   image: ignaichatbotassets.azurecr.io/supplyfy-chatbot:latest
-  #   hostname: supplyfy-chatbot
-  #   container_name: supplyfy-chatbot
-  #   restart: always
-  #   depends_on:
-  #     - redis
-  #   ports:
-  #    - "80:8000"
+     - "80:8000"

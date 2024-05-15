@@ -1,4 +1,3 @@
 FROM redis:7.2.4-alpine3.19
-EXPOSE 6379
 COPY ./configs/redis.conf /usr/local/etc/redis/redis.conf
 CMD [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
