@@ -7,7 +7,7 @@ import * as redis from 'redis';
 // };
 const redisConfig: any = {
     host: "redis-chatbot.azurewebsites.net",
-    port: "80",
+    port: "6379",
     password: process.env.REDIS_PASSWORD || ""
 };
 
