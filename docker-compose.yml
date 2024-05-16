@@ -5,13 +5,8 @@ services:
     image: ignaichatbotassets.azurecr.io/redis:latest
     hostname: redis
     container_name: redis
-    healthcheck:
-      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
-      interval: 1s
-      timeout: 3s
-      retries: 5
     ports:
-      - "6379:6379"
+      - "6380:6380"
       
   supplyfy-chatbot:
     image: ignaichatbotassets.azurecr.io/supplyfy-chatbot:latest
