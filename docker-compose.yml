@@ -5,12 +5,10 @@ services:
     image: ignaichatbotassets.azurecr.io/redis:latest
     hostname: redis
     container_name: redis
-    ports:
-      - "6380:6380"
       
   supplyfy-chatbot:
     image: ignaichatbotassets.azurecr.io/supplyfy-chatbot:latest
     hostname: supplyfy-chatbot
     container_name: supplyfy-chatbot
     ports:
-     - "80:8000"
+      - "80:8000"
