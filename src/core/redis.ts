@@ -1,13 +1,8 @@
 import * as redis from 'redis';
 
-// const redisConfig: any = {
-//     host: process.env.REDIS_HOST || 'localhost',
-//     port: process.env.REDIS_PORT || '6379',
-//     password: process.env.REDIS_PASSWORD || ""
-// };
 const redisConfig: any = {
-    host: "redis-chatbot.azurewebsites.net",
-    port: "8080",
+    host: process.env.REDIS_HOST || 'localhost',
+    port: process.env.REDIS_PORT || '6379',
     password: process.env.REDIS_PASSWORD || ""
 };
 
