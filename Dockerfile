@@ -98,6 +98,8 @@ COPY --chown=node:node --from=build /usr/src/app/build /usr/src/app/build
 COPY --chown=node:node package.json /usr/src/app/
 COPY --chown=node:node tsconfig.json /usr/src/app/
 COPY --chown=node:node declarations.d.ts /usr/src/app/
+COPY --chown=node:node model.nlp /usr/src/app/
+COPY --chown=node:node . .
 RUN yarn install --production && yarn cache clean
 USER node
 CMD ["dumb-init", "yarn", "run", "prod"]
