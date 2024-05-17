@@ -1,9 +1,15 @@
 import * as redis from 'redis';
 
+// const redisConfig: any = {
+//     host: process.env.REDIS_HOST || 'localhost',
+//     port: process.env.REDIS_PORT || '6379',
+//     password: process.env.REDIS_PASSWORD || ""
+// };
+
 const redisConfig: any = {
-    host: process.env.REDIS_HOST || 'localhost',
-    port: process.env.REDIS_PORT || '6379',
-    password: process.env.REDIS_PASSWORD || ""
+    host: 'ignai-chatbot.redis.cache.windows.net',
+    port: '6380',
+    password: 'wPMt5sZbeU3OAevYobDDEESjQZlFwQ5wvAzCaLvb0Uk='
 };
 
 const redisClient = redis.createClient({
