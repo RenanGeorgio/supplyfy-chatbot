@@ -10,6 +10,7 @@
   },
   "keywords": [],
   "author": "Renan Georgio <regeo9g@hotmail.com>",
+  "license": "MIT",
   "devDependencies": {
     "@types/bull": "^4.10.0",
     "@types/cookie-parser": "^1.4.6",
