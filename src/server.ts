@@ -70,7 +70,9 @@ app.use('/facebook-incoming', fbWebhookRouter);
 
 app.use(routes);
 
-if(process.env.NODE_ENV === "development") {
+
+const node_env = process.env.NODE_ENV ? process.env.NODE_ENV.replace(/[\\"]/g, '') : "development";
+if (node_env === "development") {
   BullBoard(routes);
 }
 

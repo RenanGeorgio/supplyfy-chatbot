@@ -10,7 +10,7 @@ const JWT = async (req: CustomRequest, res: Response, next: NextFunction) => {
             return res.status(401).send();
         }
         const user = <IUser>(
-            jsonwebtoken.verify(token, process.env.TOKEN_SECRET || "secret")
+            jsonwebtoken.verify(token, process.env.TOKEN_SECRET ? process.env.TOKEN_SECRET.replace(/[\\"]/g, '') :  "secret")
         );
         if (!user) {
             return res.status(403).send({ message: "Invalid JWT." });
