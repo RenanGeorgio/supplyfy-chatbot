@@ -17,7 +17,7 @@ import {
 import { handlePrivateReply } from "./instagramController";
 import { ConsumerData } from "./consumer";
 
-const appSecret = process.env.APP_SECRET;
+const appSecret = process.env.APP_SECRET ? process.env.APP_SECRET.replace(/[\\"]/g, '') : "secret";
 const xhub = new XHubSignature("SHA256", appSecret);
 
 let users: Consumer[] = []; // TO-DO: jogar isso para o Redis
