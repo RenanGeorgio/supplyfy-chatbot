@@ -7,7 +7,7 @@ import qrcode from "qrcode-terminal";
 const whatsappWebService = (id: string) => {
   let clientId = id;
 
-  mongoose.connect(process.env.MONGO_URL as string).then(() => {
+  mongoose.connect(process.env.MONGO_URL ? process.env.MONGO_URL.replace(/[\\"]/g, '') : "").then(() => {
     const store = new MongoStore({ mongoose: mongoose });
     const client = new Client({
       authStrategy: new RemoteAuth({

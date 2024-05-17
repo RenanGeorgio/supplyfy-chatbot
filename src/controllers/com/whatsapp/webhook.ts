@@ -6,7 +6,7 @@ import { processMessage } from "./processMessage";
 import { msgStatusChange } from "../service";
 import WhatsappService from "../../../services/whatsapp";
 
-const appSecret = process.env.APP_SECRET;
+const appSecret = process.env.APP_SECRET ? process.env.APP_SECRET.replace(/[\\"]/g, '') : "secret";
 const xhub = new XHubSignature("SHA256", appSecret);
 
 export const messageHandler = async (

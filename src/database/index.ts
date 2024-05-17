@@ -1,6 +1,8 @@
 import mongoose from 'mongoose';
 
-mongoose.connect(process.env.MONGO_URL ?? "").then(() => { console.log("Database connected!") }).catch((err) => {console.log(err.message)});
+const url = process.env.MONGO_URL ? process.env.MONGO_URL.replace(/[\\"]/g, '') : ""
+
+mongoose.connect(url).then(() => { console.log("Database connected!") }).catch((err) => {console.log(err.message)});
 mongoose.Promise = global.Promise;
 
 export default mongoose;

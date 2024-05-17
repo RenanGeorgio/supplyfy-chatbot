@@ -9,7 +9,7 @@ router.get('/', function (req: CustomRequest, res: Response, next: NextFunction)
 
     try {
         if (process.env.WEBHOOK_VERIFICATION_TOKEN) {
-            verificationToken = process.env.WEBHOOK_VERIFICATION_TOKEN;
+            verificationToken = process.env.WEBHOOK_VERIFICATION_TOKEN ? process.env.WEBHOOK_VERIFICATION_TOKEN.replace(/[\\"]/g, '') : "invalid";
         } else {
             verificationToken = null;
         }
