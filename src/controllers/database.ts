@@ -3,12 +3,14 @@ import mongoose from "../core/database";
 
 export const test = async (req: Request, res: Response, next: NextFunction) => {
     try {
+        const url = process.env.MONGO_URL ? process.env.MONGO_URL.replace(/[\\"]/g, '') : ""
+        console.log(url)
         const result = await mongoose.connection.readyState;
         if (result === 1 ){
             return res.status(200).send({ message: "Server is OK!" });
         }
         else {
-            return res.status(500).send({ message: "Database is not connected!" });
+            return res.status(500).send({ message: "Database is not connected! " + result });
         }
     } catch (error) {
         next(error);
