@@ -5,7 +5,7 @@ on:
     types:
       - closed
     branches:
-      - main
+      - azureRedis
   workflow_dispatch:
 
 jobs:
