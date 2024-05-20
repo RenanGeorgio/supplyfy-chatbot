@@ -18,9 +18,8 @@ const routes = Router();
 routes
   // Test-server
   .get("/test", serverController.test)
-
-  // session test
   .get("/session", serverController.session)
+  .get("/database", serverController.database)
 
   // login
   .get("/login", authController.login)
