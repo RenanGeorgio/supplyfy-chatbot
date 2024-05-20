@@ -1,10 +1,8 @@
 import express from "express";
-import { fbWebhookRouter, igWebhookRouter, waWebhookRouter } from "./webhooks";
+import routes from "./routes";
 
 const app = express();
 
-app.use('/whatsapp-incoming', waWebhookRouter);
-app.use('/instagram-incoming', igWebhookRouter);
-app.use('/facebook-incoming', fbWebhookRouter);
+app.use(routes)
 
 export { app };
