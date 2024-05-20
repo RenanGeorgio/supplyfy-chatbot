@@ -1,19 +1,17 @@
 import * as redis from 'redis';
 
-
 const redisConfig: any = {
   host: process.env.REDIS_HOST || 'localhost',
   port: process.env.REDIS_PORT || '6379',
   password: process.env.REDIS_PASSWORD || ''
 };
 
-console.log(redisConfig)
-
 const redisClient = redis.createClient({
   password: redisConfig.password.replace(/[\\"]/g, ''),
   socket:{
     host: redisConfig.host.replace(/[\\"]/g, ''),
     port: parseInt(redisConfig.port.replace(/[\\"]/g, '')),
+    tls: true
   },    
 });
 

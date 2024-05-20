@@ -1,11 +1,13 @@
 import Queue from "bull";
 import * as jobs from "../jobs";
 import { redisConfig } from "../core/redis";
+import { RedisOptions } from "ioredis";
 
-const redisOpts = {
+const redisOpts: RedisOptions = {
   host: redisConfig.host.replace(/[\\"]/g, ''),
   port: parseInt(redisConfig.port.replace(/[\\"]/g, '')),
-  password: redisConfig.password.replace(/[\\"]/g, '')
+  password: redisConfig.password.replace(/[\\"]/g, ''),
+  tls: { } 
 }
 
 const queues = Object.values(jobs).map((job) => ({
