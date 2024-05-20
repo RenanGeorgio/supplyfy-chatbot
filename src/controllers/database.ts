@@ -13,6 +13,6 @@ export const test = async (req: Request, res: Response, next: NextFunction) => {
             return res.status(500).send({ message: "Database is not connected! " + url });
         }
     } catch (error) {
-        next(error);
+        next(error); 
     }
 };
