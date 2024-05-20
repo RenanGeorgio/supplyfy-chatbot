@@ -3,6 +3,6 @@ import routes from "./routes";
 
 const app = express();
 
-app.use(routes)
+app.use(routes) 
 
 export { app }; 
