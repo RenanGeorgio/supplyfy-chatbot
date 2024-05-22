@@ -74,9 +74,9 @@ app.use(routes);
 
 
 const node_env = process.env.NODE_ENV ? process.env.NODE_ENV.replace(/[\\"]/g, '') : "development";
-if (node_env === "development") {
+// if (node_env === "development") {
   BullBoard(routes);
-}
+// }
 
 // catch not defined routes
 app.use(function (req: CustomRequest, res: Response, next: NextFunction) {
