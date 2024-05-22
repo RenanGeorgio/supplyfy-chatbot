@@ -8,8 +8,6 @@ const redisConfig: any = {
 
 const redisClient = redis.createClient({
   password: redisConfig.password.replace(/[\\"]/g, ''),
-  pingInterval: 60000,
-  disableOfflineQueue: true,
   socket:{
     host: redisConfig.host.replace(/[\\"]/g, ''),
     port: parseInt(redisConfig.port.replace(/[\\"]/g, '')),
