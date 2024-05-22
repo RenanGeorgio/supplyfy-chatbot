@@ -7,8 +7,6 @@ const redisOpts: RedisOptions = {
   host: redisConfig.host.replace(/[\\"]/g, ''),
   port: 6739,
   password: redisConfig.password.replace(/[\\"]/g, ''),
-  offlineQueue: false,
-  keepAlive: 1,
   // tls: {
   //   host: redisConfig.host.replace(/[\\"]/g, ''),
   //   port: parseInt(redisConfig.port.replace(/[\\"]/g, '')) 
