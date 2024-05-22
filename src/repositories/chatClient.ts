@@ -1,5 +1,10 @@
 import chatClientModel from "../models/chat/chatClientModel";
 
+export async function listCHatClients(){
+  const clients = await chatClientModel.find();
+  return clients;
+}
+
 export async function clientChatExist(email: string) {
   const clientExist = await chatClientModel.findOne({
     email: email,

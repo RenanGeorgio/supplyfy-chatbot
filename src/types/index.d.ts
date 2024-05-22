@@ -20,7 +20,8 @@ import {
   IInstagramServiceController,
   ISocketServiceController,
   IEvents,
-  IWebhook
+  IWebhook,
+  OnlineUser
 } from "./types";
 
 import {
@@ -88,5 +89,6 @@ export {
   IEvents,
   IWebhook,
   WebhookEventBase,
-  EntryProps
+  EntryProps,
+  OnlineUser
 };

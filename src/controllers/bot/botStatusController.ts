@@ -24,7 +24,14 @@ export const action = async (req: CustomRequest, res: Response) => {
       return res.status(404).json({ message: "Bot não encontrado" });
     }
 
-    servicesActions.socket.start(bot.socket);
+    // servicesActions.socket.start(bot.socket);
+    servicesActions.socket.start({
+      _id: bot.companyId as string,
+      url: "https://chatbot.ignai.com.br",
+      auth: {
+        token: "1234567890"
+      }
+    })
     const service = bot.services[serviceId];
     const serviceControl = servicesActions[serviceId];
 

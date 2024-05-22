@@ -1,61 +1,66 @@
-import { Response, NextFunction } from "express";
-import { CustomRequest } from "../../types";
-import { processQuestion } from "../../libs/trainModel";
-import Message from "../../models/chat/messageModel";
-import User from "../../models/user/User";
+import Chat from "../../models/chat/chatModel";
+import { Request, Response, NextFunction } from "express";
 
-export const create = async (
-    req: CustomRequest,
-    res: Response,
-    next: NextFunction
-) => {
-    try {
-        if (!req.user) {
-            return res.status(403).send({ message: "Unauthorized" });
-        }
-        const user = await User.findById(req.user.sub);
-        if (!user) {
-            return res.status(403).send({ message: "Unauthorized" });
-        }
-        const { chat, text, date } = req.body;  
+export const createChat = async (req: Request, res: Response) => {
+  const { firstId, secondId, origin } = req.body;
 
-        const response = await processQuestion(text);
+  if(!firstId || !secondId || !origin) {
+    return res.status(400).send("Missing required fields");
+  }
 
-        const message = new Message({
-            name: user.name,
-            chatId: chat.id,
-            message: text,
-            answer: response,
-            date: date
-        });
+  try {
+    const chat = await Chat.findOne({
+      origin,
+      members: { $all: [firstId, secondId] },
+    });
 
-        await message.save();
+    if (chat) {
+      return res.status(200).send(chat);
+    }
 
-        return res.status(200).send(message);
-    } catch (error) {
-        next(error);
-    }           
+    const newChat = new Chat({
+      members: [firstId, secondId],
+      origin,
+    });
+
+    const savedChat = await newChat.save();
+
+    return res.status(201).send(savedChat);
+  } catch (error: any) {
+    res.status(500).send(error.message);
+  }
 };
 
-export const list = async (
-    req: CustomRequest,
-    res: Response,
-    next: NextFunction
-) => {
-    try {
-        if (!req.user) {
-            return res.status(403).send({ message: "Unauthorized" });
-        }
-        const user = await User.findById(req.user.sub);
-        if (!user) {
-            return res.status(403).send({ message: "Unauthorized" });
-        }
-        const { id } = req.params;
+export const findUserChats = async (req: Request, res: Response) => {
+  const { userId } = req.params;
+  
+  try {
 
-        const messages = await Message.find({ chatId: id });
+    const chats = await Chat.find({
+      members: { $in: [userId] },
+    });
 
-        return res.status(200).send(messages);
-    } catch (error) {
-        next(error);
+    return res.status(200).send(chats);
+  } catch (error: any) {
+    console.log(error)
+    res.status(500).send(error.message);
+  }
+};
+
+export const findChat = async (req: Request, res: Response) => {
+  const { firstId, secondId } = req.params;
+
+  try {
+    const chat = await Chat.findOne({
+      members: { $all: [firstId, secondId] },
+    });
+
+    if (chat) {
+      return res.status(200).send(chat);
     }
+
+    return res.status(404).send("Chat not found");
+  } catch (error: any) {
+    res.status(500).send(error.message);
+  }
 };

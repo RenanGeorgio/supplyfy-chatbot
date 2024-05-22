@@ -1,3 +1,4 @@
+import { io } from "../../core/http";
 import { findBot } from "../../helpers/findBot";
 import { ISocketServiceController } from "../../types";
 import { Events } from "../../types/types";
@@ -22,7 +23,8 @@ export const socketServiceController: ISocketServiceController = {
         id: id,
         socket: socket,
       });
-      console.log(`Socket conectado: ${socket.id}`);
+      
+      console.log(`Socket conectado: ${socket.id} - CRM`);
       if (webhook) {
         webhookTrigger({
           url: webhook.url,
@@ -44,5 +46,7 @@ export const socketServiceController: ISocketServiceController = {
         });
       }
     });
+
+    return socket;
   },
 };

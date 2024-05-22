@@ -232,3 +232,13 @@ export enum Events {
   SERVICE_ALREADY_RUNNING = "service_already_running",
   SERVICE_NOT_RUNNING = "service_not_running",
 } 
+
+export interface UserInfo {
+  userId: Types.ObjectId;
+  name: string;
+};
+
+export interface OnlineUser {
+  userId: string;
+  socketId: string;
+};

@@ -14,6 +14,10 @@ import * as botController from "../controllers/bot/botController";
 import * as botStatusController from "../controllers/bot/botStatusController";
 import * as webhookController from "../controllers/webhook/webhookController";
 import * as facebookController from "../controllers/meta/facebookController";
+import * as anonymousChatController from "../controllers/chat/anonymousChatController";
+import * as chatClientController from "../controllers/chat/chatClientController";
+import * as messageController from "../controllers/chat/messageController";
+
 
 const routes = Router();
 
@@ -28,8 +32,8 @@ routes
   .get("/login", authController.login)
 
   // chat
-  .post("/chat", authMiddleware.JWT, chatController.create)
-  .get("/chat/:id", authMiddleware.JWT, chatController.list)
+  // .post("/chat", chatController.create)
+  // .get("/chat/:id", authMiddleware.JWT, chatController.list)
 
   // // whatsapp plugin
   // .post("/whatsapp/set-status", whatsappController.markMessageAsRead)
@@ -40,17 +44,52 @@ routes
   // .post("/whatsapp/send-img", whatsappController.sendImageByLink)
   // .post("/whatsapp/upload", whatsappController.uploadMedia)
   // .post("/whatsapp/send-doc", whatsappController.sendDocumentMessage)
-    
+
   .post("/bot", authMiddleware.JWT, botController.create)
   // .put("/bot", authMiddleware.JWT, botController.update)
 
   // controle do serviço dos bots
-  .post("/bot/:serviceId/:action", authMiddleware.JWT, botStatusController.action)
+  .post(
+    "/bot/:serviceId/:action",
+    authMiddleware.JWT,
+    botStatusController.action
+  )
 
   // webhook
   .post("/webhook", authMiddleware.JWT, webhookController.create)
 
   .get("/facebook/:userId", facebookController.verifyWebhook)
   .post("/facebook/:useId", facebookController.eventsHandler)
+
+  // chat anonimo
+  .post("/chat/send-message", anonymousChatController.create)
+
+  // chat
+
+  // ----- Chat -----
+  // Copiado do ignai-server
+  // to-do: add middleware de auth novamente
+  // cria um cliente do chat
+  .post("/api/chat/client", chatClientController.createClient)
+  // lista todos os clientes
+  .get("/api/chat/clients", chatClientController.listClients)
+  // busca um cliente
+  .get("/api/chat/client/email/:email", chatClientController.findClientByEmail)
+  // busca um cliente
+  .get("/api/chat/client/:_id", chatClientController.findClientById)
+
+  // Cria um chat
+  .post("/api/chat", chatController.createChat)
+  // // Lista todos os chats de um usuário
+  .get("/api/chat/:userId", chatController.findUserChats)
+  // // Busca um chat
+  .get("/api/chat/find/:firstId/:secondId", chatController.findChat)
+
+  // ----- Mensagens -----
+  // Cria uma mensagem
+  .post("/api/chat/message", messageController.createMessage)
+  // // Lista todas as mensagens de um chat
+  .get("/api/chat/message/:chatId", messageController.getMessages)
+
 
 export default routes;
