@@ -7,6 +7,8 @@ import { Transporter } from "nodemailer";
 import { IMailListener } from "../services/email/lib/types";
 import { IgApiClientRealtime } from "instagram_mqtt";
 import { Socket } from "socket.io-client";
+import { Server } from "socket.io";
+
 
 export interface User {
   sub: Types.ObjectId | string;
@@ -147,7 +149,7 @@ export interface  IMessengerServiceController { // alterar os tipos
 
 export interface  ISocketServiceController {
   sockets: ISocketService[];
-  start: (credentials: ISocketCredentials, webhook?: IWebhook) => void;
+  start: (credentials: ISocketCredentials, webhook?: IWebhook) => Server;
   // stop: (credentials: ISocketCredentials) => void;
 }
 

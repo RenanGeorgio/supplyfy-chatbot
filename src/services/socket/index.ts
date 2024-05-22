@@ -46,7 +46,7 @@ export const socketServiceController: ISocketServiceController = {
         });
       }
     });
-
+    
     return socket;
   },
 };

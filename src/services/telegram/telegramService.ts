@@ -59,7 +59,7 @@ const telegramService = async (
       token: "1234567890"
     }
   })
-  
+
   // const socketInfo = bot?.socket as IBotData["socket"];
 
   // const socketService = findBot(
@@ -199,7 +199,7 @@ const telegramService = async (
               const endChatMessage =
                 "Obrigado por nos contatar! Foi um prazer ajudar";
               telegram.sendMessage(chatId, endChatMessage);
-              socket.disconnect();
+              // socket.disconnect();
               telegram.removeListener("message", sendMessageToCrm);
               telegram.on("message", messageHandler);
             });
