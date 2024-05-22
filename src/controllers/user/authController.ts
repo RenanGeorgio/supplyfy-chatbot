@@ -5,7 +5,7 @@ import { generateAccessToken } from "../../helpers/accessToken";
 import { CustomRequest } from "../../types";
 
 export const login = async (
-    req: CustomRequest,
+    req: CustomRequest, 
     res: Response,
     next: NextFunction
 ) => {
