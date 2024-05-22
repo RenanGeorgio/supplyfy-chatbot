@@ -5,14 +5,14 @@ import { RedisOptions } from "ioredis";
 
 const redisOpts: RedisOptions = {
   host: redisConfig.host.replace(/[\\"]/g, ''),
-  port: parseInt(redisConfig.port.replace(/[\\"]/g, '')),
+  port: 6739,
   password: redisConfig.password.replace(/[\\"]/g, ''),
   offlineQueue: false,
   keepAlive: 1,
-  tls: {
-    host: redisConfig.host.replace(/[\\"]/g, ''),
-    port: parseInt(redisConfig.port.replace(/[\\"]/g, '')) 
-  }
+  // tls: {
+  //   host: redisConfig.host.replace(/[\\"]/g, ''),
+  //   port: parseInt(redisConfig.port.replace(/[\\"]/g, '')) 
+  // }
 }
 
 const queues = Object.values(jobs).map((job) => ({
