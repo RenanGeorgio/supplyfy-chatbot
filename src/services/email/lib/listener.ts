@@ -1,6 +1,5 @@
 import { MailListener } from "mail-listener5";
 import { IMailListener, IOptions } from "./types";
-import { IEmailCredentials } from "../../../types";
 
 const emailListener = ({ emailUsername, emailPassword, imapHost, imapPort, imapTls}): Omit<IMailListener, '_id'> => {
   const mailListener = new MailListener({

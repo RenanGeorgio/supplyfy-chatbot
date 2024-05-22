@@ -1,7 +1,6 @@
 import TelegramBot from "node-telegram-bot-api";
 import { validateEmail } from "../../../helpers/validateEmail";
 import EventEmitter from "node:events";
-import { produceMessage } from "../../../core/kafka/producer";
 
 const clientEmailEventEmitter = new EventEmitter();
 

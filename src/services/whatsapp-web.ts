@@ -1,4 +1,4 @@
-import { Client, LocalAuth, RemoteAuth } from "whatsapp-web.js";
+import { Client, RemoteAuth } from "whatsapp-web.js";
 import { MongoStore } from "wwebjs-mongo";
 import mongoose from "mongoose";
 import { processQuestion } from "../libs/trainModel";
@@ -7,23 +7,14 @@ import qrcode from "qrcode-terminal";
 const whatsappWebService = (id: string) => {
   let clientId = id;
 
-  mongoose.connect(process.env.MONGO_URL as string).then(() => {
+  mongoose.connect(process.env.MONGO_URL ? process.env.MONGO_URL.replace(/[\\"]/g, '') : "").then(() => {
     const store = new MongoStore({ mongoose: mongoose });
     const client = new Client({
-      webVersionCache: 
-      {
-        remotePath: 'https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.2404.5.html',
-        type: 'remote' 
-      },
-
-      authStrategy: new LocalAuth({
-        clientId: clientId
+      authStrategy: new RemoteAuth({
+        clientId: clientId,
+        store: store,
+        backupSyncIntervalMs: 300000,
       }),
-      // authStrategy: new RemoteAuth({
-      //   clientId: clientId,
-      //   store: store,
-      //   backupSyncIntervalMs: 300000,
-      // }),
       // proxyAuthentication: { username: 'username', password: 'password' },
       puppeteer: {
         // args: ['--proxy-server=proxy-server-that-requires-authentication.example.com'],
@@ -79,7 +70,7 @@ const whatsappWebService = (id: string) => {
 
     client.on("message", async (msg) => {
       console.log("MESSAGE RECEIVED", msg);
-      console.log(msg)
+
       if (msg.body === "!ping reply") {
         // Envia nova mensagem como resposta a mensagem atual
         const response = await processQuestion(msg.body);
@@ -188,7 +179,8 @@ const whatsappWebService = (id: string) => {
       } else if (msg.body === "!jumpto") {
         if (msg.hasQuotedMsg) {
           const quotedMsg = await msg.getQuotedMessage();
-          // client.interface.openChatWindowAt(quotedMsg.id._serialized);
+          // @ts-ignore
+          client?.interface.openChatWindowAt(quotedMsg.id._serialized);
         }
       } else if (msg.body === "!reaction") {
         msg.react("👍");
@@ -215,8 +207,9 @@ const whatsappWebService = (id: string) => {
            * 3. 2592000 for 30 days
            * You can pass your own value:
            */
-          // const result = await msg.pin(60); // Will pin a message for 1 minute
-          // console.log(result); // True if the operation completed successfully, false otherwise
+          // @ts-ignore
+          const result = await msg.pin(60); // Will pin a message for 1 minute
+          console.log(result); // True if the operation completed successfully, false otherwise
         }
       }
     });

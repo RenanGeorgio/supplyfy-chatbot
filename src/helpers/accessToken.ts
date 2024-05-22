@@ -6,7 +6,7 @@ export const generateAccessToken = (
 ) => {
     return jsonwebtoken.sign(
         { sub },
-        process.env.TOKEN_SECRET || "secret",
+        process.env.TOKEN_SECRET ? process.env.TOKEN_SECRET.replace(/[\\"]/g, '') : "secret",
         {
             expiresIn: "24h",
         }

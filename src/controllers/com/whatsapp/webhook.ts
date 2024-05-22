@@ -1,16 +1,18 @@
-import { Response } from "express";
+import { NextFunction, Response } from "express";
 import XHubSignature from "x-hub-signature";
 import { CustomRequest, statUses } from "../../../types";
 import { messageStatuses } from "../../../helpers/messageStatuses";
 import { processMessage } from "./processMessage";
 import { msgStatusChange } from "../service";
+import WhatsappService from "../../../services/whatsapp";
 
-const appSecret = process.env.APP_SECRET;
+const appSecret = process.env.APP_SECRET ? process.env.APP_SECRET.replace(/[\\"]/g, '') : "secret";
 const xhub = new XHubSignature("SHA256", appSecret);
 
 export const messageHandler = async (
     req: CustomRequest,
-    res: Response
+    res: Response,
+    next: NextFunction
 ) => {
     try {
         // Calcula o valor da assinatura x-hub para comparar com o valor no request header
@@ -30,23 +32,31 @@ export const messageHandler = async (
             res.sendStatus(400);
         }
 
-        if (body.changes[0].value.hasOwnProperty("messages")) {
-            try { // Marca msg como lida
-                let sendReadStatus: statUses = messageStatuses?.read;
-                sendReadStatus?.message_id = body.value.messages[0].id;
+        const data = body.value;
 
-                const response = await msgStatusChange(sendReadStatus?.message_id);
+        if (data.hasOwnProperty("messages")) {
+            const whatsappInstance = new WhatsappService(
+                data.metadata.phone_number_id,
+                data.contacts[0].profile.name,
+                data.messages[0].from
+            );
+
+            try { // Marca msg como lida
+                let sendReadStatus = messageStatuses?.read;
+                sendReadStatus.message_id = data.messages[0].id;
+
+                const response = await msgStatusChange(sendReadStatus?.message_id, whatsappInstance.getApi());
 
                 console.log(response);
             } catch (error) {
                 console.log(error);
             }
         
-            body.value.messages.forEach(processMessage);
+            data.messages.forEach(message => processMessage(message, whatsappInstance));
         }
 
         res.sendStatus(200);
-    } catch (error) {
-        return res.status(500).send({ message: error.message });
+    } catch (error: any) {
+        next(error);
     }           
 };

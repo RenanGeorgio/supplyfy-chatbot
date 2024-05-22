@@ -1,3 +1,4 @@
+// Comentado por Thomás para rodar primeira versão sem instagram-private-api
 import instagramLogin from "./auth/session";
 import intagramService from "./instagram";
 import { IInstagramServiceController } from "../../types";
@@ -59,7 +60,7 @@ export const instagramServiceController: IInstagramServiceController = {
 
     if (bot) {
       bot.ig.realtime.disconnect();
-      bot.ig.destroy();
+      // bot.ig.destroy();
       removeBot(bot, this.instagramServices);
       return {
         success: true,

@@ -1,6 +1,6 @@
-import { Response } from "express";
+import { NextFunction, Response } from "express";
 import XHubSignature from "x-hub-signature";
-import Receive from "./instagramController/receive";
+import Receive from "./receive";
 import { getUserProfile } from "../service";
 import { receivedAuthentication, receivedDeliveryConfirmation, receivedMessageRead, receivedAccountLink } from "./instagramController/received";
 import { 
@@ -14,13 +14,19 @@ import {
   WebhookMsgSee, 
   WebhookMsgAccLink,
   WebhookMsgOptions } from "../../../types";
+import { handlePrivateReply } from "./instagramController";
+import { ConsumerData } from "./consumer";
 
-const appSecret = process.env.APP_SECRET;
+const appSecret = process.env.APP_SECRET ? process.env.APP_SECRET.replace(/[\\"]/g, '') : "secret";
 const xhub = new XHubSignature("SHA256", appSecret);
 
 let users: Consumer[] = []; // TO-DO: jogar isso para o Redis
 
-export const messageHandler = async (req: CustomRequest, res: Response) => {
+export const messageHandler = async (
+  req: CustomRequest, 
+  res: Response,
+  next: NextFunction
+) => {
   // Calcula o valor da assinatura x-hub para comparar com o valor no request header
   const calcXHubSignature = xhub.sign(req?.rawBody).toLowerCase();
 
@@ -35,10 +41,8 @@ export const messageHandler = async (req: CustomRequest, res: Response) => {
       res.status(200).send("EVENT_RECEIVED");
 
       body.entry.forEach(async function (entry: EntryProps) {
-        if ("changes" in entry) {
-          // Evento de mudança em pagina
-          const receiveMessage = new Receive();
-
+        if ("changes" in entry) { // Evento de mudança em pagina
+          // @ts-ignore
           if (entry?.changes[0]?.field === "comments") {
             const values: Obj = entry.changes[0];
 
@@ -49,7 +53,7 @@ export const messageHandler = async (req: CustomRequest, res: Response) => {
                 console.log("Got a comments event");
                 const commentId = change.comment_id;
 
-                return receiveMessage.handlePrivateReply("comment_id", change.id, commentId);
+                return handlePrivateReply("comment_id", change.id, commentId);
               }
             }
           }
@@ -77,17 +81,16 @@ export const messageHandler = async (req: CustomRequest, res: Response) => {
                 const senderIgsid: string | number = webhookEvent.sender.id;
 
                 if (!(senderIgsid in users)) { // Primeira vez que interage com o usuario
-                  const user: Consumer = {
+                  const user = new ConsumerData({
                     igsid: senderIgsid,
                     name: undefined,
                     profilePic: undefined,
-                  };
+                  });
 
                   let userProfile = await getUserProfile(senderIgsid.toString());
 
                   if (userProfile) {
-                    user.name = userProfile.name;
-                    user.profilePic = userProfile.profilePic;
+                    user.setProfile(userProfile.name, userProfile.profilePic);
 
                     if (typeof senderIgsid == 'string') {
                       users[parseInt(senderIgsid, 10)] = user;
@@ -109,6 +112,6 @@ export const messageHandler = async (req: CustomRequest, res: Response) => {
       res.status(404).send({ message: "Unrecognized POST to webhook" });
     }
   } catch (error: any) {
-    return res.status(500).send({ message: error.message });
+    next(error);
   }
 };

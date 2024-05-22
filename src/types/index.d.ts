@@ -44,7 +44,14 @@ import {
   WebhookMsgReferral,
   WebhookMsgs,
   WebhookEventBase,
-  EntryProps
+  EntryProps,
+  FaceMsgData, 
+  SendFaceMsgBody, 
+  FaceMessagingEvent, 
+  PageEntry, 
+  FaceMsgSender, 
+  FaceMsgRecipient, 
+  FaceMessage 
 } from "./meta";
 
 export {
@@ -90,5 +97,12 @@ export {
   IWebhook,
   WebhookEventBase,
   EntryProps,
-  OnlineUser
+  OnlineUser,
+  FaceMsgData, 
+  SendFaceMsgBody, 
+  FaceMessagingEvent, 
+  PageEntry, 
+  FaceMsgSender, 
+  FaceMsgRecipient, 
+  FaceMessage 
 };

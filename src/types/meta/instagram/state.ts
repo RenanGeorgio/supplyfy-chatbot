@@ -1,4 +1,5 @@
 import { Obj } from "../../types";
+import { WebhookEventBase } from "./instagram";
 
 type Standy = {
     sender: {

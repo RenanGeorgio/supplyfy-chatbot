@@ -1,14 +1,18 @@
 import Queue from "bull";
 import * as jobs from "../jobs";
+import { redisConfig } from "../core/redis";
+import { RedisOptions } from "ioredis";
 
-const redisConfig: any = {
-  host: process.env.REDIS_HOST,
-  port: process.env.REDIS_PORT,
-};
+const redisOpts: RedisOptions = {
+  host: redisConfig.host.replace(/[\\"]/g, ''),
+  port: parseInt(redisConfig.port.replace(/[\\"]/g, '')),
+  password: redisConfig.password.replace(/[\\"]/g, ''),
+  tls: { } 
+}
 
 const queues = Object.values(jobs).map((job) => ({
   bull: new Queue(job.key, {
-    redis: redisConfig,
+    redis: redisOpts,
     prefix: "messageQueue",
   }),
   name: job.key,

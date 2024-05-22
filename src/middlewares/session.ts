@@ -7,6 +7,7 @@ const sessionMiddleware = async (req: CustomRequest, res: Response, next: NextFu
             if (req.session.service == null || req.session.service == undefined || req.session.service == ""){
                 req.session.service = "cadastro"
             }
+            
             next();
         } else {
             return res.status(401).json({ error: 'Unauthorized' });

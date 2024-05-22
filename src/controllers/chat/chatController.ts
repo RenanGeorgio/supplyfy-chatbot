@@ -1,7 +1,7 @@
 import Chat from "../../models/chat/chatModel";
 import { Request, Response, NextFunction } from "express";
 
-export const createChat = async (req: Request, res: Response) => {
+export const createChat = async (req: CustomRequest, res: Response, next: NextFunction) => {
   const { firstId, secondId, origin } = req.body;
 
   if(!firstId || !secondId || !origin) {
@@ -27,7 +27,7 @@ export const createChat = async (req: Request, res: Response) => {
 
     return res.status(201).send(savedChat);
   } catch (error: any) {
-    res.status(500).send(error.message);
+    next(error);
   }
 };
 
@@ -42,8 +42,7 @@ export const findUserChats = async (req: Request, res: Response) => {
 
     return res.status(200).send(chats);
   } catch (error: any) {
-    console.log(error)
-    res.status(500).send(error.message);
+    next(error);
   }
 };
 
@@ -61,6 +60,6 @@ export const findChat = async (req: Request, res: Response) => {
 
     return res.status(404).send("Chat not found");
   } catch (error: any) {
-    res.status(500).send(error.message);
+    next(error);
   }
 };

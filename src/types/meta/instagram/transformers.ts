@@ -32,6 +32,7 @@ export type WebhookMsgOptions = {
         user_token_status: TOKENSTATUS;  
         notification_messages_status: NOTIFICATIONS;
         title: string; 
+        ref?: any;
     };
 }
 

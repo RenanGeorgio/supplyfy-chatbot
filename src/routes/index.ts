@@ -5,8 +5,6 @@ import { authMiddleware } from "../middlewares";
 import * as serverController from "../controllers/server/serverController";
 // chat controller
 import * as chatController from "../controllers/chat/chatController";
-// whatsapp controller
-// import * as whatsappController from "../controllers/com/whatsapp/whatsappController";
 // auth controller
 import * as authController from "../controllers/user/authController";
 // Bot controller
@@ -24,9 +22,8 @@ const routes = Router();
 routes
   // Test-server
   .get("/test", serverController.test)
-
-  // session test
   .get("/session", serverController.session)
+  .get("/database", serverController.database)
 
   // login
   .get("/login", authController.login)
@@ -46,7 +43,6 @@ routes
   // .post("/whatsapp/send-doc", whatsappController.sendDocumentMessage)
 
   .post("/bot", authMiddleware.JWT, botController.create)
-  // .put("/bot", authMiddleware.JWT, botController.update)
 
   // controle do serviço dos bots
   .post(

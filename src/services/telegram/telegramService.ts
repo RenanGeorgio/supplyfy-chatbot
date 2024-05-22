@@ -51,7 +51,8 @@ const telegramService = async (
   if(!bot){
     return;
   }
-
+  
+  // teste
   const socket = socketServiceController.start({
     _id: bot.companyId,
     url: "https://chatbot.ignai.com.br",
@@ -69,18 +70,13 @@ const telegramService = async (
 
   // const socket = socketService?.socket;
 
-  // teste
-  if (bot) {
-
-  }
-
   let clientId: string | null = null;
   let enableChatBot = false;
 
   const kafkaMessage = {
-    topic: "diamond.messages",
-    service: "telegram",
-  };
+    topic: bot?.companyId + ".messages",
+    service: "telegram"
+  }
 
   const botId = (await telegram.getMe()).id;
 

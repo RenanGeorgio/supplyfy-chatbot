@@ -1,6 +1,7 @@
-import { Consumer } from "../../../types";
+import { Consumer, MsgEventProp, Obj, WebhookEventBase } from "../../../types";
+import { sendAccountLinking, sendAudioMessage, sendButtonMessage, sendFileMessage, sendGenericMessage, sendGifMessage, sendImageMessage, sendQuickReply, sendReadReceipt, sendReceiptMessage, sendTextMessage, sendTypingOff, sendTypingOn, sendVideoMessage } from "./instagramController/data";
 
-class Response {
+export default class Response {
   static genQuickReply(text, quickReplies) {
     let response = {
       text: text,
@@ -8,11 +9,8 @@ class Response {
     };
 
     for (let quickReply of quickReplies) {
-      response["quick_replies"].push({
-        content_type: "text",
-        title: quickReply["title"],
-        payload: quickReply["payload"],
-      });
+      // @ts-ignore
+      response["quick_replies"].push({ content_type: "text", title: quickReply["title"], payload: quickReply["payload"] });
     }
 
     return response;
@@ -71,8 +69,86 @@ class Response {
   }
 
   static genNuxMessage(user: Consumer) {
-    
 
     return [];
   }
 };
+
+export async function processMessage(event: WebhookEventBase, receive: any) {
+  let responses: any;
+
+  if ("postback" in event) {
+    responses = receive.handlePostback(event?.postback);
+  } else if ("referral" in event) {
+    responses = receive.handleReferral(event?.referral);
+  } else {
+    // @ts-ignore
+    if (event?.message != undefined) {
+      // @ts-ignore
+      const message: MsgEventProp = event?.message;
+
+      if ("is_echo" in message) {
+        return null;
+      } else if ("quick_reply" in message) {
+        responses = receive.handleQuickReply();
+      } else if ("attachments" in message) {
+        responses = receive.handleAttachmentMessage();
+      } else if (("text" in message) && (message?.text != undefined)) {
+        const messageText: string | Obj = message.text;
+        
+        /*switch (messageText.replace(/[^\w\s]/gi, '').trim().toLowerCase()) {
+          case 'image':
+            responses = sendImageMessage(receive.user.igsid, process.env.SERVER_URL + "/assets/rift.png");
+            break;
+          case 'gif':
+            responses = sendGifMessage(receive.user.igsid);
+            break;
+          case 'audio':
+            responses = sendAudioMessage(receive.user.igsid);
+            break;
+          case 'video':
+            responses = sendVideoMessage(receive.user.igsid);
+            break;
+          case 'file':
+            responses = sendFileMessage(receive.user.igsid);
+            break;
+          case 'button':
+            responses = sendButtonMessage(receive.user.igsid);
+            break;
+          case 'generic':
+            responses = sendGenericMessage(receive.user.igsid);
+            break;
+          case 'receipt':
+            responses = sendReceiptMessage(receive.user.igsid);
+            break;
+          case 'quick reply':
+            responses = sendQuickReply(receive.user.igsid);
+            break;
+          case 'read receipt':
+            responses = sendReadReceipt(receive.user.igsid);
+            break;
+          case 'typing on':
+            responses = sendTypingOn(receive.user.igsid);
+            break;
+          case 'typing off':
+            responses = sendTypingOff(receive.user.igsid);
+            break;
+          case 'account linking':
+            responses = sendAccountLinking(receive.user.igsid);
+            break;
+          default:
+            const data = receive.handleTextMessage(messageText);
+            responses = sendTextMessage(receive.user.igsid, data.message);
+            break;
+        }*/
+        
+        const data = receive.handleTextMessage(messageText);
+        responses = sendTextMessage(receive.user.igsid, data.message);
+      } else {
+        responses = null
+      }
+    }
+  }
+
+  return responses;
+}
