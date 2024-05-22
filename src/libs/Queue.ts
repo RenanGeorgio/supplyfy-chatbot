@@ -7,7 +7,12 @@ const redisOpts: RedisOptions = {
   host: redisConfig.host.replace(/[\\"]/g, ''),
   port: parseInt(redisConfig.port.replace(/[\\"]/g, '')),
   password: redisConfig.password.replace(/[\\"]/g, ''),
-  tls: { servername: redisConfig.host.replace(/[\\"]/g, '') } 
+  offlineQueue: false,
+  keepAlive: 1,
+  tls: {
+    host: redisConfig.host.replace(/[\\"]/g, ''),
+    port: parseInt(redisConfig.port.replace(/[\\"]/g, '')) 
+  }
 }
 
 const queues = Object.values(jobs).map((job) => ({
