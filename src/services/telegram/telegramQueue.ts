@@ -8,6 +8,7 @@ export default {
       data.serviceId,
       telegramServiceController.telegramServices
     );
+    console.log("telegram service: ", telegramService)
 
     if (!telegramService) {
       return false;
