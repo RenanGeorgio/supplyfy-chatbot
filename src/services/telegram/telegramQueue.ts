@@ -4,6 +4,8 @@ import { telegramServiceController } from "./index";
 export default {
   key: "TelegramService",
   async handle({ data }) {
+    console.log("finding telegram bot...")
+
     const telegramService = findBot(
       data.serviceId,
       telegramServiceController.telegramServices
@@ -11,6 +13,8 @@ export default {
     console.log("telegram service: ", telegramService)
 
     if (!telegramService) {
+      console.log("telegram service not founded.")
+
       return false;
     }
     const telegramBot = telegramService.telegramBot

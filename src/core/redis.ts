@@ -8,11 +8,11 @@ const redisConfig: any = {
 
 const redisClient = redis.createClient({
   password: redisConfig.password.replace(/[\\"]/g, ''),
-  socket:{
+  socket: {
     host: redisConfig.host.replace(/[\\"]/g, ''),
     port: parseInt(redisConfig.port.replace(/[\\"]/g, '')),
     tls: true
-  },    
+  },
 });
 
 redisClient.on("error", function (err) {
@@ -23,6 +23,6 @@ redisClient.on("connect", function (err) {
   console.log("Connected to redis successfully");
 });
 
-redisClient.connect().catch((err) => console.log(err))
+(async () => { redisClient.connect().catch((err) => console.log(err)) })();
 
 export { redisClient, redisConfig };
