@@ -9,17 +9,36 @@ import {
 import { chatOriginExist, createChat } from "../../repositories/chat";
 import { ignoredMessages } from "./helpers/ignoredMessages";
 import { createMessage } from "../../repositories/message";
-import { webhookTrigger } from "../../webhooks/custom/webhookTrigger";
-import { Events, IBotData, ITelegramCredentials, ITelegramService, IWebhook } from "../../types/types";
+import { webhookTrigger } from "../webhook/webhookTrigger";
+import {
+  Events,
+  IBotData,
+  ITelegramCredentials,
+  ITelegramService,
+  IWebhook,
+} from "../../types/types";
 import { servicesActions } from "..";
 import { findBot } from "../../helpers/findBot";
 import Queue from "../../libs/Queue";
 import { produceMessage } from "../../core/kafka/producer";
+import {
+  startChat,
+  continueChat as typebotChat,
+} from "../typebot/session/chatSession";
+import { io } from "../../core/http";
+import { socketServiceController } from "../socket";
 
-const telegramService = async (credentials: ITelegramCredentials, webhook: IWebhook | undefined)  => {
+const telegramService = async (
+  credentials: ITelegramCredentials,
+  webhook: IWebhook | undefined
+) => {
   const token = credentials.token;
   const telegram = new TelegramBot(token, { polling: true }); // verficar depois
   let chatStarted = false; // testando
+  let typebot = false; // testando
+  let messageProcessing = false; // testando
+  const typebotId = "lead-generation-yyf6x80"; // testando
+  let typebotSession = null; // testando
 
   try {
     await telegram.getMe();
@@ -29,36 +48,58 @@ const telegramService = async (credentials: ITelegramCredentials, webhook: IWebh
 
   const bot = await botExist("services.telegram.token", token);
 
+  if(!bot){
+    return;
+  }
+  
+  // teste
+  const socket = socketServiceController.start({
+    _id: bot.companyId,
+    url: "https://chatbot.ignai.com.br",
+    auth: {
+      token: "1234567890"
+    }
+  })
+
+  // const socketInfo = bot?.socket as IBotData["socket"];
+
+  // const socketService = findBot(
+  //   socketInfo._id.toString(),
+  //   servicesActions.socket.sockets
+  // )!;
+
+  // const socket = socketService?.socket;
+
+  let clientId: string | null = null;
+  let enableChatBot = false;
+
   const kafkaMessage = {
     topic: bot?.companyId + ".messages",
     service: "telegram"
   }
 
-  const socketInfo = bot?.socket as IBotData["socket"];
-  
-  const socketService = findBot(
-    socketInfo._id.toString(),
-    servicesActions.socket.sockets
-  )!;
-
-  const socket = socketService?.socket;
-
-  let clientId: string | null = null;
-  let enableChatBot = false;
   const botId = (await telegram.getMe()).id;
 
-  telegram.onText(/\/start/, async (msg) => {
+  const startChat = async (msg: TelegramBot.Message) => {
+    telegram.removeTextListener(/\/start/);
+
     chatStarted = true;
     const chatId = msg.chat.id;
     const { first_name, last_name } = msg.chat;
-    await produceMessage({ text: "/start", from: chatId.toString(), to: botId.toString(), ...kafkaMessage })
-
-    const greetingsTextEmail = `Olá, seja bem-vindo! \n\nPara começar, por favor, informe seu e-mail.`
-    await produceMessage({ text: greetingsTextEmail, from: botId.toString(), to: chatId.toString(), ...kafkaMessage })
-    await telegram.sendMessage(
-      msg.chat.id,
-      greetingsTextEmail
-    );
+    await produceMessage({
+      text: "/start",
+      from: chatId.toString(),
+      to: botId.toString(),
+      ...kafkaMessage,
+    });
+    const greetingsTextEmail = `Olá, seja bem-vindo! \n\nPara começar, por favor, informe seu e-mail.`;
+    await produceMessage({
+      text: greetingsTextEmail,
+      from: botId.toString(),
+      to: chatId.toString(),
+      ...kafkaMessage,
+    });
+    await telegram.sendMessage(msg.chat.id, greetingsTextEmail);
 
     const { clientEmailEventEmitter } = await askEmail(telegram, msg);
 
@@ -75,11 +116,17 @@ const telegramService = async (credentials: ITelegramCredentials, webhook: IWebh
       } else {
         clientId = checkClient?._id.toString()!;
       }
-      const greetingsText = `Olá, ${first_name}!`
-
-      await produceMessage({ text: greetingsText, from: botId.toString(), to: chatId.toString(), ...kafkaMessage })
+      const greetingsText = `Olá, ${first_name}!`;
+      await produceMessage({
+        text: greetingsText,
+        from: botId.toString(),
+        to: chatId.toString(),
+        ...kafkaMessage,
+      });
       await telegram.sendMessage(chatId, greetingsText);
-      enableChatBot = true;
+      // const chat = await startChat(typebotId);
+      // typebotSession = chat;
+      messageProcessing = true;
     };
 
     clientEmailEventEmitter.once("telegramClientEmail", (email) =>
@@ -89,12 +136,20 @@ const telegramService = async (credentials: ITelegramCredentials, webhook: IWebh
     telegram.on("message", messageHandler);
 
     telegram.onText(/\/suporte/, async (msg) => {
-      await produceMessage({ text: "/suporte", from: chatId.toString(), to: botId.toString(), ...kafkaMessage });
+      await produceMessage({
+        text: "/suporte",
+        from: chatId.toString(),
+        to: botId.toString(),
+        ...kafkaMessage,
+      });
       const waitText = `Aguarde um momento, por favor!`;
       await telegram.sendMessage(chatId, waitText);
-      await produceMessage({ text: waitText, from: botId.toString(), to: chatId.toString(), ...kafkaMessage });
-
-      //telegram.removeListener("message", messageHandler);
+      await produceMessage({
+        text: waitText,
+        from: botId.toString(),
+        to: chatId.toString(),
+        ...kafkaMessage,
+      });
       telegram.removeTextListener(/\/suporte/);
       telegram.removeListener("message", messageHandler);
       enableChatBot = false;
@@ -113,11 +168,7 @@ const telegramService = async (credentials: ITelegramCredentials, webhook: IWebh
           socket.emit("newClientChat", chatRepo);
           socket.emit("addNewUser", clientId);
 
-          socket.on("disconnect", () => {
-            socket.disconnect();
-          });
-
-          telegram.on("message", async (msg) => {
+          const sendMessageToCrm = async (msg: TelegramBot.Message) => {
             const { text, date, from } = msg;
             const recipientId = companyId;
 
@@ -127,16 +178,39 @@ const telegramService = async (credentials: ITelegramCredentials, webhook: IWebh
               text!
             );
 
-            const newMessage = { ...message, recipientId };
+            const newMessage: any = { ...message, recipientId };
 
             if (newMessage) {
-              await produceMessage({ text: newMessage.text ?? "", from: clientId ?? "", to: chatId.toString(), ...kafkaMessage })
+              await produceMessage({
+                text: newMessage.text ?? "",
+                from: clientId ?? "",
+                to: chatId.toString(),
+                ...kafkaMessage,
+              });
+              console.log("antes do sendMessage ", newMessage);
               socket.emit("sendMessage", newMessage);
             }
-          });
+
+            telegram.onText(/\/sair/, () => {
+              const endChatMessage =
+                "Obrigado por nos contatar! Foi um prazer ajudar";
+              telegram.sendMessage(chatId, endChatMessage);
+              // socket.disconnect();
+              telegram.removeListener("message", sendMessageToCrm);
+              telegram.on("message", messageHandler);
+            });
+          };
+
+          telegram.on("message", sendMessageToCrm);
 
           socket.on("getMessage", async (msg) => {
-            await produceMessage({ text: msg.text, from: chatId.toString(), to: clientId ?? "", ...kafkaMessage })
+            console.log("get message", msg);
+            await produceMessage({
+              text: msg.text,
+              from: chatId.toString(),
+              to: clientId ?? "",
+              ...kafkaMessage,
+            });
             Queue.add(
               "TelegramService",
               { id: chatId, message: msg.text },
@@ -146,23 +220,89 @@ const telegramService = async (credentials: ITelegramCredentials, webhook: IWebh
         }
       }
     });
-  });
+  };
+
+  telegram.onText(/\/start/, startChat);
 
   const messageHandler = async (msg: TelegramBot.Message) => {
+    console.log("continua no message handler");
     const { chat, text, date, from } = msg;
     if (text) {
-      if (!enableChatBot || ignoredMessages(text)) return;
+      if (ignoredMessages(text)) return;
       if (from?.is_bot === false) {
-        await produceMessage({ text, from: chat.id.toString(), to: botId.toString(), ...kafkaMessage })
-        const answer = await processQuestion(text ?? "");
-        // await telegram.sendMessage(chat.id, answer);
-        await produceMessage({ text: answer, from: botId.toString(), to: chat.id.toString(), ...kafkaMessage })
-        //teste
-        Queue.add(
-          "TelegramService",
-          { id: chat.id, message: answer },
-          credentials._id
-        );
+        // await produceMessage({ text, from: chat.id.toString(), to: botId.toString(), ...kafkaMessage })
+        if (messageProcessing) {
+          const answer = await processQuestion(text ?? "");
+          await produceMessage({
+            text: answer,
+            from: botId.toString(),
+            to: chat.id.toString(),
+            ...kafkaMessage,
+          });
+          //teste
+          Queue.add(
+            "TelegramService",
+            { id: chat.id, message: answer },
+            credentials._id
+          );
+        } else if (typebot) {
+          // message processada via typebot
+          const typebotChatMessage = await typebotChat(
+            typebotSession?.sessionId,
+            text
+          );
+
+          const answer = typebotChatMessage?.messages; // adicionar tratamento para as mensagens do modelo, se é texto, img, etc
+          const input = typebotChatMessage.input;
+
+          for (const message of answer) {
+            // await produceMessage({ text: message.text, from: botId.toString(), to: chat.id.toString(), ...kafkaMessage })
+            Queue.add(
+              "TelegramService",
+              {
+                id: chat.id,
+                message:
+                  message.content.richText[0].children[0].text ||
+                  message.content.url,
+              },
+              credentials._id
+            );
+          }
+
+          console.log("input", input);
+          for (const item of input?.items) {
+            if (input.type === "choice input") {
+              console.log("condição de escolha");
+              Queue.add(
+                "TelegramService",
+                {
+                  id: chat.id,
+                  message: "Escolha uma opção",
+                  options: {
+                    reply_markup: {
+                      inline_keyboard: [
+                        [
+                          {
+                            text: item.content,
+                            callback_data: item.content,
+                          },
+                        ],
+                      ],
+                    },
+                  },
+                },
+                credentials._id
+              );
+            }
+          }
+
+          // {
+          //   "reply_markup": {
+          //       "keyboard": [["Sample text", "Second sample"],   ["Keyboard"], ["I'm robot"]]
+          //       }
+          //   }
+        }
+        // quando finalizar este fluxo, trocar para outro (quando o fluxo termina, a sessão é encerrada)
       }
     }
   };
