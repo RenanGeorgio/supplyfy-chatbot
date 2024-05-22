@@ -61,6 +61,10 @@ const telegramService = async (
     }
   })
 
+  if(!socket){
+    return;
+  }
+
   // const socketInfo = bot?.socket as IBotData["socket"];
 
   // const socketService = findBot(
@@ -248,7 +252,8 @@ const telegramService = async (
         } else if (typebot) {
           // message processada via typebot
           const typebotChatMessage = await typebotChat(
-            typebotSession?.sessionId,
+            // typebotSession?.sessionId!,
+            "lead-generation-yyf6x80", // testando
             text
           );
 
