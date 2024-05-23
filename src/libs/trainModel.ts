@@ -1,7 +1,7 @@
 //@ts-ignore
 import { NlpManager } from "node-nlp";
 
-const manager = new NlpManager({ languages: ['pt'], forceNER: true });
+const manager = new NlpManager({ languages: ['pt'], forceNER: true, nlu: { log: false }  });
 
 manager.addDocument("pt", "qual a diferença do ingrow para outros aminoácidos do mercado", "agent.ingrow");
 manager.addAnswer("pt", "agent.ingrow", "Nosso produto, além de ser orgânico, tem uma porcentagem de 7% de aminoácidos, distribuídos entre 19 tipos. Existe uma grande diferença de distribuição, por isso entregamos ao cliente nosso aminograma. A % de ácido glutâmico de outros aminoácidos no mercado é alta, deixando a desejar em outros aminoácidos. Isso traz um desequilíbrio para a planta. O Ingrow além de trazer mais produtividade nutrindo a planta, deixa o solo mais fértil.");
