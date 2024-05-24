@@ -147,7 +147,7 @@ export interface  IMessengerServiceController { // alterar os tipos
 
 export interface  ISocketServiceController {
   sockets: ISocketService[];
-  start: (credentials: ISocketCredentials, webhook?: IWebhook) => void;
+  start: (credentials: ISocketCredentials, webhook?: IWebhook) => Socket | null;
   // stop: (credentials: ISocketCredentials) => void;
 }
 

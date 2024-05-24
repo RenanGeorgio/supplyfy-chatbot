@@ -11,7 +11,7 @@ import { getWebhook } from "../repositories/webhook";
 
 import { IWebhook } from "../types";
 
-// import "./queue";
+import "./queue";
 
 (async () => {
   const bots = await listAllBots();
