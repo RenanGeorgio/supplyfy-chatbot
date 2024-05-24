@@ -4,7 +4,7 @@ dotenv.config();
 
 import "./database";
 import { serverHttp } from "./core/http";
-//import "./websocket";
+import "./websocket";
 
 const PORT = process.env.PORT ? process.env.PORT.replace(/[\\"]/g, '') : 8000;
 const HOST = process.env.HOST ? process.env.HOST.replace(/[\\"]/g, '') : "http://localhost";

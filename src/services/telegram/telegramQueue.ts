@@ -12,8 +12,10 @@ export default {
     if (!telegramService) {
       return false;
     }
+    const telegramBot = telegramService.telegramBot
 
-    await telegramService.telegramBot.sendMessage(data.id, data.message);
+    await telegramBot.sendMessage(data.id, data.message, data?.options);
+    
   },
   options: {
     attempts: 3,

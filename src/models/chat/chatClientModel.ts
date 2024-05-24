@@ -17,7 +17,7 @@ const chatClientSchema = new Schema({
     },
     senderPhone: {
         type: String,
-        required: true,
+        // required: true,
     },
     createdAt: {
         type: Date,
