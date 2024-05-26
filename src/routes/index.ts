@@ -16,7 +16,7 @@ import * as facebookController from "../controllers/meta/facebookController";
 const routes = Router();
 
 routes
-  // Test-server
+  // server
   .get("/test", serverController.test)
   .get("/session", serverController.session)
   .get("/database", serverController.database)
