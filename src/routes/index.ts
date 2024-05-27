@@ -3,6 +3,8 @@ import { authMiddleware } from "../middlewares";
 
 // server controller
 import * as serverController from "../controllers/server/serverController";
+// meta server controller
+import * as metaController from "../controllers/server/metaController";
 // chat controller
 import * as chatController from "../controllers/chat/chatController";
 // auth controller
@@ -20,6 +22,8 @@ routes
   .get("/test", serverController.test)
   .get("/session", serverController.session)
   .get("/database", serverController.database)
+  .post("/save-code", metaController.save)
+  .post("/change-code", metaController.chageCode)
 
   // login
   .get("/login", authController.login)
