@@ -32,6 +32,10 @@ export const chageCode = async (req: CustomRequest, res: Response, next: NextFun
 
             const { access_token, token_type, expires_in } = response.body; // SALVAR
 
+            const pageResponse = await fetch(`https://graph.facebook.com/v19.0/${appId}/accounts?access_token=${access_token}`);
+
+            const { data, paging } = pageResponse.body; // SALVAR
+
             return res.status(200).send({ changeResponse.body.access_token });
         }
             
