@@ -67,11 +67,9 @@ app.use(sessionMiddleware, serviceSelectorMiddleware);
 app.use('/whatsapp-incoming', waWebhookRouter);
 app.use('/instagram-incoming', igWebhookRouter);
 app.use('/facebook-incoming', fbWebhookRouter);
-
 app.use('/incoming', webhookRouter);
 
 app.use(routes);
-
 
 const node_env = process.env.NODE_ENV ? process.env.NODE_ENV.replace(/[\\"]/g, '') : "development";
 if (node_env === "development") {
