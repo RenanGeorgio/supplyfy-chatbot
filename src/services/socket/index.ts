@@ -1,7 +1,7 @@
 import { io } from "../../core/http";
 import { findBot } from "../../helpers/findBot";
 import { ISocketServiceController } from "../../types";
-import { Events } from "../../types/types";
+import { Events } from "../../types/enums";
 import { webhookTrigger } from "../webhook/webhookTrigger";
 import { socketService } from "./socketService";
 
@@ -13,7 +13,7 @@ export const socketServiceController: ISocketServiceController = {
     const socketInstance = findBot(id, this.sockets);
 
     if (socketInstance) {
-      return null;
+      return socketInstance.socket;
     }
 
     const socket = socketService(credentials);

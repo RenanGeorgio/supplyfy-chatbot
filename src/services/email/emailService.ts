@@ -1,7 +1,7 @@
 import Queue from "../../libs/Queue";
 import { processQuestion } from "../../libs/trainModel";
 import { IEmailCredentials, IWebhook } from "../../types";
-import { Events } from "../../types/types";
+import { Events } from "../../types/enums";
 import { webhookTrigger } from "../webhook/webhookTrigger";
 import emailListener from "./lib/listener";
 import emailTransporter from "./lib/transporter";

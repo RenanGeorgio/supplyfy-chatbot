@@ -1,6 +1,6 @@
 import { findBot, removeBot } from "../../helpers/findBot";
 import Queue from "../../libs/Queue";
-import { Events } from "../../types/types";
+import { Events } from "../../types/enums";
 import messengerService from "./messengerService";
 
 export const messengerServiceController: any = {

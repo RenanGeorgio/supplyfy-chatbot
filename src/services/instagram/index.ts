@@ -2,7 +2,7 @@ import instagramLogin from "./auth/session";
 import intagramService from "./instagram";
 import { IInstagramServiceController } from "../../types";
 import { findBot, removeBot } from "../../helpers/findBot";
-import { Events } from "../../types/types";
+import { Events } from "../../types/enums";
 
 export const instagramServiceController: IInstagramServiceController = {
   instagramServices: [],

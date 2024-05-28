@@ -17,7 +17,7 @@ import * as facebookController from "../controllers/meta/facebookController";
 import * as anonymousChatController from "../controllers/chat/anonymousChatController";
 import * as chatClientController from "../controllers/chat/chatClientController";
 import * as messageController from "../controllers/chat/messageController";
-
+import * as typebotController from "../controllers/typebot/typebotController";
 
 const routes = Router();
 
@@ -90,6 +90,10 @@ routes
   .post("/api/chat/message", messageController.createMessage)
   // // Lista todas as mensagens de um chat
   .get("/api/chat/message/:chatId", messageController.getMessages)
+
+  // typebot
+  .post("/typebot", typebotController.create)
+  .delete("/typebot/:typebotId", typebotController.remove) 
 
 
 export default routes;

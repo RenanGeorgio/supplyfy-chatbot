@@ -11,7 +11,6 @@ import { ignoredMessages } from "./helpers/ignoredMessages";
 import { createMessage } from "../../repositories/message";
 import { webhookTrigger } from "../webhook/webhookTrigger";
 import {
-  Events,
   IBotData,
   ITelegramCredentials,
   ITelegramService,
@@ -27,6 +26,7 @@ import {
 } from "../typebot/session/chatSession";
 import { io } from "../../core/http";
 import { socketServiceController } from "../socket";
+import { Events } from "../../types/enums";
 
 const telegramService = async (
   credentials: ITelegramCredentials,
@@ -48,7 +48,7 @@ const telegramService = async (
 
   const bot = await botExist("services.telegram.token", token);
 
-  if(!bot){
+  if (!bot) {
     return;
   }
 
@@ -56,10 +56,10 @@ const telegramService = async (
     _id: bot.companyId,
     url: "https://chatbot.ignai.com.br",
     auth: {
-      token: "1234567890"
-    }
-  })
-  
+      token: "1234567890",
+    },
+  });
+
   // const socketInfo = bot?.socket as IBotData["socket"];
 
   // const socketService = findBot(
@@ -71,7 +71,6 @@ const telegramService = async (
 
   // teste
   if (bot) {
-
   }
 
   let clientId: string | null = null;
@@ -170,7 +169,7 @@ const telegramService = async (
           });
 
           socket.emit("newClientChat", chatRepo);
-          socket.emit("addNewUser", clientId);
+          socket.emit("addNewUser", { userId: clientId, platform: "telegram" });
 
           const sendMessageToCrm = async (msg: TelegramBot.Message) => {
             const { text, date, from } = msg;

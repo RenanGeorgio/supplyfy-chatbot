@@ -1,29 +1,40 @@
 import { io } from "../core/http";
 import { authMiddleware } from "../middlewares";
 import { OnlineUser } from "../types";
-
+import { Platforms } from "../types/enums";
 let onlineUsers: OnlineUser[] = [];
 io.on("connection", (socket) => {
   // console.log(socket)
-  console.log("connected " + socket.id);
-  socket.on("addNewUser", (userId: string) => {
-    console.log("addNewUser 123", socket)
-    console.log("addNewUser 123", userId)
-    !onlineUsers.some((user: any) => user.userId === userId) &&
-      onlineUsers.push({
-        userId,
-        socketId: socket.id,
-      });
-   
-    io.emit("onlineUsers", onlineUsers);
-  });
+  socket.on(
+    "addNewUser",
+    ({ userId, platform }: { userId: string; platform: Platforms }) => {
+      platform
+      // console.log("addNewUser 123", socket.id, userId, platform);
+      !onlineUsers.some(
+        (user: any) =>{
+          console.log("user", user)
+          console.log(user.plataform in Platforms)
+          return user.userId === userId
+        }
+      ) &&
+        onlineUsers.push({
+          userId,
+          socketId: socket.id,
+          platform: platform || "web", // acrescentar plataforma pra filtrar
+        });
+
+      io.emit("onlineUsers", onlineUsers);
+    }
+  );
 
   socket.on("sendMessage", (message: any) => {
-    console.log("messagem recebida: ", message)
+    console.log("messagem recebida: ", message);
     const receiver = onlineUsers.find(
-      (user: any) => user.userId === message.recipientId
+      (user: any) =>
+        user.userId === message.recipientId &&
+        user.platform === (message.platform || "web") // acrescentar plataforma na msg
     );
-   
+
     if (receiver) {
       io.to(receiver.socketId).emit("getMessage", message);
     }

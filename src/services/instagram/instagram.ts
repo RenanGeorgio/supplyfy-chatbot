@@ -1,6 +1,6 @@
 import { GraphQLSubscriptions, IgApiClientRealtime } from "instagram_mqtt";
 import { processQuestion } from "../../libs/trainModel";
-import { Events } from "../../types/types";
+import { Events } from "../../types/enums";
 import { webhookTrigger } from "../webhook/webhookTrigger";
 
 const intagramService = async (ig: IgApiClientRealtime, webhook: any) => {
