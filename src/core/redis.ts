@@ -8,6 +8,8 @@ const redisConfig: any = {
 
 const redisClient = redis.createClient({
   password: redisConfig.password.replace(/[\\"]/g, ''),
+  disableOfflineQueue: true,
+  pingInterval: 60000,
   socket:{
     host: redisConfig.host.replace(/[\\"]/g, ''),
     port: parseInt(redisConfig.port.replace(/[\\"]/g, '')),
@@ -23,6 +25,6 @@ redisClient.on("connect", function (err) {
   console.log("Connected to redis successfully");
 });
 
-redisClient.connect().catch((err) => console.log(err))
+(async () => {await redisClient.connect().catch((err) => console.log(err)) })();
 
 export { redisClient, redisConfig };

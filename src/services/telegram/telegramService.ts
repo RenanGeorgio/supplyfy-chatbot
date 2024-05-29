@@ -6,26 +6,17 @@ import {
   clientChatExist,
   createChatClient,
 } from "../../repositories/chatClient";
-import { chatOriginExist, createChat } from "../../repositories/chat";
+import { createChat } from "../../repositories/chat";
 import { ignoredMessages } from "./helpers/ignoredMessages";
 import { createMessage } from "../../repositories/message";
-import { webhookTrigger } from "../webhook/webhookTrigger";
+import { webhookTrigger } from "../../webhooks/custom/webhookTrigger";
 import {
   Events,
-  IBotData,
   ITelegramCredentials,
-  ITelegramService,
   IWebhook,
 } from "../../types/types";
-import { servicesActions } from "..";
-import { findBot } from "../../helpers/findBot";
 import Queue from "../../libs/Queue";
 import { produceMessage } from "../../core/kafka/producer";
-import {
-  startChat,
-  continueChat as typebotChat,
-} from "../typebot/session/chatSession";
-import { io } from "../../core/http";
 import { socketServiceController } from "../socket";
 
 const telegramService = async (
@@ -48,10 +39,10 @@ const telegramService = async (
 
   const bot = await botExist("services.telegram.token", token);
 
-  if(!bot){
+  if (!bot) {
     return;
   }
-  
+
   // teste
   const socket = socketServiceController.start({
     _id: bot.companyId,
@@ -60,6 +51,10 @@ const telegramService = async (
       token: "1234567890"
     }
   })
+
+  if (!socket) {
+    return;
+  }
 
   // const socketInfo = bot?.socket as IBotData["socket"];
 
@@ -231,7 +226,7 @@ const telegramService = async (
       if (ignoredMessages(text)) return;
       if (from?.is_bot === false) {
         // await produceMessage({ text, from: chat.id.toString(), to: botId.toString(), ...kafkaMessage })
-        if (messageProcessing) {
+        // if (messageProcessing) {
           const answer = await processQuestion(text ?? "");
           await produceMessage({
             text: answer,
@@ -239,69 +234,69 @@ const telegramService = async (
             to: chat.id.toString(),
             ...kafkaMessage,
           });
-          //teste
           Queue.add(
             "TelegramService",
             { id: chat.id, message: answer },
             credentials._id
           );
-        } else if (typebot) {
-          // message processada via typebot
-          const typebotChatMessage = await typebotChat(
-            typebotSession?.sessionId,
-            text
-          );
+        // } else if (typebot) {
+        //   // message processada via typebot
+        //   const typebotChatMessage = await typebotChat(
+        //     // typebotSession?.sessionId!,
+        //     "lead-generation-yyf6x80", // testando
+        //     text
+        //   );
 
-          const answer = typebotChatMessage?.messages; // adicionar tratamento para as mensagens do modelo, se é texto, img, etc
-          const input = typebotChatMessage.input;
+        //   const answer = typebotChatMessage?.messages; // adicionar tratamento para as mensagens do modelo, se é texto, img, etc
+        //   const input = typebotChatMessage.input;
 
-          for (const message of answer) {
-            // await produceMessage({ text: message.text, from: botId.toString(), to: chat.id.toString(), ...kafkaMessage })
-            Queue.add(
-              "TelegramService",
-              {
-                id: chat.id,
-                message:
-                  message.content.richText[0].children[0].text ||
-                  message.content.url,
-              },
-              credentials._id
-            );
-          }
+        //   for (const message of answer) {
+        //     // await produceMessage({ text: message.text, from: botId.toString(), to: chat.id.toString(), ...kafkaMessage })
+        //     Queue.add(
+        //       "TelegramService",
+        //       {
+        //         id: chat.id,
+        //         message:
+        //           message.content.richText[0].children[0].text ||
+        //           message.content.url,
+        //       },
+        //       credentials._id
+        //     );
+        //   }
 
-          console.log("input", input);
-          for (const item of input?.items) {
-            if (input.type === "choice input") {
-              console.log("condição de escolha");
-              Queue.add(
-                "TelegramService",
-                {
-                  id: chat.id,
-                  message: "Escolha uma opção",
-                  options: {
-                    reply_markup: {
-                      inline_keyboard: [
-                        [
-                          {
-                            text: item.content,
-                            callback_data: item.content,
-                          },
-                        ],
-                      ],
-                    },
-                  },
-                },
-                credentials._id
-              );
-            }
-          }
+        //   console.log("input", input);
+        //   for (const item of input?.items) {
+        //     if (input.type === "choice input") {
+        //       console.log("condição de escolha");
+        //       Queue.add(
+        //         "TelegramService",
+        //         {
+        //           id: chat.id,
+        //           message: "Escolha uma opção",
+        //           options: {
+        //             reply_markup: {
+        //               inline_keyboard: [
+        //                 [
+        //                   {
+        //                     text: item.content,
+        //                     callback_data: item.content,
+        //                   },
+        //                 ],
+        //               ],
+        //             },
+        //           },
+        //         },
+        //         credentials._id
+        //       );
+        //     }
+        //   }
 
-          // {
-          //   "reply_markup": {
-          //       "keyboard": [["Sample text", "Second sample"],   ["Keyboard"], ["I'm robot"]]
-          //       }
-          //   }
-        }
+        //   // {
+        //   //   "reply_markup": {
+        //   //       "keyboard": [["Sample text", "Second sample"],   ["Keyboard"], ["I'm robot"]]
+        //   //       }
+        //   //   }
+        // }
         // quando finalizar este fluxo, trocar para outro (quando o fluxo termina, a sessão é encerrada)
       }
     }

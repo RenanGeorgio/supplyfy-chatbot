@@ -12,11 +12,11 @@ export default {
     if (!telegramService) {
       return false;
     }
+    
     const telegramBot = telegramService.telegramBot
-    console.log("sending message", data)
-    const test = await telegramBot.sendMessage(data.id, data.message, data?.options);
-    console.log("test", test)
-    // test.answerCallbackQuery(data.id, data.message);
+    
+    await telegramBot.sendMessage(data.id, data.message, data?.options);
+    
   },
   options: {
     attempts: 3,

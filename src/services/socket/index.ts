@@ -13,7 +13,7 @@ export const socketServiceController: ISocketServiceController = {
     const socketInstance = findBot(id, this.sockets);
 
     if (socketInstance) {
-      return null;
+      return socketInstance.socket;
     }
 
     const socket = socketService(credentials);

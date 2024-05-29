@@ -5,7 +5,7 @@ import express, { ErrorRequestHandler, Response, NextFunction } from "express";
 import createError from "http-errors";
 import session from "express-session";
 import RedisStore from "connect-redis";
-import { graphqlHTTP } from "express-graphql";
+// import { graphqlHTTP } from "express-graphql";
 import { makeExecutableSchema } from "@graphql-tools/schema";
 import { redisClient } from "./core/redis";
 import routes from "./routes";
@@ -54,24 +54,24 @@ const schema = makeExecutableSchema({
   typeDefs,
 });
 
-app.use(
-  "/models",
-  graphqlHTTP({
-    schema,
-    graphiql: true,
-  })
-);
+// app.use(
+//   "/models",
+//   graphqlHTTP({
+//     schema,
+//     graphiql: true,
+//   })
+// );
 
 app.use(sessionMiddleware, serviceSelectorMiddleware);
 
 app.use('/whatsapp-incoming', waWebhookRouter);
 app.use('/instagram-incoming', igWebhookRouter);
 app.use('/facebook-incoming', fbWebhookRouter);
+app.use('/incoming', webhookRouter);
 
 app.use('/incoming', webhookRouter);
 
 app.use(routes);
-
 
 const node_env = process.env.NODE_ENV ? process.env.NODE_ENV.replace(/[\\"]/g, '') : "development";
 if (node_env === "development") {
