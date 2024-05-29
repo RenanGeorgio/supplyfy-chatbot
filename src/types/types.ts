@@ -7,6 +7,8 @@ import { Transporter } from "nodemailer";
 import { IMailListener } from "../services/email/lib/types";
 import { IgApiClientRealtime } from "instagram_mqtt";
 import { Socket } from "socket.io-client";
+import { Server } from "socket.io";
+
 
 export interface User {
   sub: Types.ObjectId | string;
@@ -147,7 +149,7 @@ export interface  IMessengerServiceController { // alterar os tipos
 
 export interface  ISocketServiceController {
   sockets: ISocketService[];
-  start: (credentials: ISocketCredentials, webhook?: IWebhook) => Socket | null;
+  start: (credentials: ISocketCredentials, webhook?: IWebhook) => Socket;
   // stop: (credentials: ISocketCredentials) => void;
 }
 
@@ -232,3 +234,13 @@ export enum Events {
   SERVICE_ALREADY_RUNNING = "service_already_running",
   SERVICE_NOT_RUNNING = "service_not_running",
 } 
+
+export interface UserInfo {
+  userId: Types.ObjectId;
+  name: string;
+};
+
+export interface OnlineUser {
+  userId: string;
+  socketId: string;
+};
