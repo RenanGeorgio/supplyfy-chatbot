@@ -1,10 +1,15 @@
 import Chat from "../../models/chat/chatModel";
 import { Request, Response, NextFunction } from "express";
+import { CustomRequest } from "../../types";
 
-export const createChat = async (req: CustomRequest, res: Response, next: NextFunction) => {
+export const createChat = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
   const { firstId, secondId, origin } = req.body;
 
-  if(!firstId || !secondId || !origin) {
+  if (!firstId || !secondId || !origin) {
     return res.status(400).send("Missing required fields");
   }
 
@@ -31,11 +36,14 @@ export const createChat = async (req: CustomRequest, res: Response, next: NextFu
   }
 };
 
-export const findUserChats = async (req: Request, res: Response) => {
+export const findUserChats = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { userId } = req.params;
-  
-  try {
 
+  try {
     const chats = await Chat.find({
       members: { $in: [userId] },
     });
@@ -46,7 +54,11 @@ export const findUserChats = async (req: Request, res: Response) => {
   }
 };
 
-export const findChat = async (req: Request, res: Response) => {
+export const findChat = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { firstId, secondId } = req.params;
 
   try {
