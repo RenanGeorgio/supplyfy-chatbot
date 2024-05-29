@@ -69,7 +69,7 @@ const telegramService = async (
   let enableChatBot = false;
 
   const kafkaMessage = {
-    topic: bot?.companyId + ".messages",
+    topic: bot?.companyId,
     service: "telegram"
   }
 
