@@ -1,3 +1,4 @@
+import { mongoErrorHandler } from "../helpers/errorHandler";
 import ChatModel from "../models/chat/chatModel";
 
 export async function chatExist(
@@ -12,14 +13,26 @@ export async function chatExist(
   return chatExist;
 }
 
-export async function chatOriginExist(origin: { platform: string, chatId: string }) {
+export async function findChatById(chatId: string) {
+  try {
+    const chat = await ChatModel.findById(chatId)
+    return chat;
+
+  } catch (error: any) {
+    return mongoErrorHandler(error);
+  }
+}
+
+export async function chatOriginExist(origin: {
+  platform: string;
+  chatId: string;
+}) {
   const clientExist = await ChatModel.findOne({
     origin: origin,
   }).exec();
-  console.log(clientExist)
+  console.log(clientExist);
   return !!clientExist;
 }
-
 
 export async function createChat({
   members,

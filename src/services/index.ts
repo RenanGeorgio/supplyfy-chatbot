@@ -27,7 +27,7 @@ import "./queue";
     }
 
     if (bot?.services?.email) {
-      emailServiceController.start(bot.services.email as any,webhook as IWebhook);
+      emailServiceController.start(bot.services.email as any, webhook as IWebhook);
     }
 
     // if(bot.services?.instagram) {

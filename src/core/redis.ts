@@ -13,7 +13,7 @@ const redisClient = redis.createClient({
   socket:{
     host: redisConfig.host.replace(/[\\"]/g, ''),
     port: parseInt(redisConfig.port.replace(/[\\"]/g, '')),
-    tls: true
+    // tls: true
   },    
 });
 

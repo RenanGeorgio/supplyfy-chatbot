@@ -1,4 +1,5 @@
 import mongoose from "../../database";
+import { Platforms } from "../../types/enums";
 
 const { Schema } = mongoose;
 
@@ -11,7 +12,7 @@ const chatSchema = new Schema({
     platform: {
       type: String,
       required: true,
-      enum: ["facebook", "instagram", "telegram", "web", "whatsapp"],
+      enum: Platforms,
     },
     chatId: {
       type: String,

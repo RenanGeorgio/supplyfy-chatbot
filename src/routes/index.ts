@@ -73,7 +73,6 @@ routes
   .get("/api/chat/client/email/:email", chatClientController.findClientByEmail)
   // busca um cliente
   .get("/api/chat/client/:_id", chatClientController.findClientById)
-
   // Cria um chat
   .post("/api/chat", chatController.createChat)
   // // Lista todos os chats de um usuário
@@ -83,9 +82,14 @@ routes
 
   // ----- Mensagens -----
   // Cria uma mensagem
-  .post("/api/chat/message", messageController.createMessage)
+  .post("/api/chat/message", messageController.create)
   // // Lista todas as mensagens de um chat
-  .get("/api/chat/message/:chatId", messageController.getMessages)
+  .get("/api/chat/message/:chatId", messageController.list)
 
+  // chat session
+  .post("/chat/message/send-message", messageController.sendMessage)
+
+  // get - obter informações 
+  
 
 export default routes;

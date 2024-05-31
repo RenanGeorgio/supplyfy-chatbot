@@ -11,7 +11,7 @@ const chatClientSchema = new Schema({
         type: String,
         required: true,
     },
-    email: {
+    username: { // numero, email, etc
         type: String,
         required: true,
     },

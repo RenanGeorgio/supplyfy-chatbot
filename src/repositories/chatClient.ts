@@ -5,28 +5,28 @@ export async function listCHatClients(){
   return clients;
 }
 
-export async function clientChatExist(email: string) {
+export async function clientChatExist(username: string) {
   const clientExist = await chatClientModel.findOne({
-    email: email,
+    "username": username,
   }).exec();
 
   return clientExist;
 }
 
 export async function createChatClient(
-  email: string,
+  username: string,
   name: string,
   lastName: string
 ) {
   try {
-    const checkClient = await clientChatExist(email);
+    const checkClient = await clientChatExist(username);
     if (checkClient) {
       return checkClient;
     }
     const client = await chatClientModel.create({
       name,
       lastName,
-      email,
+      username,
     });
     return client;
   } catch (error: any) {

@@ -8,6 +8,7 @@ import { IMailListener } from "../services/email/lib/types";
 import { IgApiClientRealtime } from "instagram_mqtt";
 import { Socket } from "socket.io-client";
 import { Server } from "socket.io";
+import { Events } from "./enums";
 
 
 export interface User {
@@ -225,16 +226,6 @@ export interface IWebhook {
   companyId: string;
 };
 
-export enum Events {
-  SERVICE_STARTED = "service_started",
-  SERVICE_STOPPED = "service_stopped",
-  SERVICE_CONNECTED = "service_connected",
-  SERVICE_DISCONNECTED = "service_disconnected",
-  SERVICE_ERROR = "service_error",
-  SERVICE_ALREADY_RUNNING = "service_already_running",
-  SERVICE_NOT_RUNNING = "service_not_running",
-} 
-
 export interface UserInfo {
   userId: Types.ObjectId;
   name: string;
@@ -244,3 +235,17 @@ export interface OnlineUser {
   userId: string;
   socketId: string;
 };
+
+export interface IMessage {
+  senderId: string;
+  recipientId: string;
+  text: string;
+  chatId: string;
+  service: string;
+}
+
+export interface IClientInfo {
+  username: string; // email, numero de telefone etc...
+  name: string;
+  lastName?: string;
+}

@@ -1,17 +1,22 @@
 import Queue from "bull";
 import * as jobs from "../jobs";
-import { redisConfig } from "../core/redis";
-import { RedisOptions } from "ioredis";
+// import { redisConfig } from "../core/redis";
+// import { RedisOptions } from "ioredis";
 
-const redisOpts: RedisOptions = {
-  host: redisConfig.host.replace(/[\\"]/g, ''),
-  port: parseInt(redisConfig.port.replace(/[\\"]/g, '')),
-  password: redisConfig.password.replace(/[\\"]/g, ''),
-  tls: {
-    host: redisConfig.host.replace(/[\\"]/g, ''),
-    port: parseInt(redisConfig.port.replace(/[\\"]/g, ''))
-  }
-}
+// const redisOpts: RedisOptions = {
+//   host: redisConfig.host.replace(/[\\"]/g, ''),
+//   port: parseInt(redisConfig.port.replace(/[\\"]/g, '')),
+//   password: redisConfig.password.replace(/[\\"]/g, ''),
+//   tls: {
+//     host: redisConfig.host.replace(/[\\"]/g, ''),
+//     port: parseInt(redisConfig.port.replace(/[\\"]/g, ''))
+//   }
+// }
+
+const redisOpts: any = {
+  host: process.env.REDIS_HOST,
+  port: process.env.REDIS_PORT,
+};
 
 const queues = Object.values(jobs).map((job) => ({
   bull: new Queue(job.key, {
@@ -43,7 +48,7 @@ export default {
       });
 
       queue.bull.on("completed", (job, result) => {
-        console.log("job completed", result);
+        console.log(`job ${job.id} completed ${JSON.stringify(job.data)}`);
       });
     });
   },
