@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
 import crypto  from "crypto";
+import { ignaiApi } from "../../api";
 
+// https://developers.facebook.com/docs/development/create-an-app/app-dashboard/data-deletion-callback
+// https://stackoverflow.com/questions/64912667/how-to-get-req-body-from-facebooks-data-deletion-url-call
 function base64decode(input) {
   input = input.replace(/-/g, '+').replace(/_/g, '/');
   const pad = input.length % 4;
@@ -35,7 +38,7 @@ function parseSignedRequest(signedRequest) {
   return data;
 }
 
-export const disAllow = (req: Request, res: Response) => {
+export const disAllow = async (req: Request, res: Response) => {
   const { signed_request } = req.body;
 
   const data = parseSignedRequest(signed_request);
