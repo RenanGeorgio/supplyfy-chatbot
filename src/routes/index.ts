@@ -59,7 +59,6 @@ routes
 
   // chat anonimo
   .post("/chat/send-message", anonymousChatController.create)
-  // chat
 
   // ----- Chat -----
   // Copiado do ignai-server

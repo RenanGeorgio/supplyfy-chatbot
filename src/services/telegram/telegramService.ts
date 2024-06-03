@@ -97,7 +97,6 @@ const telegramService = async (
 
     const createClientEvent = async (email: string) => {
       const checkClient = await clientChatExist(email);
-      console.log("checkClient", checkClient)
       if (!checkClient) {
         const newClient = await createChatClient(
           email,
@@ -213,7 +212,7 @@ const telegramService = async (
 
               Queue.add(
                 "TelegramService",
-                { id: chatId, message: endChatMessage },
+                { id: chatId, message: { text: endChatMessage } },
                 credentials._id
               );
               // socket.disconnect();
@@ -236,7 +235,7 @@ const telegramService = async (
             });
             Queue.add(
               "TelegramService",
-              { id: chatId, message: msg.text },
+              { id: chatId, message: { text: msg.text } },
               credentials._id
             );
           });
@@ -266,7 +265,7 @@ const telegramService = async (
           });
           Queue.add(
             "TelegramService",
-            { id: chat.id, message: answer },
+            { id: chat.id, message: { text: answer } },
             credentials._id
           );
           // } else if (typebot) {

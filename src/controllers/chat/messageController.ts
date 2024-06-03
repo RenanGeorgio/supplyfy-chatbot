@@ -13,6 +13,7 @@ import {
 } from "../../repositories/chatClient";
 import { IClientInfo, IMessage } from "../../types/types";
 import { createMessage } from "../../repositories/message";
+import { findWebhook } from "../../repositories/webhook";
 
 export const create = async (req: Request, res: Response) => {
   const { chatId, senderId, text } = req.body;
@@ -43,7 +44,6 @@ export const list = async (req: Request, res: Response) => {
   }
 };
 
-
 export const sendMessage = async (req: Request, res: Response) => {
   const {
     message,
@@ -66,7 +66,13 @@ export const sendMessage = async (req: Request, res: Response) => {
       return res.status(404).json({ message: "Bot não encontrado" });
     }
 
-    if(!message.service){
+    const webhook = await findWebhook({ companyId });
+
+    if (!webhook) {
+      return res.status(404).json({ message: "Webhook não encontrado" });
+    }
+
+    if (!message.service) {
       return res.status(400).json({ message: "Serviço não informado" });
     }
 
@@ -74,7 +80,9 @@ export const sendMessage = async (req: Request, res: Response) => {
       if (!clientInfo?.username || !clientInfo?.name) {
         return res
           .status(400)
-          .json({ message: "Cliente não existe e os dados não foram informados" });
+          .json({
+            message: "Cliente não existe e os dados não foram informados",
+          });
       }
 
       client = await clientChatExist(clientInfo.username);
@@ -100,21 +108,25 @@ export const sendMessage = async (req: Request, res: Response) => {
         const credentials = bot.services?.telegram as ITelegramCredentials;
         // const serviceControl = servicesActions[credentials._id];
         // verificar
-        const create = await createMessage(message.senderId, chat._id, message.text);
+        const createdMessage = await createMessage(
+          message.senderId,
+          chat._id,
+          message.text
+        );
 
-        if("success" in create){
-          return res.status(400).json({ message: create.message });
+        if ("success" in createdMessage) {
+          return res.status(400).json({ message: createdMessage.message });
         }
 
+        // vou adicionar o webhook aqui, para enviar confirmação de mensagem enviada
         Queue.add(
           "TelegramService",
-          { id: chat.origin.chatId, message: message.text },
+          { id: chat.origin.chatId, message: createdMessage, webhookUrl: webhook.url},
           credentials._id
         );
 
-        return res.status(201).json({ message: "Mensagem enviada" });
-      }
-      else {
+        return res.status(201).json();
+      } else {
         return res.status(400).json({ message: "Chat não encontrado" });
       }
     }
