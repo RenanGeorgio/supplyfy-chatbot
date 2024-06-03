@@ -242,6 +242,8 @@ export interface IMessage {
   text: string;
   chatId: string;
   service: string;
+  createdAt?: string | Date;
+  updatedAt?: string | Date;
 }
 
 export interface IClientInfo {

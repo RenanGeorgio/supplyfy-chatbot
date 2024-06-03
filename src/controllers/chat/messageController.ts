@@ -43,30 +43,6 @@ export const list = async (req: Request, res: Response) => {
   }
 };
 
-// export const createSession = async (req: Request, res: Response) => {
-//   const { url, token } = req.body;
-
-//   try {
-
-//     const verifyToken = true;
-
-//     if(!verifyToken){
-//       return res.status(401).json({ message: "Token inválido" });
-//     }
-
-//     const session = createChatSession({
-//       companyId: "1", //mock
-//       url,
-//       token,
-//       expiresDate: new Date(),
-//     });
-
-//     return res.status(201).json(session);
-//   } catch (error: any) {
-//     res.status(500).json(error.message);
-//   }
-
-// }
 
 export const sendMessage = async (req: Request, res: Response) => {
   const {
@@ -88,6 +64,10 @@ export const sendMessage = async (req: Request, res: Response) => {
 
     if (!bot) {
       return res.status(404).json({ message: "Bot não encontrado" });
+    }
+
+    if(!message.service){
+      return res.status(400).json({ message: "Serviço não informado" });
     }
 
     if (!chat && message.service !== "telegram") {
@@ -120,7 +100,11 @@ export const sendMessage = async (req: Request, res: Response) => {
         const credentials = bot.services?.telegram as ITelegramCredentials;
         // const serviceControl = servicesActions[credentials._id];
         // verificar
-        await createMessage(message.senderId, chat._id, message.text);
+        const create = await createMessage(message.senderId, chat._id, message.text);
+
+        if("success" in create){
+          return res.status(400).json({ message: create.message });
+        }
 
         Queue.add(
           "TelegramService",

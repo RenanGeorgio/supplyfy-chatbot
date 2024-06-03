@@ -10,7 +10,7 @@ export default {
     );
 
     if (!telegramService) {
-      return false;
+      throw new Error("Service not found");
     }
     
     const telegramBot = telegramService.telegramBot

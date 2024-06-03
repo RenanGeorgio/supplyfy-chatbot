@@ -59,37 +59,32 @@ routes
 
   // chat anonimo
   .post("/chat/send-message", anonymousChatController.create)
-
   // chat
 
   // ----- Chat -----
   // Copiado do ignai-server
   // to-do: add middleware de auth novamente
   // cria um cliente do chat
-  .post("/api/chat/client", chatClientController.createClient)
+  .post("/chat/client", chatClientController.createClient)
   // lista todos os clientes
-  .get("/api/chat/clients", chatClientController.listClients)
+  .get("/chat/clients", chatClientController.listClients)
   // busca um cliente
-  .get("/api/chat/client/email/:email", chatClientController.findClientByEmail)
+  .get("/chat/client/email/:email", chatClientController.findClientByEmail)
   // busca um cliente
-  .get("/api/chat/client/:_id", chatClientController.findClientById)
+  .get("/chat/client/:_id", chatClientController.findClientById)
   // Cria um chat
-  .post("/api/chat", chatController.createChat)
+  .post("/chat", chatController.createChat)
   // // Lista todos os chats de um usuário
-  .get("/api/chat/:userId", chatController.findUserChats)
+  .get("/chat/:userId", chatController.findUserChats)
   // // Busca um chat
-  .get("/api/chat/find/:firstId/:secondId", chatController.findChat)
+  .get("/chat/find/:firstId/:secondId", chatController.findChat)
 
   // ----- Mensagens -----
-  // Cria uma mensagem
-  .post("/api/chat/message", messageController.create)
+  // Cria uma mensagem (sumente armazena)
+  .post("/chat/message", messageController.create)
   // // Lista todas as mensagens de um chat
-  .get("/api/chat/message/:chatId", messageController.list)
-
-  // chat session
+  .get("/chat/message/:chatId", messageController.list)
+  // envia message via requisição http
   .post("/chat/message/send-message", messageController.sendMessage)
-
-  // get - obter informações 
-  
 
 export default routes;

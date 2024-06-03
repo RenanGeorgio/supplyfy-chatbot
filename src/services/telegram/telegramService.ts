@@ -97,7 +97,7 @@ const telegramService = async (
 
     const createClientEvent = async (email: string) => {
       const checkClient = await clientChatExist(email);
-
+      console.log("checkClient", checkClient)
       if (!checkClient) {
         const newClient = await createChatClient(
           email,
@@ -147,6 +147,7 @@ const telegramService = async (
       if (bot) {
         const { companyId } = bot!;
         if (clientId && companyId && chatId) {
+          // cria ou retorna um chat existente
           const chatRepo = await createChat({
             members: [clientId, bot?.companyId],
             origin: {
@@ -157,12 +158,18 @@ const telegramService = async (
 
           socket.emit("newClientChat", chatRepo);
           socket.emit("addNewUser", clientId);
+          // evento é sempre disparado quando o usuário iniciar o /suporte, mesmo que já exista um chat cadastrado
+          if (webhook && chatRepo) {
+            const { members, _id, timestamps } = chatRepo;
 
-          if (webhook) {
             webhookTrigger({
               url: webhook.url,
-              event: Events.CHAT_CREATED,
-              message: chatRepo,
+              event: Events.CHAT_CREATED, // mudar para CHAT_UPDATED, caso o chat já exista(se necessário)
+              message: {
+                members,
+                chatId: _id,
+                timestamps,
+              },
               service: "telegram",
             });
           }
@@ -236,7 +243,7 @@ const telegramService = async (
         }
       }
     };
-    
+
     telegram.onText(/\/suporte/, supportChat);
   };
 

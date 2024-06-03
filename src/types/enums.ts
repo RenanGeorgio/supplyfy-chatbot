@@ -6,9 +6,12 @@ export enum Events {
   SERVICE_ERROR = "service_error",
   SERVICE_ALREADY_RUNNING = "service_already_running",
   SERVICE_NOT_RUNNING = "service_not_running",
-  MESSAGE_RECEIVED = "message_received",
-  MESSAGE_SENT = "message_sent",
   CHAT_CREATED = "chat_created",
+  CHAT_ENDED = "chat_ended",
+  CHAT_UPDATED = "chat_updated",
+  CHAT_DELETED = "chat_deleted",
+  MESSAGE_SENT = "message_sent",
+  MESSAGE_RECEIVED = "message_received",
 }
 
 export enum Platforms {
