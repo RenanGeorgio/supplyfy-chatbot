@@ -1,5 +1,6 @@
 import emailService from "./emailService";
-import { Events, IEmailServiceController } from "../../types/types";
+import { IEmailServiceController } from "../../types/types";
+import { Events } from "../../types/enums";
 import { findBot, removeBot } from "../../helpers/findBot";
 
 export const emailServiceController: IEmailServiceController = {

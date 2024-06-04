@@ -14,7 +14,7 @@ export const createWebhook = async ({ url, companyId }: { url: string; companyId
   }
 };
 
-export const getWebhook = async ({ companyId }: { companyId: string; }) => {
+export const findWebhook = async ({ companyId }: { companyId: string; }) => {
   try {
     const webhook = await webhookModel.findOne({ companyId });
     return webhook;

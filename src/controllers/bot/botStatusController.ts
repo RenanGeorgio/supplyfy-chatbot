@@ -3,7 +3,7 @@ import { botExist } from "../../repositories/bot";
 import { userExist } from "../../repositories/user";
 import { servicesActions, webhookPromiseHandler } from "../../services";
 import { CustomRequest, IBotData } from "../../types";
-import { getWebhook } from "../../repositories/webhook";
+import { findWebhook } from "../../repositories/webhook";
 
 const actionMessages = {
   start: "Iniciando serviço",
@@ -42,7 +42,7 @@ export const action = async (req: CustomRequest, res: Response) => {
     if (!serviceControl[action]) { // rotas unificadas, com um parâmetro para identificar a ação
       return res.status(400).json({ message: "Ação fornecida é inválida" });
     } else {
-      const webhook = await getWebhook({ companyId });
+      const webhook = await findWebhook({ companyId });
       
       const control = serviceControl[action](service, webhook); // não estou esperando o retorno, para não travar a requisição
 

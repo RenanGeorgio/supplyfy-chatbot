@@ -1,7 +1,7 @@
 // Comentado por Thomás para rodar primeira versão sem instagram-private-api
 import { GraphQLSubscriptions, IgApiClientRealtime } from "instagram_mqtt";
 import { processQuestion } from "../../libs/trainModel";
-import { Events } from "../../types/types";
+import { Events } from "../../types/enums";
 import { webhookTrigger } from "../../webhooks/custom/webhookTrigger";
 
 const intagramService = async (ig: IgApiClientRealtime, webhook: any) => {

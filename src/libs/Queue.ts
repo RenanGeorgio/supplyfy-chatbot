@@ -43,7 +43,7 @@ export default {
       });
 
       queue.bull.on("completed", (job, result) => {
-        console.log("job completed", result);
+        console.log(`job ${job.id} completed ${JSON.stringify(job.data)}`);
       });
     });
   },

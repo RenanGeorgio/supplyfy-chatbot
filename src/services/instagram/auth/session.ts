@@ -2,7 +2,7 @@
 import { readFileSync, writeFileSync } from "fs";
 //import { IgApiClient } from "instagram-private-api";
 import { withRealtime, IgApiClientRealtime } from "instagram_mqtt";
-import { Events } from "../../../types/types";
+import { Events } from "../../../types/enums";
 
 const ERROR_MESSAGES = {
   CHALLENGE_REQUIRED: "É necessário resolver um desafio para continuar",

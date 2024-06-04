@@ -3,7 +3,7 @@ import { produceMessage } from "../../core/kafka/producer";
 import { processQuestion } from "../../libs/trainModel";
 import { botExist } from "../../repositories/bot";
 import { IEmailCredentials, IWebhook } from "../../types";
-import { Events } from "../../types/types";
+import { Events } from "../../types/enums";
 import { webhookTrigger } from "../../webhooks/custom/webhookTrigger";
 import emailListener from "./lib/listener";
 import emailTransporter from "./lib/transporter";

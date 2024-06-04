@@ -5,6 +5,7 @@ import { CustomRequest } from "../../types";
 
 export const listClients = async (req: Request, res: Response) => {
   try {
+    // todo: filtrar com o token do usuário
     const clients = await ChatClientModel.find();
 
     return res.status(200).json(clients);

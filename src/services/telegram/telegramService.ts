@@ -10,14 +10,11 @@ import { createChat } from "../../repositories/chat";
 import { ignoredMessages } from "./helpers/ignoredMessages";
 import { createMessage } from "../../repositories/message";
 import { webhookTrigger } from "../../webhooks/custom/webhookTrigger";
-import {
-  Events,
-  ITelegramCredentials,
-  IWebhook,
-} from "../../types/types";
+import { ITelegramCredentials, IWebhook } from "../../types/types";
 import Queue from "../../libs/Queue";
 import { produceMessage } from "../../core/kafka/producer";
 import { socketServiceController } from "../socket";
+import { Events } from "../../types/enums";
 
 const telegramService = async (
   credentials: ITelegramCredentials,
@@ -48,9 +45,9 @@ const telegramService = async (
     _id: bot.companyId,
     url: "https://chatbot.ignai.com.br",
     auth: {
-      token: "1234567890"
-    }
-  })
+      token: "1234567890",
+    },
+  });
 
   if (!socket) {
     return;
@@ -70,8 +67,8 @@ const telegramService = async (
 
   const kafkaMessage = {
     topic: bot?.companyId,
-    service: "telegram"
-  }
+    service: "telegram",
+  };
 
   const botId = (await telegram.getMe()).id;
 
@@ -100,7 +97,6 @@ const telegramService = async (
 
     const createClientEvent = async (email: string) => {
       const checkClient = await clientChatExist(email);
-
       if (!checkClient) {
         const newClient = await createChatClient(
           email,
@@ -119,8 +115,6 @@ const telegramService = async (
         ...kafkaMessage,
       });
       await telegram.sendMessage(chatId, greetingsText);
-      // const chat = await startChat(typebotId);
-      // typebotSession = chat;
       messageProcessing = true;
     };
 
@@ -130,7 +124,7 @@ const telegramService = async (
 
     telegram.on("message", messageHandler);
 
-    telegram.onText(/\/suporte/, async (msg) => {
+    const supportChat = async (msg: TelegramBot.Message) => {
       await produceMessage({
         text: "/suporte",
         from: chatId.toString(),
@@ -152,6 +146,7 @@ const telegramService = async (
       if (bot) {
         const { companyId } = bot!;
         if (clientId && companyId && chatId) {
+          // cria ou retorna um chat existente
           const chatRepo = await createChat({
             members: [clientId, bot?.companyId],
             origin: {
@@ -162,6 +157,21 @@ const telegramService = async (
 
           socket.emit("newClientChat", chatRepo);
           socket.emit("addNewUser", clientId);
+          // evento é sempre disparado quando o usuário iniciar o /suporte, mesmo que já exista um chat cadastrado
+          if (webhook && chatRepo) {
+            const { members, _id, timestamps } = chatRepo;
+
+            webhookTrigger({
+              url: webhook.url,
+              event: Events.CHAT_CREATED, // mudar para CHAT_UPDATED, caso o chat já exista(se necessário)
+              message: {
+                members,
+                chatId: _id,
+                timestamps,
+              },
+              service: "telegram",
+            });
+          }
 
           const sendMessageToCrm = async (msg: TelegramBot.Message) => {
             const { text, date, from } = msg;
@@ -183,14 +193,31 @@ const telegramService = async (
                 ...kafkaMessage,
               });
               console.log("antes do sendMessage ", newMessage);
+
+              if (webhook) {
+                webhookTrigger({
+                  url: webhook.url,
+                  event: Events.MESSAGE_RECEIVED,
+                  message: newMessage,
+                  service: "telegram",
+                });
+              }
+
               socket.emit("sendMessage", newMessage);
             }
 
-            telegram.onText(/\/sair/, () => {
+            telegram.onText(/\/sair/, async () => {
               const endChatMessage =
                 "Obrigado por nos contatar! Foi um prazer ajudar";
-              telegram.sendMessage(chatId, endChatMessage);
+
+              Queue.add(
+                "TelegramService",
+                { id: chatId, message: { text: endChatMessage } },
+                credentials._id
+              );
               // socket.disconnect();
+              telegram.removeTextListener(/\/sair/);
+              telegram.onText(/\/suporte/, supportChat);
               telegram.removeListener("message", sendMessageToCrm);
               telegram.on("message", messageHandler);
             });
@@ -208,13 +235,15 @@ const telegramService = async (
             });
             Queue.add(
               "TelegramService",
-              { id: chatId, message: msg.text },
+              { id: chatId, message: { text: msg.text } },
               credentials._id
             );
           });
         }
       }
-    });
+    };
+
+    telegram.onText(/\/suporte/, supportChat);
   };
 
   telegram.onText(/\/start/, startChat);
@@ -226,7 +255,7 @@ const telegramService = async (
       if (ignoredMessages(text)) return;
       if (from?.is_bot === false) {
         // await produceMessage({ text, from: chat.id.toString(), to: botId.toString(), ...kafkaMessage })
-        // if (messageProcessing) {
+        if (messageProcessing) {
           const answer = await processQuestion(text ?? "");
           await produceMessage({
             text: answer,
@@ -236,68 +265,69 @@ const telegramService = async (
           });
           Queue.add(
             "TelegramService",
-            { id: chat.id, message: answer },
+            { id: chat.id, message: { text: answer } },
             credentials._id
           );
-        // } else if (typebot) {
-        //   // message processada via typebot
-        //   const typebotChatMessage = await typebotChat(
-        //     // typebotSession?.sessionId!,
-        //     "lead-generation-yyf6x80", // testando
-        //     text
-        //   );
+          // } else if (typebot) {
+          //   // message processada via typebot
+          //   const typebotChatMessage = await typebotChat(
+          //     // typebotSession?.sessionId!,
+          //     "lead-generation-yyf6x80", // testando
+          //     text
+          //   );
 
-        //   const answer = typebotChatMessage?.messages; // adicionar tratamento para as mensagens do modelo, se é texto, img, etc
-        //   const input = typebotChatMessage.input;
+          //   const answer = typebotChatMessage?.messages; // adicionar tratamento para as mensagens do modelo, se é texto, img, etc
+          //   const input = typebotChatMessage.input;
 
-        //   for (const message of answer) {
-        //     // await produceMessage({ text: message.text, from: botId.toString(), to: chat.id.toString(), ...kafkaMessage })
-        //     Queue.add(
-        //       "TelegramService",
-        //       {
-        //         id: chat.id,
-        //         message:
-        //           message.content.richText[0].children[0].text ||
-        //           message.content.url,
-        //       },
-        //       credentials._id
-        //     );
-        //   }
+          //   for (const message of answer) {
+          //     // await produceMessage({ text: message.text, from: botId.toString(), to: chat.id.toString(), ...kafkaMessage })
+          //     Queue.add(
+          //       "TelegramService",
+          //       {
+          //         id: chat.id,
+          //         message:
+          //           message.content.richText[0].children[0].text ||
+          //           message.content.url,
+          //       },
+          //       credentials._id
+          //     );
+          //   }
 
-        //   console.log("input", input);
-        //   for (const item of input?.items) {
-        //     if (input.type === "choice input") {
-        //       console.log("condição de escolha");
-        //       Queue.add(
-        //         "TelegramService",
-        //         {
-        //           id: chat.id,
-        //           message: "Escolha uma opção",
-        //           options: {
-        //             reply_markup: {
-        //               inline_keyboard: [
-        //                 [
-        //                   {
-        //                     text: item.content,
-        //                     callback_data: item.content,
-        //                   },
-        //                 ],
-        //               ],
-        //             },
-        //           },
-        //         },
-        //         credentials._id
-        //       );
-        //     }
-        //   }
+          //   console.log("input", input);
+          //   for (const item of input?.items) {
+          //     if (input.type === "choice input") {
+          //       console.log("condição de escolha");
+          //       Queue.add(
+          //         "TelegramService",
+          //         {
+          //           id: chat.id,
+          //           message: "Escolha uma opção",
+          //           options: {
+          //             reply_markup: {
+          //               inline_keyboard: [
+          //                 [
+          //                   {
+          //                     text: item.content,
+          //                     callback_data: item.content,
+          //                   },
+          //                 ],
+          //               ],
+          //             },
+          //           },
+          //         },
+          //         credentials._id
+          //       );
+          //     }
+          //   }
 
-        //   // {
-        //   //   "reply_markup": {
-        //   //       "keyboard": [["Sample text", "Second sample"],   ["Keyboard"], ["I'm robot"]]
-        //   //       }
-        //   //   }
-        // }
-        // quando finalizar este fluxo, trocar para outro (quando o fluxo termina, a sessão é encerrada)
+          //   // {
+          //   //   "reply_markup": {
+          //   //       "keyboard": [["Sample text", "Second sample"],   ["Keyboard"], ["I'm robot"]]
+          //   //       }
+          //   //   }
+          // }
+          // quando finalizar este fluxo, trocar para outro (quando o fluxo termina, a sessão é encerrada)
+        }
       }
     }
   };
