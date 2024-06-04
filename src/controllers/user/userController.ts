@@ -75,7 +75,7 @@ export const create = async (
             return res.status(400).send({ message: "Usuário já cadastrado." });
         }
 
-        const response = await authApi("/chatbot_clients", {
+        const response = await authApi("/ignai_clients", {
             method: "POST",
             data: {
                 username: email,
