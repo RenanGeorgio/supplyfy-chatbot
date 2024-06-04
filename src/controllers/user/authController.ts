@@ -16,7 +16,7 @@ export const login = async (
             return res.status(401).send({ message: "Unauthorized" });
         }
 
-        const response = await authApi("/login-chatbot", {
+        const response = await authApi("/login-ignai", {
             method: "POST",
             data: {
                 username: req.body.email,

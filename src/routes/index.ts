@@ -27,7 +27,7 @@ routes
   .get("/database", serverController.database)
 
   // login
-  .get("/login", authController.login)
+  .post("/login", authController.login)
 
   // chat
   // .post("/chat", chatController.create)
