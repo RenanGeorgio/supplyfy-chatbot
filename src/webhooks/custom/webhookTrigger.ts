@@ -10,7 +10,12 @@ export const webhookTrigger = async ({ url, event, service, message }) => {
         dateTime: new Date().toISOString()
       },
     });
-  } catch (error) {
-    console.error(error);
+  } catch (error: any) {
+    if("code" in error) {
+      console.error(`Webhook Error ${error.code}`);
+    }
+    else {
+      console.error(`Webhook Error: ${error.message}`);
+    }
   }
 };

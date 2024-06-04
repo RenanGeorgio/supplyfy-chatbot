@@ -15,7 +15,7 @@ import * as facebookController from "../controllers/meta/facebookController";
 import * as anonymousChatController from "../controllers/chat/anonymousChatController";
 import * as chatClientController from "../controllers/chat/chatClientController";
 import * as messageController from "../controllers/chat/messageController";
-
+import * as apiTokenController from "../controllers/api/apiTokenController";
 
 const routes = Router();
 
@@ -51,9 +51,6 @@ routes
     botStatusController.action
   )
 
-  // webhook
-  .post("/webhook", authMiddleware.JWT, webhookController.create)
-
   .get("/facebook/:userId", facebookController.verifyWebhook)
   .post("/facebook/:useId", facebookController.eventsHandler)
 
@@ -83,7 +80,11 @@ routes
   .post("/chat/message", messageController.create)
   // // Lista todas as mensagens de um chat
   .get("/chat/message/:chatId", messageController.list)
+  // gerar api token
+  .post("/api-token", authMiddleware.JWT, apiTokenController.create)
+  // webhook
+  .post("/webhook", authMiddleware.apiMiddleware, webhookController.create)
   // envia message via requisição http
-  .post("/chat/message/send-message", messageController.sendMessage)
+  .post("/chat/message/send-message", authMiddleware.apiMiddleware, messageController.sendMessage)
 
 export default routes;
