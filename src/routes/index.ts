@@ -43,7 +43,6 @@ routes
   // .post("/whatsapp/upload", whatsappController.uploadMedia)
   // .post("/whatsapp/send-doc", whatsappController.sendDocumentMessage)
   // user
-  .post("/user", userController.create)
   .get("/user", authMiddleware.JWT, userController.info)
 
   .post("/bot", authMiddleware.JWT, botController.create)
