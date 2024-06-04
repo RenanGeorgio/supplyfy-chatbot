@@ -16,22 +16,22 @@ export const login = async (
             return res.status(401).send({ message: "Unauthorized" });
         }
 
-        // const response = await authApi("/login-chatbot", {
-        //     method: "POST",
-        //     data: {
-        //         username: req.body.email,
-        //         password: req.body.password,
-        //     },
-        // });
+        const response = await authApi("/login-chatbot", {
+            method: "POST",
+            data: {
+                username: req.body.email,
+                password: req.body.password,
+            },
+        });
         
-        // if (response.status === 200) {
+        if (response.status === 200) {
             const token = generateAccessToken(user._id);
             return res
                 .status(200)
                 .send({ token, email: user.email, company: user.company, name: user.name });
-        // } else {
-        //     return res.status(401).send({ message: "Unauthorized" });
-        // }
+        } else {
+            return res.status(401).send({ message: "Unauthorized" });
+        }
     } catch (error) {
         next(error);
     }
