@@ -51,9 +51,6 @@ routes
     botStatusController.action
   )
 
-  // webhook
-  .post("/webhook", authMiddleware.apiMiddleware, webhookController.create)
-
   .get("/facebook/:userId", facebookController.verifyWebhook)
   .post("/facebook/:useId", facebookController.eventsHandler)
 
@@ -83,8 +80,10 @@ routes
   .post("/chat/message", messageController.create)
   // // Lista todas as mensagens de um chat
   .get("/chat/message/:chatId", messageController.list)
-  // webhook
+  // gerar api token
   .post("/api-token", authMiddleware.JWT, apiTokenController.create)
+  // webhook
+  .post("/webhook", authMiddleware.apiMiddleware, webhookController.create)
   // envia message via requisição http
   .post("/chat/message/send-message", authMiddleware.apiMiddleware, messageController.sendMessage)
 
