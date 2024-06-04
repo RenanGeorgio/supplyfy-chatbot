@@ -3,6 +3,7 @@ import { authMiddleware } from "../middlewares";
 
 // server controller
 import * as serverController from "../controllers/server/serverController";
+import * as userController from "../controllers/user/userController";
 // chat controller
 import * as chatController from "../controllers/chat/chatController";
 // auth controller
@@ -41,6 +42,9 @@ routes
   // .post("/whatsapp/send-img", whatsappController.sendImageByLink)
   // .post("/whatsapp/upload", whatsappController.uploadMedia)
   // .post("/whatsapp/send-doc", whatsappController.sendDocumentMessage)
+  // user
+  .post("/user", userController.create)
+  .get("/user", authMiddleware.JWT, userController.info)
 
   .post("/bot", authMiddleware.JWT, botController.create)
 
