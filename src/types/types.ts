@@ -234,6 +234,7 @@ export interface UserInfo {
 export interface OnlineUser {
   userId: string;
   socketId: string;
+  platform?: string;
 };
 
 export interface IMessage {

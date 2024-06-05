@@ -19,5 +19,6 @@ export enum Platforms {
   INSTAGRAM = "instagram",
   TELEGRAM = "telegram",
   WEB = "web",
-  WHATSAPP = "whatsapp"
+  WHATSAPP = "whatsapp",
+  TYPEBOT = "typebot",
 }

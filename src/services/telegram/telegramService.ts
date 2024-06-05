@@ -44,6 +44,7 @@ const telegramService = async (
   const socket = socketServiceController.start({
     _id: bot.companyId,
     url: "https://chatbot.ignai.com.br",
+    // url: "http://localhost:8000",
     auth: {
       token: "1234567890",
     },
@@ -156,7 +157,7 @@ const telegramService = async (
           });
 
           socket.emit("newClientChat", chatRepo);
-          socket.emit("addNewUser", clientId);
+          socket.emit("addNewUser", { userId: clientId, platform: "telegram" });
           // evento é sempre disparado quando o usuário iniciar o /suporte, mesmo que já exista um chat cadastrado
           if (webhook && chatRepo) {
             const { members, _id, timestamps } = chatRepo;
