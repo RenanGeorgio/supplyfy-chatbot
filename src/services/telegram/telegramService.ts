@@ -2,10 +2,7 @@ import TelegramBot from "node-telegram-bot-api";
 import { processQuestion } from "../../libs/trainModel";
 import { askEmail } from "./helpers/askEmail";
 import { botExist } from "../../repositories/bot";
-import {
-  clientChatExist,
-  createChatClient,
-} from "../../repositories/chatClient";
+import { clientChatExist, createChatClient } from "../../repositories/chatClient";
 import { createChat } from "../../repositories/chat";
 import { ignoredMessages } from "./helpers/ignoredMessages";
 import { createMessage } from "../../repositories/message";
@@ -44,7 +41,6 @@ const telegramService = async (
   const socket = socketServiceController.start({
     _id: bot.companyId,
     url: "https://chatbot.ignai.com.br",
-    // url: "http://localhost:8000",
     auth: {
       token: "1234567890",
     },
