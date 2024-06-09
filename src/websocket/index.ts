@@ -2,9 +2,10 @@ import { io } from "../core/http";
 import { authMiddleware } from "../middlewares";
 import { OnlineUser } from "../types";
 import { Platforms } from "../types/enums";
+
 let onlineUsers: OnlineUser[] = [];
+
 io.on("connection", (socket) => {
-  // console.log(socket)
   socket.on(
     "addNewUser",
     ({ userId, platform }: { userId: string; platform: Platforms }) => {
