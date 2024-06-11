@@ -60,6 +60,30 @@ const apiMiddleware = async(req: CustomRequest, res: Response, next: NextFunctio
   }
 };
 
-const authMiddleware = { JWT, apiMiddleware };
+const auth0 = async (req: CustomRequest, res: Response, next: NextFunction) => {
+  try {
+    const url = `${req.protocol}://${req.get('host')}`;
+    if (url === process.env.AUTH0_ISSUER) {
+      return res.status(401).send({ message: "Unauthorized" });
+    }
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ")[1];
+    if (token == null) {
+      return res.status(401).send();
+    }
+    const valid = jsonwebtoken.verify(token, process.env.AUTH0_CLIENT_SECRET ? process.env.AUTH0_CLIENT_SECRET.replace(/[\\"]/g, '') : "secret")
+    if (!valid) {
+      return res.status(403).send({ message: "Invalid JWT." });
+    }
+    next();
+  } catch (error: any) {
+    if (error.name === "JsonWebTokenError") {
+      return res.status(403).send({ message: "Invalid JWT." });
+    }
+    next(error);
+  }
+};
+
+const authMiddleware = { JWT, apiMiddleware, auth0 };
 
 export default authMiddleware;

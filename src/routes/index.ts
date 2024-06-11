@@ -17,6 +17,7 @@ import * as anonymousChatController from "../controllers/chat/anonymousChatContr
 import * as chatClientController from "../controllers/chat/chatClientController";
 import * as messageController from "../controllers/chat/messageController";
 import * as apiTokenController from "../controllers/api/apiTokenController";
+import * as auth0Controller from "../controllers/user/auth0Controller";
 
 const routes = Router();
 
@@ -92,5 +93,10 @@ routes
   .post("/api-token", authMiddleware.JWT, apiTokenController.create)
   // webhook
   .post("/webhook", authMiddleware.apiMiddleware, webhookController.create)
+
+  // ----- Auth0 -----
+  .post("/auth0/auth", auth0Controller.token)
+  .post("/auth0/register", authMiddleware.auth0, auth0Controller.register)
+  .post("/auth0/login", authMiddleware.auth0, auth0Controller.login)
 
 export default routes;
