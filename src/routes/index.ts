@@ -90,4 +90,9 @@ routes
   // envia message via requisição http
   .post("/chat/message/send-message", authMiddleware.apiMiddleware, messageController.sendMessage)
 
+  // ----- Auth0 -----
+  .post("/auth0/auth", auth0Controller.token)
+  .post("/auth0/register", authMiddleware.auth0, auth0Controller.register)
+  .post("/auth0/login", authMiddleware.auth0, auth0Controller.login)
+
 export default routes;
