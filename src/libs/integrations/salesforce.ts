@@ -13,7 +13,8 @@ app.post("/outbound_message", (requset, response) => {
   };
 
   //send WhatsApp message
-  const url = `https://graph.facebook.com/${process.env.VERSION}/${process.env.PHONE_NUMBER_ID}/messages`;
+  // const url = `https://graph.facebook.com/${process.env.VERSION}/${process.env.PHONE_NUMBER_ID}/messages`;
+  const url = `https://graph.facebook.com/${process.env.VERSION}/messages`;
 
   const options = {
     messaging_product: "whatsapp",
