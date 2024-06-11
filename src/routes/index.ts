@@ -80,15 +80,15 @@ routes
   .get("/chat/find/:firstId/:secondId", chatController.findChat)
 
   // ----- Mensagens -----
+  // envia message via requisição http
+  .post("/chat/message/send-message", authMiddleware.apiMiddleware, messageController.sendMessage)
   // Cria uma mensagem (sumente armazena)
-  .post("/chat/message", messageController.create)
+  .post("/chat/message", authMiddleware.JWT, messageController.create)
   // // Lista todas as mensagens de um chat
   .get("/chat/message/:chatId", messageController.list)
   // gerar api token
   .post("/api-token", authMiddleware.JWT, apiTokenController.create)
   // webhook
   .post("/webhook", authMiddleware.apiMiddleware, webhookController.create)
-  // envia message via requisição http
-  .post("/chat/message/send-message", authMiddleware.apiMiddleware, messageController.sendMessage)
 
 export default routes;
