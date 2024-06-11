@@ -92,6 +92,6 @@ routes
   // gerar api token
   .post("/api-token", authMiddleware.JWT, apiTokenController.create)
   // webhook
-  .post("/webhook", authMiddleware.apiMiddleware, webhookController.create);
+  .post("/webhook", authMiddleware.apiMiddleware, webhookController.create)
 
 export default routes;
