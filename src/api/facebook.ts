@@ -1,7 +1,7 @@
 import axios from "axios";
 import https from "https";
 
-const facebookApi = (version: string = 'v19.0') => {
+const facebookApi = (version: string = 'v20.0') => {
     const useFacebookApi = axios.create({
         baseURL: `https://graph.facebook.com/${version}`,
         withCredentials: true,
