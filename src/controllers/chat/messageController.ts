@@ -11,9 +11,10 @@ import {
   clientChatExist,
   createChatClient,
 } from "../../repositories/chatClient";
-import { IClientInfo, IMessage } from "../../types/types";
+import { CustomRequest, IClientInfo, IMessage } from "../../types/types";
 import { createMessage } from "../../repositories/message";
 import { findWebhook } from "../../repositories/webhook";
+import { userExist } from "../../repositories/user";
 
 export const create = async (req: Request, res: Response) => {
   const { chatId, senderId, text } = req.body;
@@ -44,7 +45,7 @@ export const list = async (req: Request, res: Response) => {
   }
 };
 
-export const sendMessage = async (req: Request, res: Response) => {
+export const sendMessage = async (req: CustomRequest, res: Response) => {
   const {
     message,
     clientInfo,
@@ -57,10 +58,12 @@ export const sendMessage = async (req: Request, res: Response) => {
   let chat: any;
 
   try {
+    const user = await userExist(req.user?.sub as string);
+    
     chat = await findChatById(message.chatId);
     // to-do: verificar se o chat não foi encerrado
 
-    const bot = await botExist("companyId", companyId);
+    const bot = await botExist("companyId", user?.companyId as string);
 
     if (!bot) {
       return res.status(404).json({ message: "Bot não encontrado" });
