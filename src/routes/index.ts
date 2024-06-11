@@ -17,6 +17,7 @@ import * as anonymousChatController from "../controllers/chat/anonymousChatContr
 import * as chatClientController from "../controllers/chat/chatClientController";
 import * as messageController from "../controllers/chat/messageController";
 import * as apiTokenController from "../controllers/api/apiTokenController";
+import * as auth0Controller from "../controllers/user/auth0Controller";
 
 const routes = Router();
 
