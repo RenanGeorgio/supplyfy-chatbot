@@ -53,7 +53,7 @@ export const sendMessage = async (req: CustomRequest, res: Response) => {
     message: IMessage;
     clientInfo: IClientInfo;
   } = req.body; // conteudo da mensagem, conteudo do cliente
-  const companyId = "1";
+
   let client: any;
   let chat: any;
 
@@ -69,7 +69,7 @@ export const sendMessage = async (req: CustomRequest, res: Response) => {
       return res.status(404).json({ message: "Bot não encontrado" });
     }
 
-    const webhook = await findWebhook({ companyId });
+    const webhook = await findWebhook({ companyId: user?.companyId as string});
 
     if (!webhook) {
       return res.status(404).json({ message: "Webhook não encontrado" });
