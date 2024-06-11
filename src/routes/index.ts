@@ -71,24 +71,27 @@ routes
   .get("/chat/client/email/:email", chatClientController.findClientByEmail)
   // busca um cliente
   .get("/chat/client/:_id", chatClientController.findClientById)
-  // Cria um chat
-  .post("/chat", chatController.createChat)
-  // // Lista todos os chats de um usuário
-  .get("/chat/:userId", chatController.findUserChats)
   // // Busca um chat
   .get("/chat/find/:firstId/:secondId", chatController.findChat)
-
+  // Cria um chat
+  .post("/chat", chatController.createChat)
   // ----- Mensagens -----
-  // Cria uma mensagem (sumente armazena)
-  .post("/chat/message", messageController.create)
   // // Lista todas as mensagens de um chat
-  .get("/chat/message/:chatId", messageController.list)
+  .get("/chat/message/:chatId", authMiddleware.JWT, messageController.list)
+  // envia message via requisição http
+  .post(
+    "/chat/message/send-message",
+    authMiddleware.apiMiddleware,
+    messageController.sendMessage
+  )
+  // Cria uma mensagem (sumente armazena)
+  .post("/chat/message", authMiddleware.JWT, messageController.create)
+  // // Lista todos os chats de um usuário
+  .get("/chat/:userId", authMiddleware.JWT, chatController.findUserChats)
   // gerar api token
   .post("/api-token", authMiddleware.JWT, apiTokenController.create)
   // webhook
   .post("/webhook", authMiddleware.apiMiddleware, webhookController.create)
-  // envia message via requisição http
-  .post("/chat/message/send-message", authMiddleware.apiMiddleware, messageController.sendMessage)
 
   // ----- Auth0 -----
   .post("/auth0/auth", auth0Controller.token)

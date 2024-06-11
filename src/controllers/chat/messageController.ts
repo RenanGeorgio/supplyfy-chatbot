@@ -11,9 +11,10 @@ import {
   clientChatExist,
   createChatClient,
 } from "../../repositories/chatClient";
-import { IClientInfo, IMessage } from "../../types/types";
+import { CustomRequest, IClientInfo, IMessage } from "../../types/types";
 import { createMessage } from "../../repositories/message";
 import { findWebhook } from "../../repositories/webhook";
+import { userExist } from "../../repositories/user";
 
 export const create = async (req: Request, res: Response) => {
   const { chatId, senderId, text } = req.body;
@@ -38,13 +39,13 @@ export const list = async (req: Request, res: Response) => {
 
   try {
     const messages = await messageModel.find({ chatId });
-    return res.status(201).json(messages);
+    return res.status(200).json(messages);
   } catch (error: any) {
     res.status(500).json(error.message);
   }
 };
 
-export const sendMessage = async (req: Request, res: Response) => {
+export const sendMessage = async (req: CustomRequest, res: Response) => {
   const {
     message,
     clientInfo,
@@ -52,21 +53,23 @@ export const sendMessage = async (req: Request, res: Response) => {
     message: IMessage;
     clientInfo: IClientInfo;
   } = req.body; // conteudo da mensagem, conteudo do cliente
-  const companyId = "1";
+
   let client: any;
   let chat: any;
 
   try {
+    const user = await userExist(req.user?.sub as string);
+    
     chat = await findChatById(message.chatId);
     // to-do: verificar se o chat não foi encerrado
 
-    const bot = await botExist("companyId", companyId);
+    const bot = await botExist("companyId", user?.companyId as string);
 
     if (!bot) {
       return res.status(404).json({ message: "Bot não encontrado" });
     }
 
-    const webhook = await findWebhook({ companyId });
+    const webhook = await findWebhook({ companyId: user?.companyId as string});
 
     if (!webhook) {
       return res.status(404).json({ message: "Webhook não encontrado" });

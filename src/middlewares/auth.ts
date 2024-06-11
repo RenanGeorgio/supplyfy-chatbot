@@ -32,7 +32,7 @@ const apiMiddleware = async(req: CustomRequest, res: Response, next: NextFunctio
     const token = authHeader && authHeader.split(" ")[1];
 
     if (token == null) {
-      return res.status(401).send();
+      return res.status(401).send({ message: "Api Token não informado" });
     }
 
     const user = <IUser>(
@@ -53,6 +53,7 @@ const apiMiddleware = async(req: CustomRequest, res: Response, next: NextFunctio
     next();
   } catch (error: any) {
     if (error.name === "JsonWebTokenError") {
+      console.error(error, process.env.API_TOKEN_SECRET);
       return res.status(403).send({ message: "Invalid JWT." });
     }
     next(error);

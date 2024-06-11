@@ -2,10 +2,7 @@ import TelegramBot from "node-telegram-bot-api";
 import { processQuestion } from "../../libs/trainModel";
 import { askEmail } from "./helpers/askEmail";
 import { botExist } from "../../repositories/bot";
-import {
-  clientChatExist,
-  createChatClient,
-} from "../../repositories/chatClient";
+import { clientChatExist, createChatClient } from "../../repositories/chatClient";
 import { createChat } from "../../repositories/chat";
 import { ignoredMessages } from "./helpers/ignoredMessages";
 import { createMessage } from "../../repositories/message";
@@ -156,7 +153,7 @@ const telegramService = async (
           });
 
           socket.emit("newClientChat", chatRepo);
-          socket.emit("addNewUser", clientId);
+          socket.emit("addNewUser", { userId: clientId, platform: "telegram" });
           // evento é sempre disparado quando o usuário iniciar o /suporte, mesmo que já exista um chat cadastrado
           if (webhook && chatRepo) {
             const { members, _id, timestamps } = chatRepo;
