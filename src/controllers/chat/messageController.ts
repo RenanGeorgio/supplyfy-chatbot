@@ -38,7 +38,7 @@ export const list = async (req: Request, res: Response) => {
 
   try {
     const messages = await messageModel.find({ chatId });
-    return res.status(201).json(messages);
+    return res.status(200).json(messages);
   } catch (error: any) {
     res.status(500).json(error.message);
   }
