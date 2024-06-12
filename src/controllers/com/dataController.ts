@@ -83,13 +83,13 @@ export const disAllow = async (req: Request, res: Response) => {
   // Remover do database (mongo)
   // Atualizar o user
   // Start data deletion
-  const statusUrl = `${process.env.IGNAI_BOT}/${user.companyId}/delete?id=${typebot?.id}`; // URL to track the deletion
-  const confirmationCode = uuidv6(); // Unique code for the deletion request... exemplo = abc123
+  const currentCode = uuidv6();
+  const statusUrl = `${process.env.IGNAI_BOT}/${user.companyId}/delete?id=${currentCode}`; // URL to track the deletion
 
   // await removeUser(userId); // Remover usuario do banco de dados?
   const responseData = {
     url: statusUrl,
-    confirmation_code: confirmationCode,
+    confirmation_code: currentCode,
   };
 
   res.json(responseData);
