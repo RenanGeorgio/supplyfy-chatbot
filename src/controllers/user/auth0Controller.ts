@@ -97,7 +97,8 @@ export const token = async (
         // if (url !== process.env.AUTH0_ISSUER){
         //     return res.status(401).send({ message: "Unauthorized" });               
         // }
-        if (secret !== process.env.AUTH0_CLIENT_SECRET) {
+        const auth0_secret = process.env.AUTH0_CLIENT_SECRET ? process.env.AUTH0_CLIENT_SECRET.replace(/[\\"]/g, '') : ""
+        if (secret !== auth0_secret) {
             return res.status(401).send({ message: "Unauthorized" });
         }
         // if (id !== process.env.AUTH0_CLIENT_ID) {
