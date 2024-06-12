@@ -47,12 +47,11 @@ export const register = async (
     next: NextFunction
 ) => {
     try {
-        const {company, email, name} = req.body;
-        console.log("company: ", company)
-        console.log("email: ", email)
-        console.log("name: ", name)
+        const {user} = req.body;
+        console.log('User Auth0:')
+        console.log(user)
 
-        if (!company) {
+        if (!user) {
             return res.status(401).send({ message: "Unauthorized" });
         }
 
@@ -60,27 +59,27 @@ export const register = async (
             method: "GET"
         });
 
-        if (response.status === 200) {
-            if (response.data && response.data.length > 0) {
-                if (response.data.some(e => e.company === company)) {
-                    const user = await User.create({
-                        email,
-                        name,
-                        cpf: response.data.cpf,
-                        company: response.data.company,
-                        company_id: response.data.company_id,
-                    });
-                    const token = generateAccessToken(user._id);
-                    return res.status(200).send({ token, email: user.email, company: user.company, name: user.name });
-                } else {
-                    return res.status(401).send({ message: "Unauthorized" });
-                }
-            } else {
-                return res.status(401).send({ message: "Unauthorized" });
-            }
-        } else {
+        // if (response.status === 200) {
+        //     if (response.data && response.data.length > 0) {
+        //         if (response.data.some(e => e.company === company)) {
+        //             const user = await User.create({
+        //                 email,
+        //                 name,
+        //                 cpf: response.data.cpf,
+        //                 company: response.data.company,
+        //                 company_id: response.data.company_id,
+        //             });
+        //             const token = generateAccessToken(user._id);
+        //             return res.status(200).send({ token, email: user.email, company: user.company, name: user.name });
+        //         } else {
+        //             return res.status(401).send({ message: "Unauthorized" });
+        //         }
+        //     } else {
+        //         return res.status(401).send({ message: "Unauthorized" });
+        //     }
+        // } else {
             return res.status(401).send({ message: "Unauthorized" });
-        }
+        // }
     } catch (error) {
         next(error);
     }
@@ -104,9 +103,7 @@ export const token = async (
         // if (id !== process.env.AUTH0_CLIENT_ID) {
         //     return res.status(401).send({ message: "Unauthorized" });
         // }
-        console.log("Auth0 secret: " + secret)
         const token = generateAccessToken(secret);
-        console.log("Auth0 token: " + token) 
         return res.status(200).send({ token });               
     } catch (error) {
         next(error);
