@@ -64,7 +64,7 @@ export const register = async (
         if (!user.user_metadata.full_name) {
             return res.status(401).send({ message: "Unauthorized" });
         }
-
+        console.log(process.env.USER_CONTROL ? process.env.USER_CONTROL.replace(/[\\"]/g, '') : "user control not defined")
         const response = await authApi("/ignai_clients", {
             method: "GET"
         });
