@@ -79,7 +79,7 @@ export const register = async (
                         name: user.user_metadata.full_name,
                         cpf: company.cpf,
                         company: company.username,
-                        company_id: company.company_id
+                        companyId: company.company_id
                     });
                     return res.status(200).send({ email: newUser.email, company: newUser.company, name: newUser.name });
                 } else {
