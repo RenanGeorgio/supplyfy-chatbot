@@ -48,38 +48,49 @@ export const register = async (
 ) => {
     try {
         const {user} = req.body;
-        console.log('User Auth0:')
-        console.log(user)
 
         if (!user) {
+            return res.status(401).send({ message: "Unauthorized" });
+        }
+
+        if (!user.email) {
+            return res.status(401).send({ message: "Unauthorized" });
+        }
+
+        if (!user.user_metadata.company) {
+            return res.status(401).send({ message: "Unauthorized" });
+        }
+
+        if (!user.user_metadata.full_name) {
             return res.status(401).send({ message: "Unauthorized" });
         }
 
         const response = await authApi("/ignai_clients", {
             method: "GET"
         });
-
-        // if (response.status === 200) {
-        //     if (response.data && response.data.length > 0) {
-        //         if (response.data.some(e => e.company === company)) {
-        //             const user = await User.create({
-        //                 email,
-        //                 name,
-        //                 cpf: response.data.cpf,
-        //                 company: response.data.company,
-        //                 company_id: response.data.company_id,
-        //             });
-        //             const token = generateAccessToken(user._id);
-        //             return res.status(200).send({ token, email: user.email, company: user.company, name: user.name });
-        //         } else {
-        //             return res.status(401).send({ message: "Unauthorized" });
-        //         }
-        //     } else {
-        //         return res.status(401).send({ message: "Unauthorized" });
-        //     }
-        // } else {
+        console.log(response.data)
+        if (response.status === 200) {
+            if (response.data && response.data.length > 0) {
+                if (response.data.some(e => e.company === user.user_metadata.company)) {
+                    console.log(response.data.find(e => e.company === user.user_metadata.company))
+                    const newUser = await User.create({
+                        email: user.email,
+                        name: user.user_metadata.full_name,
+                        cpf: response.data.find(e => e.company === user.user_metadata.company).cpf,
+                        company: response.data.find(e => e.company === user.user_metadata.company).company,
+                        company_id: response.data.find(e => e.company === user.user_metadata.company).company_id,
+                    });
+                    const token = generateAccessToken(user._id);
+                    return res.status(200).send({ token, email: newUser.email, company: newUser.company, name: newUser.name });
+                } else {
+                    return res.status(401).send({ message: "Unauthorized" });
+                }
+            } else {
+                return res.status(401).send({ message: "Unauthorized" });
+            }
+        } else {
             return res.status(401).send({ message: "Unauthorized" });
-        // }
+        }
     } catch (error) {
         next(error);
     }
