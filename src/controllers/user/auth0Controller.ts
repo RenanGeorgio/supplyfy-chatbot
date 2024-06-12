@@ -72,10 +72,10 @@ export const register = async (
         if (response.status === 200) {
             console.log(response.data.length)
             if (response.data && response.data.length > 0) {
-                console.log(response.data)
+                console.log(response.data.find(e => e.company_key === user.user_metadata.company))
+                console.log(response.data.some(e => e.company_key === user.user_metadata.company))
                 if (response.data.some((e) => e.company_key === user.user_metadata.company_key)) {
-                    console.log(response.data.find(e => e.company_key === user.user_metadata.company_key))
-                    const company = response.data.find(e => e.company_key === user.user_metadata.company_key);
+                    const company = response.data.find(e => e.company_key === user.user_metadata.company);
                     const newUser = await User.create({
                         email: user.email,
                         name: user.user_metadata.full_name,
