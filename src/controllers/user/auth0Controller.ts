@@ -92,20 +92,21 @@ export const token = async (
     next: NextFunction
 ) => {
     try {
-        console.log(`url: ${req.protocol}://${req.get('host')}`);
-        const url = `${req.protocol}://${req.get('host')}`;
-        const { client_id, client_secret } = req.body;
-        if (url !== process.env.AUTH0_ISSUER){
-            return res.status(401).send({ message: "Unauthorized" });               
-        }
-        if (client_secret !== process.env.AUTH0_CLIENT_SECRET) {
+        const { id, secret } = req.body;
+        // const url = `${req.protocol}://${req.get('host')}`;
+        // if (url !== process.env.AUTH0_ISSUER){
+        //     return res.status(401).send({ message: "Unauthorized" });               
+        // }
+        if (secret !== process.env.AUTH0_CLIENT_SECRET) {
             return res.status(401).send({ message: "Unauthorized" });
         }
-        if (client_id !== process.env.AUTH0_CLIENT_ID) {
-            return res.status(401).send({ message: "Unauthorized" });
-        }
-        const token = generateAccessToken(client_secret);
-        return res.status(200).send({ access_token: token });               
+        // if (id !== process.env.AUTH0_CLIENT_ID) {
+        //     return res.status(401).send({ message: "Unauthorized" });
+        // }
+        console.log("Auth0 secret: " + secret)
+        const token = generateAccessToken(secret);
+        console.log("Auth0 token: " + token)
+        return res.status(200).send({ token });               
     } catch (error) {
         next(error);
     }
