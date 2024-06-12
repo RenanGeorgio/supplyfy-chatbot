@@ -13,3 +13,12 @@ export async function userExist(userId: string) {
     mongoErrorHandler(error);
   }
 }
+
+export async function removeUser(userId: string) {
+  try {
+    const user = await User.findOneAndDelete({ _id: userId });
+    return { success: true, message: "Usuário removido com sucesso" };
+  } catch (error) {
+    mongoErrorHandler(error);
+  }
+}
