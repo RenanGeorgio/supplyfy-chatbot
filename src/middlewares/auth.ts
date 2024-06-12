@@ -62,10 +62,10 @@ const apiMiddleware = async(req: CustomRequest, res: Response, next: NextFunctio
 
 const auth0 = async (req: CustomRequest, res: Response, next: NextFunction) => {
   try {
-    const url = `${req.protocol}://${req.get('host')}`;
-    if (url === process.env.AUTH0_ISSUER) {
-      return res.status(401).send({ message: "Unauthorized" });
-    }
+    // const url = `${req.protocol}://${req.get('host')}`;
+    // if (url === process.env.AUTH0_ISSUER) {
+    //   return res.status(401).send({ message: "Unauthorized" });
+    // }
     const authHeader = req.headers["authorization"];
     const token = authHeader && authHeader.split(" ")[1];
     if (token == null) {
