@@ -22,7 +22,7 @@ export const login = async (
         
         if (response.status === 200) {
             if (response.data && response.data.length > 0) {
-                if (response.data.some(e => e.company_id === user.companyId )) {
+                if (response.data.some(e => e.company_id === user.companyId)) {
                     const token = generateAccessToken(user._id);
                     return res
                         .status(200)
@@ -64,24 +64,23 @@ export const register = async (
         if (!user.user_metadata.full_name) {
             return res.status(401).send({ message: "Unauthorized" });
         }
-        console.log(process.env.USER_CONTROL ? process.env.USER_CONTROL.replace(/[\\"]/g, '') : "user control not defined")
+
         const response = await authApi("/ignai_clients", {
             method: "GET"
         });
-        console.log(response.data)
+        
         if (response.status === 200) {
             if (response.data && response.data.length > 0) {
-                if (response.data.some(e => e.company === user.user_metadata.company)) {
-                    console.log(response.data.find(e => e.company === user.user_metadata.company))
+                if (response.data.some(e => e.company_key === user.user_metadata.company_key)) {
+                    const company = response.data.find(e => e.company_key === user.user_metadata.company_key);
                     const newUser = await User.create({
                         email: user.email,
                         name: user.user_metadata.full_name,
-                        cpf: response.data.find(e => e.company === user.user_metadata.company).cpf,
-                        company: response.data.find(e => e.company === user.user_metadata.company).company,
-                        company_id: response.data.find(e => e.company === user.user_metadata.company).company_id,
+                        cpf: company.cpf,
+                        company: company.username,
+                        company_id: company.company_id
                     });
-                    const token = generateAccessToken(user._id);
-                    return res.status(200).send({ token, email: newUser.email, company: newUser.company, name: newUser.name });
+                    return res.status(200).send({ email: newUser.email, company: newUser.company, name: newUser.name });
                 } else {
                     return res.status(401).send({ message: "Unauthorized" });
                 }
