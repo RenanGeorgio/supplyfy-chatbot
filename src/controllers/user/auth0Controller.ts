@@ -3,6 +3,7 @@ import { Response, NextFunction } from "express";
 import { authApi } from "../../api";
 import { generateAccessToken } from "../../helpers/accessToken";
 import { CustomRequest } from "../../types";
+import { Console } from "node:console";
 
 export const login = async (
     req: CustomRequest, 
@@ -91,6 +92,7 @@ export const register = async (
             return res.status(401).send({ message: "Unauthorized" });
         }
     } catch (error) {
+        console.log(error)
         next(error);
     }
 };
