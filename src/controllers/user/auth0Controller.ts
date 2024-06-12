@@ -105,7 +105,7 @@ export const token = async (
         // }
         console.log("Auth0 secret: " + secret)
         const token = generateAccessToken(secret);
-        console.log("Auth0 token: " + token)
+        console.log("Auth0 token: " + token) 
         return res.status(200).send({ token });               
     } catch (error) {
         next(error);
