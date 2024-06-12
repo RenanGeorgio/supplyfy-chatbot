@@ -11,9 +11,27 @@ export const login = async (
     next: NextFunction
 ) => {
     try {
-        const user = await User.findOne({ email: req.body.email });
+        const { user } = req.body;
 
         if (!user) {
+            return res.status(401).send({ message: "Unauthorized" });
+        }
+
+        if (!user.email) {
+            return res.status(401).send({ message: "Unauthorized" });
+        }
+
+        if (!user.user_metadata.company) {
+            return res.status(401).send({ message: "Unauthorized" });
+        }
+
+        if (!user.user_metadata.full_name) {
+            return res.status(401).send({ message: "Unauthorized" });
+        }
+
+        const chatbotUser = await User.findOne({ email: user.email });
+
+        if (!chatbotUser) {
             return res.status(401).send({ message: "Unauthorized" });
         }
 
@@ -23,11 +41,11 @@ export const login = async (
         
         if (response.status === 200) {
             if (response.data && response.data.length > 0) {
-                if (response.data.some(e => e.company_id === user.companyId)) {
-                    const token = generateAccessToken(user._id);
+                if (response.data.some(e => e.company_id === chatbotUser.companyId)) {
+                    const token = generateAccessToken(chatbotUser._id);
                     return res
                         .status(200)
-                        .send({ token, email: user.email, company: user.company, name: user.name });
+                        .send({ token, email: chatbotUser.email, company: chatbotUser.company, name: chatbotUser.name });
                 } else {
                     return res.status(401).send({ message: "Unauthorized" });
                 }
