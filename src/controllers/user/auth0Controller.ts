@@ -92,14 +92,18 @@ export const register = async (
             if (response.data && response.data.length > 0) {
                 if (response.data.some((e) => e.company_key === user.user_metadata.company)) {
                     const company = response.data.find(e => e.company_key === user.user_metadata.company);
-                    const newUser = await User.create({
-                        email: user.email,
-                        name: user.user_metadata.full_name,
-                        cpf: company.cpf,
-                        company: company.username,
-                        companyId: company.company_id
-                    });
-                    return res.status(200).send({ email: newUser.email, company: newUser.company, name: newUser.name });
+                    const chatbotUser = await User.findOne({ email: user.email });
+                    if (!chatbotUser) {
+                        const newUser = await User.create({
+                            email: user.email,
+                            name: user.user_metadata.full_name,
+                            cpf: company.cpf,
+                            company: company.username,
+                            companyId: company.company_id
+                        });
+                        return res.status(200).send({ email: newUser.email, company: newUser.company, name: newUser.name });
+                    }
+                    return res.status(200).send({ email: chatbotUser.email, company: chatbotUser.company, name: chatbotUser.name });
                 } else {
                     return res.status(401).send({ message: "Unauthorized" });
                 }
