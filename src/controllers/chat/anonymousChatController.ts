@@ -8,9 +8,8 @@ export const create = async (
     next: NextFunction
 ) => {
     try {
-        const { text } = req.body;
-
-        const response = await processQuestion(text);
+        const { message } = req.body;
+        const response = await processQuestion(message);
 
         return res.status(200).send({ message: response });
     } catch (error) {
