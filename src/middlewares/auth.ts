@@ -71,7 +71,7 @@ const auth0 = async (req: CustomRequest, res: Response, next: NextFunction) => {
     if (token == null) {
       return res.status(401).send();
     }
-    const valid = jsonwebtoken.verify(token, process.env.AUTH0_CLIENT_SECRET ? process.env.AUTH0_CLIENT_SECRET.replace(/[\\"]/g, '') : "secret")
+    const valid = jsonwebtoken.verify(token, process.env.TOKEN_SECRET ? process.env.TOKEN_SECRET.replace(/[\\"]/g, '') : "secret")
     if (!valid) {
       return res.status(403).send({ message: "Invalid JWT." });
     }
