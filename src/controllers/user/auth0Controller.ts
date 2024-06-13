@@ -100,9 +100,12 @@ export const register = async (
                             company: company.username,
                             companyId: company.company_id
                         });
-                        return res.status(200).send({ email: newUser.email, company: newUser.company, name: newUser.name });
+                        const token = generateAccessToken(newUser._id);
+                        return res.status(200).send({ token, email: newUser.email, company: newUser.company, name: newUser.name });
+                    } else {
+                        const token = generateAccessToken(chatbotUser._id);
+                        return res.status(200).send({ token, email: chatbotUser.email, company: chatbotUser.company, name: chatbotUser.name });
                     }
-                    return res.status(200).send({ email: chatbotUser.email, company: chatbotUser.company, name: chatbotUser.name });
                 } else {
                     return res.status(401).send({ message: "Unauthorized" });
                 }
