@@ -10,9 +10,27 @@ export const login = async (
     next: NextFunction
 ) => {
     try {
-        const user = await User.findOne({ email: req.body.email });
+        const { user } = req.body;
 
         if (!user) {
+            return res.status(401).send({ message: "Unauthorized" });
+        }
+
+        if (!user.email) {
+            return res.status(401).send({ message: "Unauthorized" });
+        }
+
+        if (!user.user_metadata.company) {
+            return res.status(401).send({ message: "Unauthorized" });
+        }
+
+        if (!user.user_metadata.full_name) {
+            return res.status(401).send({ message: "Unauthorized" });
+        }
+
+        const chatbotUser = await User.findOne({ email: user.email });
+
+        if (!chatbotUser) {
             return res.status(401).send({ message: "Unauthorized" });
         }
 
@@ -22,11 +40,11 @@ export const login = async (
         
         if (response.status === 200) {
             if (response.data && response.data.length > 0) {
-                if (response.data.some(e => e.company_id === user.companyId )) {
-                    const token = generateAccessToken(user._id);
+                if (response.data.some(e => e.company_id === chatbotUser.companyId)) {
+                    const token = generateAccessToken(chatbotUser._id);
                     return res
                         .status(200)
-                        .send({ token, email: user.email, company: user.company, name: user.name });
+                        .send({ token, email: chatbotUser.email, company: chatbotUser.company, name: chatbotUser.name });
                 } else {
                     return res.status(401).send({ message: "Unauthorized" });
                 }
@@ -47,31 +65,44 @@ export const register = async (
     next: NextFunction
 ) => {
     try {
-        const {company, email, name} = req.body;
-        console.log("company: ", company)
-        console.log("email: ", email)
-        console.log("name: ", name)
+        const {user} = req.body;
 
-        if (!company) {
+        if (!user) {
+            return res.status(401).send({ message: "Unauthorized" });
+        }
+
+        if (!user.email) {
+            return res.status(401).send({ message: "Unauthorized" });
+        }
+
+        if (!user.user_metadata.company) {
+            return res.status(401).send({ message: "Unauthorized" });
+        }
+
+        if (!user.user_metadata.full_name) {
             return res.status(401).send({ message: "Unauthorized" });
         }
 
         const response = await authApi("/ignai_clients", {
             method: "GET"
         });
-
+        
         if (response.status === 200) {
             if (response.data && response.data.length > 0) {
-                if (response.data.some(e => e.company === company)) {
-                    const user = await User.create({
-                        email,
-                        name,
-                        cpf: response.data.cpf,
-                        company: response.data.company,
-                        company_id: response.data.company_id,
-                    });
-                    const token = generateAccessToken(user._id);
-                    return res.status(200).send({ token, email: user.email, company: user.company, name: user.name });
+                if (response.data.some((e) => e.company_key === user.user_metadata.company)) {
+                    const company = response.data.find(e => e.company_key === user.user_metadata.company);
+                    const chatbotUser = await User.findOne({ email: user.email });
+                    if (!chatbotUser) {
+                        const newUser = await User.create({
+                            email: user.email,
+                            name: user.user_metadata.full_name,
+                            cpf: company.cpf,
+                            company: company.username,
+                            companyId: company.company_id
+                        });
+                        return res.status(200).send({ email: newUser.email, company: newUser.company, name: newUser.name });
+                    }
+                    return res.status(200).send({ email: chatbotUser.email, company: chatbotUser.company, name: chatbotUser.name });
                 } else {
                     return res.status(401).send({ message: "Unauthorized" });
                 }
@@ -82,6 +113,7 @@ export const register = async (
             return res.status(401).send({ message: "Unauthorized" });
         }
     } catch (error) {
+        console.log(error)
         next(error);
     }
 };
@@ -92,20 +124,20 @@ export const token = async (
     next: NextFunction
 ) => {
     try {
-        console.log(`url: ${req.protocol}://${req.get('host')}`);
-        const url = `${req.protocol}://${req.get('host')}`;
-        const { client_id, client_secret } = req.body;
-        if (url !== process.env.AUTH0_ISSUER){
-            return res.status(401).send({ message: "Unauthorized" });               
-        }
-        if (client_secret !== process.env.AUTH0_CLIENT_SECRET) {
+        const { id, secret } = req.body;
+        // const url = `${req.protocol}://${req.get('host')}`;
+        // if (url !== process.env.AUTH0_ISSUER){
+        //     return res.status(401).send({ message: "Unauthorized" });               
+        // }
+        const auth0_secret = process.env.AUTH0_CLIENT_SECRET ? process.env.AUTH0_CLIENT_SECRET.replace(/[\\"]/g, '') : ""
+        if (secret !== auth0_secret) {
             return res.status(401).send({ message: "Unauthorized" });
         }
-        if (client_id !== process.env.AUTH0_CLIENT_ID) {
-            return res.status(401).send({ message: "Unauthorized" });
-        }
-        const token = generateAccessToken(client_secret);
-        return res.status(200).send({ access_token: token });               
+        // if (id !== process.env.AUTH0_CLIENT_ID) {
+        //     return res.status(401).send({ message: "Unauthorized" });
+        // }
+        const token = generateAccessToken(secret);
+        return res.status(200).send({ token });               
     } catch (error) {
         next(error);
     }
