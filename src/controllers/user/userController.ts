@@ -4,6 +4,7 @@ import { authApi } from "../../api";
 import { generateAccessToken } from "../../helpers/accessToken";
 import { isValid } from "../../helpers/validCpfCnpj";
 import { CustomRequest } from "../../types";
+import { findUserByField } from "../../repositories/user";
 
 export const info = async (
     req: CustomRequest,
@@ -33,13 +34,20 @@ export const info = async (
     }
 };
 
-export const find = async (
+export const findByEmail = async (
     req: CustomRequest,
     res: Response,
     next: NextFunction
 ) => {
     try {
-        return res.status(501).send({ message: "Not implemented" });
+        const { email } = req.params;
+        const user = await findUserByField("email", email);
+       
+        if(!user) {
+            return res.status(404).send({ message: "Usuário não encontrado" });
+        }
+
+        return res.status(200).send(user);
     } catch (error) {
         next(error);
     }

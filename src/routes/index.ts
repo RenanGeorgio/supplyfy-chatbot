@@ -45,6 +45,7 @@ routes
   // .post("/whatsapp/send-doc", whatsappController.sendDocumentMessage)
   // user
   .get("/user", authMiddleware.JWT, userController.info)
+  .get("/user/:email", userController.findByEmail)
 
   .post("/bot", authMiddleware.JWT, botController.create)
 
@@ -78,7 +79,7 @@ routes
   .post("/chat", chatController.createChat)
   // ----- Mensagens -----
   // // Lista todas as mensagens de um chat
-  .get("/chat/message/:chatId", authMiddleware.JWT, messageController.list)
+  .get("/chat/message/:chatId", messageController.list)
   // envia message via requisição http
   .post(
     "/chat/message/send-message",
@@ -86,9 +87,9 @@ routes
     messageController.sendMessage
   )
   // Cria uma mensagem (sumente armazena)
-  .post("/chat/message", authMiddleware.JWT, messageController.create)
+  .post("/chat/message", messageController.create)
   // // Lista todos os chats de um usuário
-  .get("/chat/:userId", authMiddleware.JWT, chatController.findUserChats)
+  .get("/chat/:userId", chatController.findUserChats)
   // gerar api token
   .post("/api-token", authMiddleware.JWT, apiTokenController.create)
   // webhook

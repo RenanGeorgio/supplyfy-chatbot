@@ -45,6 +45,10 @@ export default {
       queue.bull.on("completed", (job, result) => {
         console.log(`job ${job.id} completed ${JSON.stringify(job.data)}`);
       });
+
+      queue.bull.on("error", (err) => {
+        console.log("bull error ", err);
+      });
     });
   },
 };

@@ -2,7 +2,10 @@ import TelegramBot from "node-telegram-bot-api";
 import { processQuestion } from "../../libs/trainModel";
 import { askEmail } from "./helpers/askEmail";
 import { botExist } from "../../repositories/bot";
-import { clientChatExist, createChatClient } from "../../repositories/chatClient";
+import {
+  clientChatExist,
+  createChatClient,
+} from "../../repositories/chatClient";
 import { createChat } from "../../repositories/chat";
 import { ignoredMessages } from "./helpers/ignoredMessages";
 import { createMessage } from "../../repositories/message";
@@ -40,7 +43,8 @@ const telegramService = async (
   // teste
   const socket = socketServiceController.start({
     _id: bot.companyId,
-    url: "https://chatbot.ignai.com.br",
+    // url: "https://chatbot.ignai.com.br",
+    url: "http://localhost:8000",
     auth: {
       token: "1234567890",
     },
@@ -121,7 +125,41 @@ const telegramService = async (
 
     telegram.on("message", messageHandler);
 
-    const supportChat = async (msg: TelegramBot.Message) => {
+    const sendMessageToCrm = async (msg: TelegramBot.Message) => {
+      const { text, date, from } = msg;
+      const recipientId = bot.companyId;
+
+      const message = await createMessage(
+        clientId!,
+        "665f412ca6e3b453f39f83e4", // mock temporario
+        text!
+      );
+
+      const newMessage: any = { ...message, recipientId };
+
+      if (newMessage) {
+        await produceMessage({
+          text: newMessage.text ?? "",
+          from: clientId ?? "",
+          to: chatId.toString(),
+          ...kafkaMessage,
+        });
+        console.log("antes do sendMessage ", newMessage);
+
+        if (webhook) {
+          webhookTrigger({
+            url: webhook.url,
+            event: Events.MESSAGE_RECEIVED,
+            message: newMessage,
+            service: "telegram",
+          });
+        }
+
+        socket.emit("sendMessage", newMessage);
+      }
+    };
+
+    const supportChat = async () => {
       await produceMessage({
         text: "/suporte",
         from: chatId.toString(),
@@ -152,6 +190,10 @@ const telegramService = async (
             },
           });
 
+          if (socket.disconnected) {
+            socket.connect();
+          }
+
           socket.emit("newClientChat", chatRepo);
           socket.emit("addNewUser", { userId: clientId, platform: "telegram" });
           // evento é sempre disparado quando o usuário iniciar o /suporte, mesmo que já exista um chat cadastrado
@@ -170,59 +212,9 @@ const telegramService = async (
             });
           }
 
-          const sendMessageToCrm = async (msg: TelegramBot.Message) => {
-            const { text, date, from } = msg;
-            const recipientId = companyId;
-
-            const message = await createMessage(
-              clientId!,
-              chatRepo._id.toString(),
-              text!
-            );
-
-            const newMessage: any = { ...message, recipientId };
-
-            if (newMessage) {
-              await produceMessage({
-                text: newMessage.text ?? "",
-                from: clientId ?? "",
-                to: chatId.toString(),
-                ...kafkaMessage,
-              });
-              console.log("antes do sendMessage ", newMessage);
-
-              if (webhook) {
-                webhookTrigger({
-                  url: webhook.url,
-                  event: Events.MESSAGE_RECEIVED,
-                  message: newMessage,
-                  service: "telegram",
-                });
-              }
-
-              socket.emit("sendMessage", newMessage);
-            }
-
-            telegram.onText(/\/sair/, async () => {
-              const endChatMessage =
-                "Obrigado por nos contatar! Foi um prazer ajudar";
-
-              Queue.add(
-                "TelegramService",
-                { id: chatId, message: { text: endChatMessage } },
-                credentials._id
-              );
-              // socket.disconnect();
-              telegram.removeTextListener(/\/sair/);
-              telegram.onText(/\/suporte/, supportChat);
-              telegram.removeListener("message", sendMessageToCrm);
-              telegram.on("message", messageHandler);
-            });
-          };
-
           telegram.on("message", sendMessageToCrm);
 
-          socket.on("getMessage", async (msg) => {
+          const receiveMessageFromCrm = async(msg: any) => {
             console.log("get message", msg);
             await produceMessage({
               text: msg.text,
@@ -235,9 +227,34 @@ const telegramService = async (
               { id: chatId, message: { text: msg.text } },
               credentials._id
             );
+          };
+
+          socket.on("getMessage", receiveMessageFromCrm);
+
+          telegram.onText(/\/sair/, () => {
+            telegram.removeListener("message", sendMessageToCrm);
+            socket.removeListener("getMessage", receiveMessageFromCrm);
+            endSupportChat();
           });
         }
       }
+    };
+
+    const endSupportChat = () => {
+      const removed = telegram.removeTextListener(/\/sair/);
+      console.log("removed", removed);
+
+      const endChatMessage = "Obrigado por nos contatar! Foi um prazer ajudar";
+      Queue.add(
+        "TelegramService",
+        { id: chatId, message: { text: endChatMessage } },
+        credentials._id
+      );
+
+      telegram.on("message", messageHandler);
+
+      // socket.disconnect();
+      telegram.onText(/\/suporte/, supportChat);
     };
 
     telegram.onText(/\/suporte/, supportChat);
