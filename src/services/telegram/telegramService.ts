@@ -15,19 +15,16 @@ import Queue from "../../libs/Queue";
 import { produceMessage } from "../../core/kafka/producer";
 import { socketServiceController } from "../socket";
 import { ClientFlow, Events } from "../../types/enums";
-import socketUsers from "../../websocket/socketUsers";
-
-// import { removeOnlineUser } from "../../websocket";
 
 const telegramService = async (
   credentials: ITelegramCredentials,
   webhook: IWebhook | undefined
 ) => {
   const token = credentials.token;
-  const telegram = new TelegramBot(token, { polling: true }); // verficar depois
-
+  const telegram = new TelegramBot(token, { polling: true });
   const clients = new Map();
-
+  // São armezados no Map, o flow atual, o chatId e o clientId
+  // Existem 3 fluxos atualmente: CHABOT, EMAIL e HUMAN
   try {
     await telegram.getMe();
   } catch (error) {
@@ -42,8 +39,7 @@ const telegramService = async (
 
   const socket = socketServiceController.start({
     _id: bot.companyId,
-    // url: "https://chatbot.ignai.com.br",
-    url: "http://localhost:8000",
+    url: "https://chatbot.ignai.com.br", // adicionar env depois, pra faciliar a troca em desenvolvimento
     auth: {
       token: "1234567890",
     },
