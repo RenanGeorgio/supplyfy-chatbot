@@ -24,7 +24,7 @@ export const socketServiceController: ISocketServiceController = {
         socket: socket,
       });
       
-      console.log(`Socket conectado: ${socket.id}`);
+      console.log(`📗 Socket conectado: ${credentials.url}`);
       if (webhook) {
         webhookTrigger({
           url: webhook.url,

@@ -22,3 +22,16 @@ export enum Platforms {
   WHATSAPP = "whatsapp",
   TYPEBOT = "typebot",
 }
+
+export enum ChatStatus {
+  ACTIVE = "active",
+  FINISHED = "finished",
+  ARCHIVED = "archived",
+  // DELETED = "deleted",
+}
+
+export enum ClientFlow {
+  CHABOT = "chabot",
+  HUMAN = "human",
+  EMAIL = "email",
+}
