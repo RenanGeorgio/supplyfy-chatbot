@@ -6,7 +6,11 @@ import {
   clientChatExist,
   createChatClient,
 } from "../../repositories/chatClient";
-import { createChat, findChatById } from "../../repositories/chat";
+import {
+  createChat,
+  findChatById,
+  updateChatStatus,
+} from "../../repositories/chat";
 import { ignoredMessages } from "./helpers/ignoredMessages";
 import { createMessage } from "../../repositories/message";
 import { webhookTrigger } from "../../webhooks/custom/webhookTrigger";
@@ -40,6 +44,7 @@ const telegramService = async (
   const socket = socketServiceController.start({
     _id: bot.companyId,
     url: "https://chatbot.ignai.com.br", // adicionar env depois, pra faciliar a troca em desenvolvimento
+    // url: "http://localhost:8000",
     auth: {
       token: "1234567890",
     },
@@ -66,7 +71,10 @@ const telegramService = async (
       telegram.sendMessage(msg.chat.id, "Você está sendo atendido por um bot");
     }
 
-    if (msg.text === "/suporte") {
+    if (
+      msg.text === "/suporte" &&
+      clients.get(chatId).flow === ClientFlow.CHABOT
+    ) {
       const { first_name, last_name } = msg.chat;
       clients.get(chatId).flow = ClientFlow.EMAIL;
       const { clientEmailEventEmitter } = await askEmail(telegram, msg);
@@ -142,8 +150,15 @@ const telegramService = async (
 
       if (msg.text === "/sair") {
         telegram.sendMessage(chatId, "Suporte finalizado");
-        clients.get(chatId).flow = ClientFlow.CHABOT;
+        const message = await createMessage(
+          client.clientId,
+          client.chatId,
+          "Atendimento finalizado!"
+        );
+        socket.emit("sendMessage", { ...message, recipientId });
         socket.emit("disconnectClient", client.clientId);
+        clients.get(chatId).flow = ClientFlow.CHABOT;
+        updateChatStatus(client.chatId, "finished");
         return;
       }
 
@@ -193,7 +208,9 @@ const telegramService = async (
           credentials._id
         );
       }
-    console.log(`📗 Telegram: \x1b[4m${botName}\x1b[0m received message from socket`);
+      console.log(
+        `📗 Telegram: \x1b[4m${botName}\x1b[0m received message from socket`
+      );
     }
   });
 
