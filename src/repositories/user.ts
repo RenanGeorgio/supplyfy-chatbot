@@ -1,6 +1,6 @@
 import { mongoErrorHandler } from "../helpers/errorHandler";
 import User from "../models/user/User";
-// substituir e remover depois, caso necessário
+
 export async function userExist(userId: string) {
   try {
     const user = await User.findOne({ _id: userId });
