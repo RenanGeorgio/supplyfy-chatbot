@@ -53,6 +53,10 @@ const emailSchema = new Schema({
     type: String,
     required: true,
   },
+  service: {
+    type: String,
+    // required: true,
+  }
 });
 
 const socketSchema = new Schema({

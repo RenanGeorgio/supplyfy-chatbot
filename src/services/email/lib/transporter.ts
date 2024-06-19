@@ -1,7 +1,7 @@
 import nodemailer, { Transporter } from "nodemailer";
 import { IEmailCredentials } from "../../../types";
 
-const transporter = ({ smtpHost, smtpPort, emailUsername, emailPassword, smtpSecure }: Omit<IEmailCredentials, '_id'>) => {
+const transporter = ({ smtpHost, smtpPort, emailUsername, emailPassword, smtpSecure, service }: Omit<IEmailCredentials, '_id'>) => {
   const transporter: Transporter =  nodemailer.createTransport({
     host: smtpHost,
     port: smtpPort,
@@ -11,6 +11,11 @@ const transporter = ({ smtpHost, smtpPort, emailUsername, emailPassword, smtpSec
       user: emailUsername,
       pass: emailPassword,
     },
+    // tls: {
+    //   rejectUnauthorized: false,
+    //   ciphers:'SSLv3' // avaliar dps
+    // },
+    service
   });
 
   return transporter;

@@ -27,6 +27,7 @@ const emailService = async (
     smtpSecure,
     emailUsername,
     emailPassword,
+    service
   } = credentials;
   const mailListenerEventEmitter = new EventEmitter();
 
@@ -36,6 +37,7 @@ const emailService = async (
     emailUsername,
     emailPassword,
     smtpSecure,
+    service
   });
 
   mailTransporter.verify((error, success) => {
@@ -114,9 +116,11 @@ const emailService = async (
   });
 
   mailListener.on("mail", (mail: any, seqno: any, attributes: any) => {
-    const emailText = mail.text.split(/\r?\n/).join(" "); // adicionar algum tratamento para a mensagem
-
+    const emailText = mail.text?.split(/\r?\n/).join(" "); // adicionar algum tratamento para a mensagem
     (async () => {
+      // console.log("mail.text", mail.text)
+      // console.log("emailText", emailText)
+      // console.log("mail obj", mail)
       await produceMessage({ text: emailText, from: mail.from.value[0].address, to: emailUsername, ...kafkaMessage })
       const responseMessage = await processQuestion(emailText);
       if (!responseMessage) return;

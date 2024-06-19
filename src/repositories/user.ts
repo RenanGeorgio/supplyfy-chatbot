@@ -13,3 +13,21 @@ export async function userExist(userId: string) {
     mongoErrorHandler(error);
   }
 }
+
+/**
+ * verifica se o usuário existe
+ * @param {string} path campo a ser pesquisado
+ * @param {string} value valor a ser pesquisado
+ */
+export async function findUserByField(path: string, value: string) {
+  try {
+    const user = await User.findOne({ [path]: value });
+    if (user) {
+      return user;
+    } else {
+      return null;
+    }
+  } catch (error) {
+    mongoErrorHandler(error);
+  }
+}
