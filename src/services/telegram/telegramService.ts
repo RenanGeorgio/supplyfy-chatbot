@@ -20,6 +20,17 @@ import { produceMessage } from "../../core/kafka/producer";
 import { socketServiceController } from "../socket";
 import { ClientFlow, Events } from "../../types/enums";
 
+const sendMessage = async (bot: TelegramBot, id: TelegramBot.ChatId, txt: string, options?: TelegramBot.SendMessageOptions, kafka?: any) => {
+  await bot.sendMessage(id, txt, options); 
+  if (kafka){
+    await produceMessage({
+      text: txt ?? "",
+      to: id.toString(),
+      ...kafka,
+    }); 
+  }
+}
+
 const telegramService = async (
   credentials: ITelegramCredentials,
   webhook: IWebhook | undefined
@@ -41,6 +52,11 @@ const telegramService = async (
     return;
   }
 
+  const kafkaMessage = {
+    topic: bot?.companyId,
+    service: "telegram",
+  };
+
   const socket = socketServiceController.start({
     _id: bot.companyId,
     url: "https://chatbot.ignai.com.br", // adicionar env depois, pra faciliar a troca em desenvolvimento
@@ -55,10 +71,17 @@ const telegramService = async (
   }
 
   const botName = (await telegram.getMe()).username;
+  const botId = (await telegram.getMe()).id;
 
   async function messageHandler(msg: TelegramBot.Message) {
     const chatId = msg.chat.id;
     const client = clients.get(chatId);
+    await produceMessage({
+      text: msg.text ?? "",
+      from: chatId.toString(),
+      to: botId.toString(),
+      ...kafkaMessage,
+    });
 
     if (!client) {
       clients.set(chatId, {
@@ -67,8 +90,8 @@ const telegramService = async (
         chatId: null,
       });
       const greetingsText = `Olá, ${msg.chat.first_name}!`;
-      await telegram.sendMessage(chatId, greetingsText);
-      telegram.sendMessage(msg.chat.id, "Você está sendo atendido por um bot");
+      await sendMessage(telegram, chatId, greetingsText, undefined, { ...kafkaMessage, from: botId.toString() });
+      await sendMessage(telegram, msg.chat.id, "Você está sendo atendido por um bot", undefined, { ...kafkaMessage, from: botId.toString() });
     }
 
     if (
@@ -92,7 +115,7 @@ const telegramService = async (
           clients.get(chatId).clientId = checkClient._id.toString()!;
         }
         clients.get(chatId).flow = ClientFlow.HUMAN;
-        telegram.sendMessage(chatId, "Aguardando atendimento humano");
+        await sendMessage(telegram, chatId, "Aguardando atendimento humano", undefined, { ...kafkaMessage, from: botId.toString() });
       };
 
       clientEmailEventEmitter.once("telegramClientEmail", async (email) => {
@@ -144,12 +167,13 @@ const telegramService = async (
       !ignoredMessages(msg.text as string)
     ) {
       const responseMessage = await processQuestion(msg.text as string);
-      telegram.sendMessage(chatId, responseMessage);
+      await sendMessage(telegram, chatId, responseMessage, undefined, { ...kafkaMessage, from: botId.toString() });
     } else if (client && client.flow === ClientFlow.HUMAN) {
       const recipientId = bot?.companyId;
 
       if (msg.text === "/sair") {
-        telegram.sendMessage(chatId, "Suporte finalizado");
+        await sendMessage(telegram, chatId, "Suporte finalizado", undefined, { ...kafkaMessage, from: botId.toString() });
+
         const message = await createMessage(
           client.clientId,
           client.chatId,
