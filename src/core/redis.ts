@@ -11,11 +11,11 @@ const redisClient = redis.createClient({
   disableOfflineQueue: true,
   pingInterval: 60000,
   // descomentar antes de mandar para main
-  // socket:{
-  //   host: redisConfig.host.replace(/[\\"]/g, ''),
-  //   port: parseInt(redisConfig.port.replace(/[\\"]/g, '')),
-  //   tls: true
-  // },    
+  socket:{
+    host: redisConfig.host.replace(/[\\"]/g, ''),
+    port: parseInt(redisConfig.port.replace(/[\\"]/g, '')),
+    tls: true
+  },    
 });
 
 redisClient.on("error", function (err) {
