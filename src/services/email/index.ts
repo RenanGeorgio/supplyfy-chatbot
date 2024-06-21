@@ -7,14 +7,7 @@ export const emailServiceController: IEmailServiceController = {
   emailServices: [],
 
   async start(emailCredentials, webhook) {
-    const { 
-      mailListener, 
-      mailTransporter, 
-      mailListenerEventEmitter 
-    } = await emailService(emailCredentials, webhook);
-
     const id = emailCredentials._id?.toString()!;
-
     const bot = findBot(id, this.emailServices);
 
     if (bot) {
@@ -25,41 +18,63 @@ export const emailServiceController: IEmailServiceController = {
         service: "email",
       };
     }
+    
+    const { mailListener, mailTransporter, mailListenerEventEmitter } =
+    await emailService(emailCredentials, webhook);
 
     const waitForConnect = () => {
       return new Promise((resolve) => {
-        mailListenerEventEmitter.on("email:connected", () => {
-          this.emailServices.push({
-            id: emailCredentials._id?.toString()!,
-            mailListener: mailListener,
-            mailTransporter: mailTransporter,
-          });
+        let mailListenerConnected = false;
+        let mailTransporterConnected = false;
 
-          resolve({
-            success: true,
-            event: Events.SERVICE_STARTED,
-            message: "serviço iniciado",
-            service: "email"
-          });
+        const verifyConnection = () => {
+          if (mailListenerConnected && mailTransporterConnected) {
+            resolve({
+              success: true,
+              event: Events.SERVICE_STARTED,
+              message: "serviço iniciado",
+              service: "email",
+            });
+
+            this.emailServices.push({
+              id,
+              mailListener,
+              mailTransporter,
+            });
+
+            console.log(
+              `📘 Email: serviço iniciado \x1b[4m${emailCredentials.emailUsername}\x1b[0m`
+            );
+          }
+        };
+
+        mailListenerEventEmitter.on("mailTransporter:connected", () => {
+          mailTransporterConnected = true;
+          verifyConnection();
+        });
+
+        mailListenerEventEmitter.on("mailListener:connected", () => {
+          mailListenerConnected = true;
+          verifyConnection();
         });
       });
     };
-    
+
     mailListener.start();
     const connect = await waitForConnect();
-
     return connect;
   },
 
   stop(credentials) {
     const id = credentials._id?.toString()!;
     const service = findBot(id.toString(), this.emailServices);
-    if(service){
+    if (service) {
       service.mailListener.stop();
       service.mailListener.removeAllListeners();
       service.mailTransporter.close();
       service.mailTransporter.removeAllListeners();
       removeBot(service, this.emailServices);
+      console.log(`📙 Email: serviço parado ${credentials.emailUsername}`);
       return {
         success: true,
         event: Events.SERVICE_STOPPED,
@@ -75,6 +90,5 @@ export const emailServiceController: IEmailServiceController = {
     };
   },
 
-  resume(id) {
-  },
+  resume(id) {},
 };

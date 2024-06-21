@@ -238,6 +238,17 @@ export interface OnlineUser {
   platform?: string;
 };
 
+export interface IChat {
+  members: string[];
+  origin: {
+    platform: string;
+    chatId?: string;
+  };
+  status: string;
+  createdAt?: string | Date;
+  updatedAt?: string | Date;
+}
+
 export interface IMessage {
   senderId: string;
   recipientId: string | string[];

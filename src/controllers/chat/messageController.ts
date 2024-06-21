@@ -13,6 +13,7 @@ import {
 } from "../../repositories/chatClient";
 import {
   CustomRequest,
+  IChat,
   IClientInfo,
   IEmailCredentials,
   IMessage,
@@ -67,7 +68,6 @@ export const sendMessage = async (req: CustomRequest, res: Response) => {
     const user = await userExist(req.user?.sub as string);
 
     chat = await findChatById(message.chatId);
-    // to-do: verificar se o chat não foi encerrado
 
     const bot = await botExist("companyId", user?.companyId as string);
 
@@ -90,7 +90,7 @@ export const sendMessage = async (req: CustomRequest, res: Response) => {
       const serviceControl = servicesActions[message.service];
 
       if (!serviceControl) {
-        return res.status(400).json({ message: "Serviço não encontrado" });
+        return res.status(404).json({ message: "Serviço não encontrado" });
       }
 
       const emailService = findBot(
@@ -111,9 +111,14 @@ export const sendMessage = async (req: CustomRequest, res: Response) => {
           type: "email",
           id: credentials._id?.toString(),
         },
+        webhookUrl: webhook.url,
       });
 
       return res.status(201).json();
+    }
+
+    if(chat && (chat as IChat).status !== "active") {
+      return res.status(400).json({ message: "Chat não está ativo" });
     }
 
     if (

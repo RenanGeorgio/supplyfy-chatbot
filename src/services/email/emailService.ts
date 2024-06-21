@@ -54,7 +54,8 @@ const emailService = async (
       }
       console.log("Server is not ready to take our messages: ", error);
     } else {
-      console.log(`SMPT conectado: ${smtpHost}`);
+      console.log(`SMTP conectado: ${smtpHost}`);
+      mailListenerEventEmitter.emit("mailTransporter:connected");
     }
   });
 
@@ -74,8 +75,8 @@ const emailService = async (
   };
 
   mailListener.on("server:connected", function () {
-    mailListenerEventEmitter.emit("email:connected");
     console.log(`IMAP conectado: ${imapHost}`);
+    mailListenerEventEmitter.emit("mailListener:connected");
   });
 
   mailListener.on("server:disconnected", function (e) {
@@ -117,7 +118,7 @@ const emailService = async (
       }
     }
   });
-
+  
   mailListener.on("mail", (mail: any, seqno: any, attributes: any) => {
     const emailText: string = mail.text?.split(/\r?\n/).join(" "); // adicionar algum tratamento para a mensagem
     (async () => {
