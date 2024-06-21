@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Response } from "express";
 import messageModel from "../../models/chat/messageModel";
 import chatSessionModel from "../../models/chat/chatSession";
 // import { createChatSession } from "../../repositories/chatSession";
@@ -22,7 +22,7 @@ import { findWebhook } from "../../repositories/webhook";
 import { userExist } from "../../repositories/user";
 import { findBot } from "../../helpers/findBot";
 
-export const create = async (req: Request, res: Response) => {
+export const create = async (req: CustomRequest, res: Response, next: NextFunction) => {
   const { chatId, senderId, text } = req.body;
 
   try {
@@ -36,22 +36,22 @@ export const create = async (req: Request, res: Response) => {
 
     return res.status(201).json(savedMessage);
   } catch (error: any) {
-    res.status(500).json(error.message);
+    next(error)
   }
 };
 
-export const list = async (req: Request, res: Response) => {
+export const list = async (req: CustomRequest, res: Response, next: NextFunction) => {
   const { chatId } = req.params;
 
   try {
     const messages = await messageModel.find({ chatId });
     return res.status(200).json(messages);
   } catch (error: any) {
-    res.status(500).json(error.message);
+    next(error)
   }
 };
 
-export const sendMessage = async (req: CustomRequest, res: Response) => {
+export const sendMessage = async (req: CustomRequest, res: Response, next: NextFunction) => {
   const {
     message,
     clientInfo,
@@ -177,6 +177,6 @@ export const sendMessage = async (req: CustomRequest, res: Response) => {
       }
     }
   } catch (error: any) {
-    console.log(error);
+    next(error)
   }
 };

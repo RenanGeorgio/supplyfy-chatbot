@@ -1,20 +1,20 @@
-import { Request, Response } from "express";
+import { NextFunction, Response } from "express";
 import ChatClientModel from "../../models/chat/chatClientModel";
 import { createChatClient } from "../../repositories/chatClient";
 import { CustomRequest } from "../../types";
 
-export const listClients = async (req: Request, res: Response) => {
+export const listClients = async (req: CustomRequest, res: Response, next: NextFunction) => {
   try {
     // todo: filtrar com o token do usuário
     const clients = await ChatClientModel.find();
 
     return res.status(200).json(clients);
   } catch (error: any) {
-    res.status(500).json(error.message);
+    next(error)
   }
 };
 
-export const createClient = async (req: CustomRequest, res: Response) => {
+export const createClient = async (req: CustomRequest, res: Response, next: NextFunction) => {
   const { name, lastName, username } = req.body;
 
   if (!name || !username) {
@@ -26,11 +26,11 @@ export const createClient = async (req: CustomRequest, res: Response) => {
 
     return res.status(201).json(client);
   } catch (error: any) {
-    res.status(500).json(error.message);
+    next(error)
   }
 };
 
-export const findClientByEmail = async (req: Request, res: Response) => {
+export const findClientByEmail = async (req: CustomRequest, res: Response, next: NextFunction) => {
   const { username } = req.params;
 
   try {
@@ -44,11 +44,11 @@ export const findClientByEmail = async (req: Request, res: Response) => {
 
     return res.status(404).send("Chat user not found");
   } catch (error: any) {
-    res.status(500).send(error.message);
+    next(error)
   }
 };
 
-export const findClientById = async (req: Request, res: Response) => {
+export const findClientById = async (req: CustomRequest, res: Response, next: NextFunction) => {
   const { _id } = req.params;
 
   try {
@@ -62,6 +62,6 @@ export const findClientById = async (req: Request, res: Response) => {
 
     return res.status(404).send("Chat user not found");
   } catch (error: any) {
-    res.status(500).send(error.message);
+    next(error)
   }
 };
