@@ -9,16 +9,16 @@ export const createChat = async (
   next: NextFunction
 ) => {
   const user = await userExist(req.user?.sub as string);
-  const { secondId, origin } = req.body;
+  const { clientId, origin } = req.body;
 
-  if ( !secondId || !origin || !user) {
+  if ( !clientId || !origin || !user) {
     return res.status(400).send("Missing required fields");
   }
 
   try {
     const chat = await Chat.findOne({
       origin,
-      members: { $all: [user?._id, secondId] },
+      members: { $all: [user.companyId, clientId] },
     });
 
     if (chat) {
@@ -26,7 +26,7 @@ export const createChat = async (
     }
 
     const newChat = new Chat({
-      members: [user?._id, secondId],
+      members: [user.companyId, clientId],
       origin,
     });
 
