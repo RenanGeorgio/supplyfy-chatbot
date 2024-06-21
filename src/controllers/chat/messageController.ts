@@ -60,10 +60,10 @@ export const sendMessage = async (req: CustomRequest, res: Response, next: NextF
     message: IMessage;
     clientInfo: IClientInfo;
   } = req.body; // conteudo da mensagem, conteudo do cliente
-
+  
   let client: any;
   let chat: any;
-
+  
   try {
     const user = await userExist(req.user?.sub as string);
     if (!user) {
@@ -146,7 +146,7 @@ export const sendMessage = async (req: CustomRequest, res: Response, next: NextF
       }
       // criar chat aqui ?
       chat = await createChat({
-        members: [client?._id, message.senderId],
+        members: [client?._id, user._id],
         origin: {
           platform: message.service,
           chatId: "",
@@ -159,7 +159,7 @@ export const sendMessage = async (req: CustomRequest, res: Response, next: NextF
         // const serviceControl = servicesActions[credentials._id];
         // verificar
         const createdMessage = await createMessage(
-          message.senderId,
+          user._id.toString(),
           chat._id,
           message.text
         );
