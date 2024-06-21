@@ -1,23 +1,24 @@
 import Chat from "../../models/chat/chatModel";
 import { Response, NextFunction } from "express";
 import { CustomRequest } from "../../types";
+import { userExist } from "../../repositories/user";
 
 export const createChat = async (
   req: CustomRequest,
   res: Response,
   next: NextFunction
 ) => {
-  const userId = req.user?.sub;
-  const { firstId, secondId, origin } = req.body;
+  const user = await userExist(req.user?.sub as string);
+  const { secondId, origin } = req.body;
 
-  if (!firstId || !secondId || !origin) {
+  if ( !secondId || !origin || !user) {
     return res.status(400).send("Missing required fields");
   }
 
   try {
     const chat = await Chat.findOne({
       origin,
-      members: { $all: [firstId, secondId] },
+      members: { $all: [user?._id, secondId] },
     });
 
     if (chat) {
@@ -25,7 +26,7 @@ export const createChat = async (
     }
 
     const newChat = new Chat({
-      members: [firstId, secondId],
+      members: [user?._id, secondId],
       origin,
     });
 

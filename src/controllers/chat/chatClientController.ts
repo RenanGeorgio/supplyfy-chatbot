@@ -2,6 +2,7 @@ import { NextFunction, Response } from "express";
 import ChatClientModel from "../../models/chat/chatClientModel";
 import { createChatClient } from "../../repositories/chatClient";
 import { CustomRequest } from "../../types";
+import { userExist } from "../../repositories/user";
 
 export const listClients = async (req: CustomRequest, res: Response, next: NextFunction) => {
   try {
@@ -15,9 +16,14 @@ export const listClients = async (req: CustomRequest, res: Response, next: NextF
 };
 
 export const createClient = async (req: CustomRequest, res: Response, next: NextFunction) => {
+  const user = await userExist(req.user?.sub as string);
+  if (!user) {
+    return res.status(403).send({ message: "Unauthorized" });
+  }
+
   const { name, lastName, username } = req.body;
 
-  if (!name || !username) {
+  if (!name || !username || !user) {
     return res.status(400).send({ message: "Missing required fields" });
   }
 

@@ -66,6 +66,9 @@ export const sendMessage = async (req: CustomRequest, res: Response, next: NextF
 
   try {
     const user = await userExist(req.user?.sub as string);
+    if (!user) {
+      return res.status(403).json({ message: "Unauthorized" });
+    }
 
     chat = await findChatById(message.chatId);
 
