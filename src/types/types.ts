@@ -240,10 +240,11 @@ export interface OnlineUser {
 
 export interface IMessage {
   senderId: string;
-  recipientId: string;
+  recipientId: string | string[];
   text: string;
   chatId: string;
   service: string;
+  subject?: string;
   createdAt?: string | Date;
   updatedAt?: string | Date;
 }

@@ -15,14 +15,14 @@ export const listClients = async (req: Request, res: Response) => {
 };
 
 export const createClient = async (req: CustomRequest, res: Response) => {
-  const { name, lastName, email } = req.body;
-  console.log(req.body, "req body")
-  if (!name || !email) {
+  const { name, lastName, username } = req.body;
+
+  if (!name || !username) {
     return res.status(400).send({ message: "Missing required fields" });
   }
 
   try {
-    const client = await createChatClient(email, name, lastName || " ");
+    const client = await createChatClient(username, name, lastName || " ");
 
     return res.status(201).json(client);
   } catch (error: any) {
@@ -31,11 +31,11 @@ export const createClient = async (req: CustomRequest, res: Response) => {
 };
 
 export const findClientByEmail = async (req: Request, res: Response) => {
-  const { email } = req.params;
+  const { username } = req.params;
 
   try {
     const client = await ChatClientModel.findOne({
-      email,
+      username,
     });
 
     if (client) {

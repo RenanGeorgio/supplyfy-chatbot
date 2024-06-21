@@ -59,8 +59,8 @@ const telegramService = async (
 
   const socket = socketServiceController.start({
     _id: bot.companyId,
-    url: "https://chatbot.ignai.com.br", // adicionar env depois, pra faciliar a troca em desenvolvimento
-    // url: "http://localhost:8000",
+    // url: "https://chatbot.ignai.com.br", // adicionar env depois, pra faciliar a troca em desenvolvimento
+    url: "http://localhost:8000",
     auth: {
       token: "1234567890",
     },

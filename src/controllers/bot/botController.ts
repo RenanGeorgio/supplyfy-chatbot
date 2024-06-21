@@ -11,7 +11,7 @@ export const create = async (
 ) => {
   try {
     const { services, socket } = req.body;
-    
+
     if (!services) {
       return res.status(400).json({ message: "Campos obrigatórios ausentes" });
     }
@@ -21,11 +21,14 @@ export const create = async (
     const companyId = checkUser?.companyId as string;
 
     const existingBot = await botExist("companyId", companyId);
-    
+
     let bot = {} as any;
 
     if (existingBot) {
-      const { success, message } = await checkServices(existingBot as unknown as IBotData, services);
+      const { success, message } = await checkServices(
+        existingBot as unknown as IBotData,
+        services
+      );
 
       if (success === false) {
         return res.status(400).json({ message });
@@ -39,11 +42,28 @@ export const create = async (
 
     if (bot && "success" in bot && !bot.success) {
       const { message, error } = bot;
-      
+
       throw new Error(`${message}, ${error}`);
     }
 
     return res.status(201).json({ message: "Bot criado" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const listServices = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { userId } = req.params;
+    const checkUser = await userExist((req.user?.sub as string) || userId);
+    const companyId = checkUser?.companyId as string;
+    const bot = await botExist("companyId", companyId);
+
+    return res.status(200).json({ services: bot?.services });
   } catch (error) {
     next(error);
   }

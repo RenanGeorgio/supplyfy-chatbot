@@ -11,10 +11,16 @@ import {
   clientChatExist,
   createChatClient,
 } from "../../repositories/chatClient";
-import { CustomRequest, IClientInfo, IMessage } from "../../types/types";
+import {
+  CustomRequest,
+  IClientInfo,
+  IEmailCredentials,
+  IMessage,
+} from "../../types/types";
 import { createMessage } from "../../repositories/message";
 import { findWebhook } from "../../repositories/webhook";
 import { userExist } from "../../repositories/user";
+import { findBot } from "../../helpers/findBot";
 
 export const create = async (req: Request, res: Response) => {
   const { chatId, senderId, text } = req.body;
@@ -59,7 +65,7 @@ export const sendMessage = async (req: CustomRequest, res: Response) => {
 
   try {
     const user = await userExist(req.user?.sub as string);
-    
+
     chat = await findChatById(message.chatId);
     // to-do: verificar se o chat não foi encerrado
 
@@ -69,7 +75,7 @@ export const sendMessage = async (req: CustomRequest, res: Response) => {
       return res.status(404).json({ message: "Bot não encontrado" });
     }
 
-    const webhook = await findWebhook({ companyId: user?.companyId as string});
+    const webhook = await findWebhook({ companyId: user?.companyId as string });
 
     if (!webhook) {
       return res.status(404).json({ message: "Webhook não encontrado" });
@@ -79,13 +85,46 @@ export const sendMessage = async (req: CustomRequest, res: Response) => {
       return res.status(400).json({ message: "Serviço não informado" });
     }
 
-    if (!chat && message.service !== "telegram") {
+    if (message.service === "email") {
+      const credentials = bot.services?.email as IEmailCredentials;
+      const serviceControl = servicesActions[message.service];
+
+      if (!serviceControl) {
+        return res.status(400).json({ message: "Serviço não encontrado" });
+      }
+
+      const emailService = findBot(
+        credentials._id.toString(),
+        serviceControl.emailServices
+      );
+
+      if (!emailService) {
+        return res.status(400).json({ message: "Serviço não está rodando" });
+      }
+
+      Queue.add("EmailService", {
+        from: credentials.emailUsername,
+        to: message.recipientId,
+        subject: message.subject,
+        text: message.text,
+        service: {
+          type: "email",
+          id: credentials._id?.toString(),
+        },
+      });
+
+      return res.status(201).json();
+    }
+
+    if (
+      !chat &&
+      message.service !== "telegram" &&
+      message.service !== "email"
+    ) {
       if (!clientInfo?.username || !clientInfo?.name) {
-        return res
-          .status(400)
-          .json({
-            message: "Cliente não existe e os dados não foram informados",
-          });
+        return res.status(400).json({
+          message: "Cliente não existe e os dados não foram informados",
+        });
       }
 
       client = await clientChatExist(clientInfo.username);
@@ -124,7 +163,11 @@ export const sendMessage = async (req: CustomRequest, res: Response) => {
         // vou adicionar o webhook aqui, para enviar confirmação de mensagem enviada
         Queue.add(
           "TelegramService",
-          { id: chat.origin.chatId, message: createdMessage, webhookUrl: webhook.url},
+          {
+            id: chat.origin.chatId,
+            message: createdMessage,
+            webhookUrl: webhook.url,
+          },
           credentials._id
         );
 

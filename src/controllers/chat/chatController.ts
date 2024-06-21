@@ -7,6 +7,7 @@ export const createChat = async (
   res: Response,
   next: NextFunction
 ) => {
+  const userId = req.user?.sub;
   const { firstId, secondId, origin } = req.body;
 
   if (!firstId || !secondId || !origin) {

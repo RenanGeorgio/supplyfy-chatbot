@@ -48,7 +48,7 @@ routes
   .get("/user/:email", userController.findByEmail)
 
   .post("/bot", authMiddleware.JWT, botController.create)
-
+  .get("/bot/services/?:userId", botController.listServices)
   // controle do serviço dos bots
   .post(
     "/bot/:serviceId/:action",
