@@ -1,5 +1,5 @@
 import Chat from "../../models/chat/chatModel";
-import { Request, Response, NextFunction } from "express";
+import { Response, NextFunction } from "express";
 import { CustomRequest } from "../../types";
 
 export const createChat = async (
@@ -38,7 +38,7 @@ export const createChat = async (
 };
 
 export const findUserChats = async (
-  req: Request,
+  req: CustomRequest,
   res: Response,
   next: NextFunction
 ) => {
@@ -56,7 +56,7 @@ export const findUserChats = async (
 };
 
 export const findChat = async (
-  req: Request,
+  req: CustomRequest,
   res: Response,
   next: NextFunction
 ) => {

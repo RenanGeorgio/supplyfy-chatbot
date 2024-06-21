@@ -1,7 +1,10 @@
-export const create = async(req: Request, res: Response) => {
+import { NextFunction, Response } from "express"
+import { CustomRequest } from "../../types"
+
+export const create = async (req: CustomRequest, res: Response, next: NextFunction) => {
 
 }
 
-export const retrieve = async(req: Request, res: Response) => {
+export const retrieve = async (req: CustomRequest, res: Response, next: NextFunction) => {
   
 }
