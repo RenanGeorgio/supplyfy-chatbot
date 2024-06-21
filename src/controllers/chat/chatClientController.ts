@@ -1,41 +1,47 @@
-import { Request, Response } from "express";
+import { NextFunction, Response } from "express";
 import ChatClientModel from "../../models/chat/chatClientModel";
 import { createChatClient } from "../../repositories/chatClient";
 import { CustomRequest } from "../../types";
+import { userExist } from "../../repositories/user";
 
-export const listClients = async (req: Request, res: Response) => {
+export const listClients = async (req: CustomRequest, res: Response, next: NextFunction) => {
   try {
     // todo: filtrar com o token do usuário
     const clients = await ChatClientModel.find();
 
     return res.status(200).json(clients);
   } catch (error: any) {
-    res.status(500).json(error.message);
+    next(error)
   }
 };
 
-export const createClient = async (req: CustomRequest, res: Response) => {
-  const { name, lastName, email } = req.body;
-  console.log(req.body, "req body")
-  if (!name || !email) {
+export const createClient = async (req: CustomRequest, res: Response, next: NextFunction) => {
+  const user = await userExist(req.user?.sub as string);
+  if (!user) {
+    return res.status(403).send({ message: "Unauthorized" });
+  }
+
+  const { name, lastName, username } = req.body;
+
+  if (!name || !username || !user) {
     return res.status(400).send({ message: "Missing required fields" });
   }
 
   try {
-    const client = await createChatClient(email, name, lastName || " ");
+    const client = await createChatClient(username, name, lastName || " ");
 
     return res.status(201).json(client);
   } catch (error: any) {
-    res.status(500).json(error.message);
+    next(error)
   }
 };
 
-export const findClientByEmail = async (req: Request, res: Response) => {
-  const { email } = req.params;
+export const findClientByEmail = async (req: CustomRequest, res: Response, next: NextFunction) => {
+  const { username } = req.params;
 
   try {
     const client = await ChatClientModel.findOne({
-      email,
+      username,
     });
 
     if (client) {
@@ -44,11 +50,11 @@ export const findClientByEmail = async (req: Request, res: Response) => {
 
     return res.status(404).send("Chat user not found");
   } catch (error: any) {
-    res.status(500).send(error.message);
+    next(error)
   }
 };
 
-export const findClientById = async (req: Request, res: Response) => {
+export const findClientById = async (req: CustomRequest, res: Response, next: NextFunction) => {
   const { _id } = req.params;
 
   try {
@@ -62,6 +68,6 @@ export const findClientById = async (req: Request, res: Response) => {
 
     return res.status(404).send("Chat user not found");
   } catch (error: any) {
-    res.status(500).send(error.message);
+    next(error)
   }
 };

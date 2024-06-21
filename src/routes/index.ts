@@ -48,7 +48,7 @@ routes
   .get("/user/:email", userController.findByEmail)
 
   .post("/bot", authMiddleware.JWT, botController.create)
-
+  .get("/bot/services/?:userId", botController.listServices)
   // controle do serviço dos bots
   .post(
     "/bot/:serviceId/:action",
@@ -66,7 +66,7 @@ routes
   // Copiado do ignai-server
   // to-do: add middleware de auth novamente
   // cria um cliente do chat
-  .post("/chat/client", chatClientController.createClient)
+  .post("/chat/client", authMiddleware.apiMiddleware, chatClientController.createClient)
   // lista todos os clientes
   .get("/chat/clients", chatClientController.listClients)
   // busca um cliente
@@ -76,7 +76,7 @@ routes
   // // Busca um chat
   .get("/chat/find/:firstId/:secondId", chatController.findChat)
   // Cria um chat
-  .post("/chat", chatController.createChat)
+  .post("/chat", authMiddleware.apiMiddleware, chatController.createChat)
   // ----- Mensagens -----
   // // Lista todas as mensagens de um chat
   .get("/chat/message/:chatId", messageController.list)

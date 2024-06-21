@@ -1,22 +1,24 @@
 import Chat from "../../models/chat/chatModel";
-import { Request, Response, NextFunction } from "express";
+import { Response, NextFunction } from "express";
 import { CustomRequest } from "../../types";
+import { userExist } from "../../repositories/user";
 
 export const createChat = async (
   req: CustomRequest,
   res: Response,
   next: NextFunction
 ) => {
-  const { firstId, secondId, origin } = req.body;
+  const user = await userExist(req.user?.sub as string);
+  const { clientId, origin } = req.body;
 
-  if (!firstId || !secondId || !origin) {
+  if ( !clientId || !origin || !user) {
     return res.status(400).send("Missing required fields");
   }
 
   try {
     const chat = await Chat.findOne({
       origin,
-      members: { $all: [firstId, secondId] },
+      members: { $all: [user.companyId, clientId] },
     });
 
     if (chat) {
@@ -24,7 +26,7 @@ export const createChat = async (
     }
 
     const newChat = new Chat({
-      members: [firstId, secondId],
+      members: [user.companyId, clientId],
       origin,
     });
 
@@ -37,7 +39,7 @@ export const createChat = async (
 };
 
 export const findUserChats = async (
-  req: Request,
+  req: CustomRequest,
   res: Response,
   next: NextFunction
 ) => {
@@ -55,7 +57,7 @@ export const findUserChats = async (
 };
 
 export const findChat = async (
-  req: Request,
+  req: CustomRequest,
   res: Response,
   next: NextFunction
 ) => {

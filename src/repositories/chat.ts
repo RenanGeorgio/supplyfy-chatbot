@@ -58,6 +58,6 @@ export async function updateChatStatus(chatId: string, status: string) {
     const chat = await ChatModel.findByIdAndUpdate({ _id: chatId }, { status });
     return chat;
   } catch (error: any) {
-    return mongoErrorHandler(error);
+    mongoErrorHandler(error);
   }
 }
