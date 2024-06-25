@@ -1,6 +1,4 @@
-import { timeStamp } from "console";
 import mongoose from "../../database";
-import { create } from "domain";
 
 const { Schema } = mongoose;
 

@@ -9,6 +9,9 @@ export const save = async (req: CustomRequest, res: Response, next: NextFunction
     const { accessToken, expiresIn, reauthorize_required_in, signedRequest, userID} = req.body;
 
     // alguma forma de associar ao companyId
+    //
+    // RESPONDENDO
+    // companyId tem relação dcom userID, que é o usuario de sistema associado ao Meta
     const create = await createOrUpdateAuthData({
       companyId,
       accessToken,
@@ -33,7 +36,7 @@ export const chageCode = async (req: CustomRequest, res: Response, next: NextFun
 
   try {
     const changeResponse =
-      await fetch(`https://graph.facebook.com/v19.0/oauth/access_token?
+      await fetch(`https://graph.facebook.com/v20.0/oauth/access_token?
             client_id=${appId}
             &redirect_uri=${redirectUri}
             &client_secret=${process.env.APP_SECRET}
@@ -42,7 +45,7 @@ export const chageCode = async (req: CustomRequest, res: Response, next: NextFun
     if (changeResponse) {
       const changResData = await changeResponse.json(); // SALVAR
       const response =
-        await fetch(`https://graph.facebook.com/v19.0/oauth/access_token?
+        await fetch(`https://graph.facebook.com/v20.0/oauth/access_token?
                 grant_type=fb_exchange_token
                 &client_id=${appId}
                 &client_secret=${process.env.APP_SECRET}
@@ -60,12 +63,32 @@ export const chageCode = async (req: CustomRequest, res: Response, next: NextFun
       }
 
       const pageResponse = await fetch(
-        `https://graph.facebook.com/v19.0/${appId}/accounts?access_token=${access_token}`
+        `https://graph.facebook.com/v20.0/${appId}/accounts?access_token=${access_token}`
       );
 
       const { data, paging } = await pageResponse.json(); // SALVAR
 
       return res.status(200).send({ access_token: changResData.access_token });
+    }
+
+    return res.status(400).send({ message: "Problem to obtain token" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const chageWhatsappCode = async (req: CustomRequest, res: Response, next: NextFunction) => {
+  const { appId, userID, expiresIn, code } = req.body;
+
+  try {
+    const response = await fetch(`https://graph.facebook.com/v20.0/oauth/access_token?
+      client_id=${appId}
+      &client_secret=${process.env.APP_SECRET}
+      &code=${code}`);
+
+    // TO-DO: salvar valores
+    if (response) {
+      return res.status(200);
     }
 
     return res.status(400).send({ message: "Problem to obtain token" });
