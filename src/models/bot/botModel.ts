@@ -14,6 +14,10 @@ const instagramSchema = new Schema({
 });
 
 const telegramSchema = new Schema({
+  username: {
+    type: String,
+    required: true,
+  },
   token: {
     type: String,
     required: true,
@@ -56,7 +60,7 @@ const emailSchema = new Schema({
   service: {
     type: String,
     // required: true,
-  }
+  },
 });
 
 const socketSchema = new Schema({
@@ -87,41 +91,36 @@ const messengerSchema = new Schema({
   },
 });
 
-const botSchema = new Schema({
-  companyId: {
-    type: String,
-    required: true,
-  },
-  services: {
-    telegram: {
-      _id: { auto: false },
-      type: telegramSchema,
+const botSchema = new Schema(
+  {
+    companyId: {
+      type: String,
+      required: true,
     },
-    instagram: {
-      _id: { auto: false },
-      type: instagramSchema,
+    services: {
+      telegram: {
+        _id: { auto: false },
+        type: telegramSchema,
+      },
+      instagram: {
+        _id: { auto: false },
+        type: instagramSchema,
+      },
+      email: {
+        _id: { auto: false },
+        type: emailSchema,
+      },
+      facebook: {
+        _id: { auto: false },
+        type: messengerSchema,
+      },
     },
-    email: {
-      _id: { auto: false },
-      type: emailSchema,
-    },
-    facebook: {
-      _id: { auto: false },
-      type: messengerSchema,
+    socket: {
+      type: socketSchema,
     },
   },
-  socket: {
-    type: socketSchema,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-  updatedAt: {
-    type: Date,
-    default: Date.now,
-  },
-});
+  { timestamps: true }
+);
 
 const BotModel = mongoose.model("Bot", botSchema);
 

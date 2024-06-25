@@ -2,32 +2,41 @@ import mongoose from "../../database";
 
 const { Schema } = mongoose;
 
-const chatClientSchema = new Schema({
+const chatClientSchema = new Schema(
+  {
     name: {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
     },
     lastName: {
-        type: String,
-        required: true,
+      type: String,
     },
-    username: { // numero, email, etc
-        type: String,
-        required: true,
+    username: {
+      // identificador: numero, email, username(instagram) etc
+      type: String,
+      required: true,
     },
-    senderPhone: {
-        type: String,
-        // required: true,
+    companyId: {
+      type: String,
+      required: true,
     },
-    createdAt: {
-        type: Date,
-        default: Date.now,
+    phone: { type: String },
+    address: {
+      street: { type: String },
+      number: { type: String },
+      city: { type: String },
+      state: { type: String },
+      country: { type: String },
+      zipCode: { type: String },
     },
-    updatedAt: {
-        type: Date,
-        default: Date.now,
-    },
-});
+    email: { type: String },
+    //   metadata: {
+    //     service: { type: String },
+    //     tags: [String],
+    //   }
+  },
+  { timestamps: true }
+);
 
 const chatClientModel = mongoose.model("chatClient", chatClientSchema);
 

@@ -118,12 +118,13 @@ const telegramService = async (
       const { clientEmailEventEmitter } = await askEmail(telegram, msg);
 
       const createClientEvent = async (email: string) => {
-        const checkClient = await clientChatExist(email);
+        const checkClient = await clientChatExist(email, bot!.companyId);
         if (!checkClient) {
           const newClient = await createChatClient(
             email,
             first_name!,
-            last_name || " "
+            last_name!,
+            bot!.companyId
           );
           clients.get(chatId).clientId = newClient?._id.toString()!;
         } else {

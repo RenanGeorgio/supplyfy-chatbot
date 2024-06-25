@@ -1,6 +1,6 @@
 import { NextFunction, Response } from "express";
 import { botExist, createBot, updateBot } from "../../repositories/bot";
-import { userExist } from "../../repositories/user";
+import { findUserByField, userExist } from "../../repositories/user";
 import { checkServices } from "../../helpers/services/checkServices";
 import { CustomRequest, IBotData } from "../../types";
 
@@ -58,12 +58,35 @@ export const listServices = async (
   next: NextFunction
 ) => {
   try {
-    const { userId } = req.params;
-    const checkUser = await userExist((req.user?.sub as string) || userId);
+    // const { userId } = req.params;
+    const { email } = req.params;
+    // const checkUser = await userExist((req.user?.sub as string) || userId); // esperar resolver a falta do token com userId
+    const checkUser = await findUserByField("email", email);
     const companyId = checkUser?.companyId as string;
     const bot = await botExist("companyId", companyId);
 
-    return res.status(200).json({ services: bot?.services });
+    if (!bot) {
+      return res.status(404).json({ message: "Bot não encontrado" });
+    }
+
+    const services = bot.services;
+
+    if (services) {
+      return res.status(200).json({
+        telegram: services.telegram
+          ? { username: services.telegram.username }
+          : null,
+        instagram: services.instagram
+          ? { username: services.instagram.username }
+          : null,
+        email: services.email
+          ? { username: services.email.emailUsername }
+          : null,
+        // facebook: services.facebook ? services.facebook : null,
+      });
+    }
+
+    return res.status(404).json({ message: "Nenhum serviço cadastrado" });
   } catch (error) {
     next(error);
   }
