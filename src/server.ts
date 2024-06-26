@@ -8,7 +8,7 @@ import RedisStore from "connect-redis";
 // import { graphqlHTTP } from "express-graphql";
 import { makeExecutableSchema } from "@graphql-tools/schema";
 import { redisClient } from "./core/redis";
-import routes from "./routes";
+import { apiRoutes, routes } from "./routes";
 import resolvers from "./core/resolvers";
 import typeDefs from "./core/schemas";
 import { fbWebhookRouter, igWebhookRouter, waWebhookRouter, webhookRouter } from "./webhooks";
@@ -69,7 +69,8 @@ app.use('/instagram-incoming', igWebhookRouter);
 app.use('/facebook-incoming', fbWebhookRouter);
 app.use('/incoming', webhookRouter);
 
-app.use('/api/v1', routes);
+app.use('/api/v1', apiRoutes);
+app.use('/v1', routes);
 
 const node_env = process.env.NODE_ENV ? process.env.NODE_ENV.replace(/[\\"]/g, '') : "development";
 if (node_env === "development") {
