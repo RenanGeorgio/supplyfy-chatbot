@@ -135,13 +135,14 @@ export const sendMessage = async (req: CustomRequest, res: Response, next: NextF
         });
       }
 
-      client = await clientChatExist(clientInfo.username);
+      client = await clientChatExist(clientInfo.username, user.companyId);
 
       if (!client) {
         client = await createChatClient(
           clientInfo.username,
           clientInfo.name,
-          clientInfo?.lastName || " "
+          clientInfo?.lastName || "",
+          user.companyId
         );
       }
       // criar chat aqui ?

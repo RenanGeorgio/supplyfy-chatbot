@@ -20,8 +20,7 @@ export const telegramServiceController: ITelegramServiceController = {
       };
     }
 
-    const telegram: { telegram: TelegramBot; getClients: () => Map<any, any> } =
-      await telegramService(credentials, webhook);
+    const telegram = await telegramService(credentials, webhook);
 
     if (!telegram) {
       return {
