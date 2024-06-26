@@ -180,11 +180,7 @@ export interface IInstagramCredentials {
 }
 
 export interface ITelegramCredentials {
-  token: string;
-  _id: string;
-}
-
-export interface ITelegramCredentials {
+  username: string;
   token: string;
   _id: string;
 }
