@@ -29,8 +29,8 @@ export const markMessageAsRead = async (
         }
 
         return res.status(501).send({ message: "Server problem" });
-    } catch (error) {
-        next(error);
+    } catch (error: any) {
+        next(error)
     }           
 };
 
@@ -50,8 +50,8 @@ export const sendTextMessage = async (messageText: string, wb: any) => {
         const response = await sendMsg(data, wb);
 
         return response;
-    } catch (error) {
-        console.log(error);
+    } catch (error: any) {
+        throw new Error(error?.message);
     }
 };
 

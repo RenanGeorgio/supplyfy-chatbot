@@ -47,8 +47,6 @@ export async function processMessage(message: MsgTypes, wb: any) {
   const customerPhoneNumber = wb.getRecipientPhoneNumberId();
   const companyPhoneNumber = wb.getSenderPhoneNumberId();
   try {
-    console.log("BOT ID: ", companyPhoneNumber)
-    console.log("SENDER ID: ", customerPhoneNumber)
 
     const bots = await botExist("services.whatsapp.numberId", companyPhoneNumber)
     if (!bots){
