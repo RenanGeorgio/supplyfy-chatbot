@@ -12,6 +12,7 @@ import { findWebhook } from "../repositories/webhook";
 import { IWebhook } from "../types";
 
 import "./queue";
+import { whatsappServiceController } from "./whatsappTest";
 
 (async () => {
   const bots = await listAllBots();
@@ -37,6 +38,9 @@ import "./queue";
     if (bot?.services?.facebook) {
       messengerServiceController.start(bot.services.facebook, webhook as IWebhook);
     }
+    if(bot?.services?.whatsapp) {
+      whatsappServiceController.start(bot.services.whatsapp, webhook as IWebhook);
+    }
   }
 })();
 
@@ -48,6 +52,7 @@ const servicesActions = {
   instagramWeb: instagramServiceController,
   socket: socketServiceController,
   facebookWeb: messengerServiceController,
+  whatsapp: whatsappServiceController,
 };
 
 export { whatsappWebService, servicesActions, webhookPromiseHandler };

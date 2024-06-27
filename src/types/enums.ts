@@ -21,6 +21,7 @@ export enum Platforms {
   WEB = "web",
   WHATSAPP = "whatsapp",
   TYPEBOT = "typebot",
+  EMAIL = "email",
 }
 
 export enum ChatStatus {
