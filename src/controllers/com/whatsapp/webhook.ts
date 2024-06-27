@@ -55,8 +55,8 @@ export const messageHandler = async (
                 const response = await msgStatusChange(sendReadStatus?.message_id, whatsappInstance);
 
                 console.log("Atualização de Status: " + response.status);
-            } catch (error) {
-                console.log(error);
+            } catch (error: any) {
+                console.log(error?.message);
             }
         
             console.log("Número de mensagens: " + data.messages.length)

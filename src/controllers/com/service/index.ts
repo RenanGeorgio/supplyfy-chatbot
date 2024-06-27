@@ -16,11 +16,11 @@ export const sendMsg = async (data: MsgProps, wb: any) => {
     if (response) {
       return response;
     }
-
-    return null;
-  } catch (error) {
-    console.log(error);
-    return null;
+    else {
+      return null;
+    }
+  } catch (error: any) {
+    throw new Error(error?.message);
   }
 };
 
