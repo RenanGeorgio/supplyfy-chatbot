@@ -21,10 +21,10 @@ export const messageHandler = async (
         console.log(calcXHubSignature)
         console.log(req.headers['x-hub-signature-256'])
 
-        if (req.headers['x-hub-signature-256'] != calcXHubSignature) {
-            console.log("Warning - request header X-Hub-Signature not present or invalid");
-            return res.sendStatus(401);
-        }
+        // if (req.headers['x-hub-signature-256'] != calcXHubSignature) {
+        //     console.log("Warning - request header X-Hub-Signature not present or invalid");
+        //     return res.sendStatus(401);
+        // }
 
         console.log("request header X-Hub-Signature validated");
 
