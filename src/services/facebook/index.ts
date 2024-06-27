@@ -19,7 +19,7 @@ export const messengerServiceController: any = {
     }
 
     this.mensengerServices.push(credentials);
-
+    
     return {
       success: true,
       event: Events.SERVICE_STARTED,

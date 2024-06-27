@@ -19,7 +19,7 @@ const WhatsappService = class<Props> {
     this.setWhatsappCloudApi('v19.0', senderBusinessPhoneId);
   }
 
-  setWhatsappCloudApi(version: string = 'v19.0', senderPhoneId: string | number){
+  setWhatsappCloudApi(version: string = 'v20.0', senderPhoneId: string | number){
     this.useWhatsappApi = whatsappCloudApi(version, senderPhoneId);
     return;
   }

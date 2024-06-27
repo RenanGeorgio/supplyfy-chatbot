@@ -6,6 +6,7 @@ const STATUS_MESSAGES = {
   EMAIL_EXISTS: "Bot do e-mail já existe",
   INSTAGRAM_EXISTS: "Bot do instagram já existe",
   FACEBOOK_EXISTS: "Bot do facebook já existe",
+  WHATSAPP_EXISTS: "Bot do whatsapp já existe",
   BOT_NOT_INITIALIZED: "O bot não foi inicializaço",
 };
 
@@ -18,6 +19,7 @@ export const checkServices = async (
     email: STATUS_MESSAGES.EMAIL_EXISTS,
     instagram: STATUS_MESSAGES.INSTAGRAM_EXISTS,
     facebook: STATUS_MESSAGES.FACEBOOK_EXISTS,
+    whatsapp: STATUS_MESSAGES.WHATSAPP_EXISTS,
   };
 
   for (const service in services) {

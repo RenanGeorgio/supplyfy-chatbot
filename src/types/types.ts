@@ -201,6 +201,7 @@ export interface IBotData {
     telegram?: ITelegramCredentials;
     email?: IEmailCredentials;
     facebook?: any;
+    whatsapp?: any; // alterar depois
   };
   socket: ISocketCredentials;
 }
