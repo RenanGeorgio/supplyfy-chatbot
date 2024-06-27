@@ -9,6 +9,7 @@ import emailListener from "./lib/listener";
 import emailTransporter from "./lib/transporter";
 import EventEmitter from "node:events";
 import { filter } from "./helpers/extractMessage";
+import { ignoredSenders } from "./helpers/ignoredSenders";
 
 const errorMessages = {
   authentication: "erro de autenticação imap",
@@ -121,6 +122,8 @@ const emailService = async (
   
   mailListener.on("mail", (mail: any, seqno: any, attributes: any) => {
     const emailText: string = mail.text?.split(/\r?\n/).join(" "); // adicionar algum tratamento para a mensagem
+    // const ignoredEmails = ["no-reply", "noreply", "donotreply"];
+    if(ignoredSenders.includes(mail.from.value[0].address)) return console.log("Email ignorado");
     (async () => {
       console.log("emailText", emailText);
       const sanitizedEmailText = filter(emailText); // filtragem básica da mensagem, melhorar depois

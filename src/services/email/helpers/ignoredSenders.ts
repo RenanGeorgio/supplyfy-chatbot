@@ -1,0 +1,1 @@
+export const ignoredSenders = ['mailer-daemon@secureserver.net']

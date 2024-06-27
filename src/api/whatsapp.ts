@@ -1,9 +1,9 @@
 import axios from "axios";
 import https from "https";
 
-const whatsappCloudApi = (version: string = 'v19.0', senderPhoneId: string | number) => {
+const whatsappCloudApi = (version: string = 'v20.0', phoneNumberId: string | number) => {
     const useWhatsappApi = axios.create({
-        baseURL: `https://graph.facebook.com/${version}/${senderPhoneId}`,
+        baseURL: `https://graph.facebook.com/${version}/${phoneNumberId}`,
         withCredentials: true,
         httpsAgent: new https.Agent({
             rejectUnauthorized: false,
