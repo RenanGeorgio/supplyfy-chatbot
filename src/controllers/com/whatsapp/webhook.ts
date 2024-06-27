@@ -18,15 +18,10 @@ export const messageHandler = async (
         // Calcula o valor da assinatura x-hub para comparar com o valor no request header
         const calcXHubSignature = xhub.sign(req.rawBody).toLowerCase();
 
-        console.log(calcXHubSignature)
-        console.log(req.headers['x-hub-signature-256'])
-
         // if (req.headers['x-hub-signature-256'] != calcXHubSignature) {
         //     console.log("Warning - request header X-Hub-Signature not present or invalid");
         //     return res.sendStatus(401);
         // }
-
-        console.log("request header X-Hub-Signature validated");
 
         const body = req.body.entry[0].changes[0];
         
@@ -49,7 +44,6 @@ export const messageHandler = async (
 
                 const response = await msgStatusChange(sendReadStatus?.message_id, whatsappInstance.getApi());
 
-                console.log(response);
             } catch (error) {
                 console.log(error);
             }

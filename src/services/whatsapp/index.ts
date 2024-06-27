@@ -16,7 +16,7 @@ const WhatsappService = class<Props> {
     this.recipientName = recipientName;
     this.recipientPhoneNumber = recipientPhoneNumber;
 
-    this.setWhatsappCloudApi('v19.0', senderBusinessPhoneId);
+    this.setWhatsappCloudApi('v20.0', senderBusinessPhoneId);
   }
 
   setWhatsappCloudApi(version: string = 'v20.0', senderPhoneId: string | number){
