@@ -39,7 +39,7 @@ export const sendTextMessage = async (messageText: string, wb: any) => {
         const data: SendText = {
             messaging_product: "whatsapp",
             recipient_type: "individual",
-            to: wb.getRecipientPhoneNumber(),
+            to: wb.getRecipientPhoneNumberId(),
             type: "text",
             text: {
                 preview_url: false,
