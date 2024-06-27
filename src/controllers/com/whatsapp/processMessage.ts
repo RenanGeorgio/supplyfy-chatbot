@@ -44,11 +44,11 @@ function interactiveMessage(message: SendInterativeList | SendInterativeButton) 
 }
 
 export async function processMessage(message: MsgTypes, wb: any) {
-  const customerPhoneNumber = message.from;
-  const companyPhoneNumber = wb.getRecipientPhoneNumber();
+  const customerPhoneNumber = wb.getRecipientPhoneNumberId();
+  const companyPhoneNumber = wb.getSenderPhoneNumberId();
   try {
-    console.log(companyPhoneNumber)
-    console.log(customerPhoneNumber)
+    console.log("BOT ID: ", companyPhoneNumber)
+    console.log("SENDER ID: ", customerPhoneNumber)
 
     const bots = await botExist("services.whatsapp.numberId", companyPhoneNumber)
     if (!bots){
@@ -58,6 +58,7 @@ export async function processMessage(message: MsgTypes, wb: any) {
     const companyId = bots.companyId
 
     const webhook = await findWebhook({ companyId })
+    console.log("WEBHOOK: ", webhook?.url)
 
     if ("text" in message) {
       const textMessage = message.text.body;
