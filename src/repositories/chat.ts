@@ -20,7 +20,7 @@ export async function findChatById(chatId: string) {
     const chat = await ChatModel.findById(chatId);
     return chat;
   } catch (error: any) {
-    return mongoErrorHandler(error);
+    mongoErrorHandler(error);
   }
 }
 

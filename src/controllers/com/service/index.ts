@@ -8,7 +8,8 @@ export const sendMsg = async (data: MsgProps, useWhatsappApi: any) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.ACCESS_TOKEN}`,
+        Authorization: `Bearer ${process.env.
+          WHATSAPP_ACCESS_TOKEN}`,
       },
       data: data,
     });
