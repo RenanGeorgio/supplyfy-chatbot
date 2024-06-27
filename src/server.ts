@@ -62,7 +62,8 @@ const schema = makeExecutableSchema({
 //   })
 // );
 
-app.use(sessionMiddleware, serviceSelectorMiddleware);
+// app.use(sessionMiddleware, serviceSelectorMiddleware);
+app.use(sessionMiddleware);
 
 app.use('/whatsapp-incoming', waWebhookRouter);
 app.use('/instagram-incoming', igWebhookRouter);
