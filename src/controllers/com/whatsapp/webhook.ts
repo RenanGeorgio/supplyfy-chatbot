@@ -59,7 +59,11 @@ export const messageHandler = async (
                 console.log(error);
             }
         
-            data.messages.forEach(message => processMessage(message, whatsappInstance));
+            console.log("Número de mensagens: " + data.messages.length)
+            data.messages.forEach(async (message, index) => { 
+                console.log("Mensagem: " + index)
+                return await processMessage(message, whatsappInstance)
+            });
         }
 
         return res.sendStatus(200);
