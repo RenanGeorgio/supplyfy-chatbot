@@ -32,14 +32,15 @@ export const messageHandler = async (
 
         const data = body.value;
         console.log(data)
+
         const bots = await botExist("services.whatsapp.numberId", data.metadata.phone_number_id)
         if (!bots) {
             throw new Error("Bot não encontrado")
         }
 
         const accessToken = bots.services?.whatsapp?.accessToken
-        console.log(accessToken)
-
+        
+        // TO-DO: Corrigir spam de eventos para responder apenas evento de mensagem recebida 
         if (data.hasOwnProperty("messages")) {
             const whatsappInstance = new WhatsappService({
                 senderPhoneNumberId: data.metadata.phone_number_id,
@@ -59,11 +60,9 @@ export const messageHandler = async (
                 console.log(error?.message);
             }
         
-            console.log("Número de mensagens: " + data.messages.length)
-            data.messages.forEach(async (message, index) => { 
-                console.log("Mensagem: " + index)
-                return await processMessage(message, whatsappInstance)
-            });
+            data.messages.forEach((message) => 
+                processMessage(message, whatsappInstance)
+            );
         }
 
         return res.sendStatus(200);

@@ -44,9 +44,8 @@ function interactiveMessage(message: SendInterativeList | SendInterativeButton) 
 }
 
 export async function processMessage(message: MsgTypes, wb: any) {
-  const customerPhoneNumber = wb.getRecipientPhoneNumberId();
-  const companyPhoneNumber = wb.getSenderPhoneNumberId();
   try {
+    const companyPhoneNumber = wb.getSenderPhoneNumberId();
 
     const bots = await botExist("services.whatsapp.numberId", companyPhoneNumber)
     if (!bots){
@@ -56,41 +55,37 @@ export async function processMessage(message: MsgTypes, wb: any) {
     const companyId = bots.companyId
 
     const webhook = await findWebhook({ companyId })
-    console.log("WEBHOOK: ", webhook?.url)
 
     if ("text" in message) {
       const textMessage = message.text.body;
 
-      try {
-        if (webhook) {
-          webhookTrigger({
-            url: webhook?.url,
-            event: Events.MESSAGE_RECEIVED,
-            message: textMessage,
-            service: "whatsapp",
-          });
-        }
-        const answer = await processQuestion(textMessage);
-
-        await sendTextMessage(answer, wb);
-
-        if (webhook) {
-          webhookTrigger({
-            url: webhook?.url,
-            event: Events.MESSAGE_SENT,
-            message: answer,
-            service: "whatsapp",
-          });
-        }
-        /*let replyButtonMessage = interactiveReplyButton;
-        replyButtonMessage.to = process.env.RECIPIENT_PHONE_NUMBER;
-
-        const replyButtonSent = await sendWhatsAppMessage(replyButtonMessage);
-        console.log(replyButtonSent);*/
-        return null;
-      } catch (error: any) {
-        throw new Error(error?.message)
+      if (webhook) {
+        webhookTrigger({
+          url: webhook?.url,
+          event: Events.MESSAGE_RECEIVED,
+          message: textMessage,
+          service: "whatsapp",
+        });
       }
+      const answer = await processQuestion(textMessage);
+
+      await sendTextMessage(answer, wb);
+
+      if (webhook) {
+        webhookTrigger({
+          url: webhook?.url,
+          event: Events.MESSAGE_SENT,
+          message: answer,
+          service: "whatsapp",
+        });
+      }
+      /*let replyButtonMessage = interactiveReplyButton;
+      replyButtonMessage.to = process.env.RECIPIENT_PHONE_NUMBER;
+
+      const replyButtonSent = await sendWhatsAppMessage(replyButtonMessage);
+      console.log(replyButtonSent);*/
+      return null;
+      
     } else if ("interactive" in message) {
       interactiveMessage(message as SendInterativeButton | SendInterativeList);
     } else if ("contacts" in message) {
