@@ -32,7 +32,7 @@ router.post('/', async function (req: CustomRequest, res: Response, next: NextFu
         }
 
         if ((data.object != undefined) || (data.entry != undefined)) {
-            return wbMessageHandler(req, res, next);
+            next(wbMessageHandler);
         } else {
             return res.status(404).json({ error: 'Service not defined' });
         }
