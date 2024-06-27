@@ -209,7 +209,7 @@ export const sendMessage = async (
       if (webhook) {
         webhookTrigger({
           url: webhook?.url,
-          event: Events.MESSAGE_RECEIVED,
+          event: Events.MESSAGE_SENT,
           message: message.text,
           service: "whatsapp",
         });
