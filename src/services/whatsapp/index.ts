@@ -1,22 +1,24 @@
 import { whatsappCloudApi } from "../../api";
 
 interface Props {
-  senderBusinessPhoneId: string | number;
+  senderPhoneNumberId: string | number;
   recipientName: string;
-  recipientPhoneNumber: string | number;
+  recipientPhoneNumberId: string | number;
+  accessToken: string;
 };
 
 const WhatsappService = class<Props> {
-  senderBusinessPhoneId: string | number;
+  senderPhoneNumberId: string | number;
   recipientName: string;
-  recipientPhoneNumber: string | number;
+  recipientPhoneNumberId: string | number;
+  accessToken: string;
   useWhatsappApi: unknown;
-  constructor(senderBusinessPhoneId: string | number, recipientName: string, recipientPhoneNumber: string | number) {
-    this.senderBusinessPhoneId = senderBusinessPhoneId;
+  constructor({ senderPhoneNumberId, recipientName, recipientPhoneNumberId, accessToken }) {
+    this.senderPhoneNumberId = senderPhoneNumberId;
     this.recipientName = recipientName;
-    this.recipientPhoneNumber = recipientPhoneNumber;
-
-    this.setWhatsappCloudApi('v20.0', senderBusinessPhoneId);
+    this.recipientPhoneNumberId = recipientPhoneNumberId;
+    this.accessToken = accessToken;
+    this.setWhatsappCloudApi('v20.0', senderPhoneNumberId);
   }
 
   setWhatsappCloudApi(version: string = 'v20.0', senderPhoneId: string | number){
@@ -32,8 +34,16 @@ const WhatsappService = class<Props> {
     return this.recipientName;
   }
 
-  getRecipientPhoneNumber(){
-    return this.recipientPhoneNumber;
+  getRecipientPhoneNumberId(){
+    return this.recipientPhoneNumberId;
+  }
+
+  getSenderPhoneNumberId() {
+    return this.senderPhoneNumberId;
+  }
+
+  getAccessToken() {
+    return this.accessToken;
   }
 };
 

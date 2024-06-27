@@ -5,6 +5,7 @@ import { messageStatuses } from "../../../helpers/messageStatuses";
 import { processMessage } from "./processMessage";
 import { msgStatusChange } from "../service";
 import WhatsappService from "../../../services/whatsapp";
+import { botExist } from "../../../repositories/bot";
 
 const appSecret = process.env.APP_SECRET ? process.env.APP_SECRET.replace(/[\\"]/g, '') : "secret";
 const xhub = new XHubSignature("SHA256", appSecret);
@@ -30,20 +31,30 @@ export const messageHandler = async (
         }
 
         const data = body.value;
+        console.log(data)
+        const bots = await botExist("services.whatsapp.numberId", data.metadata.phone_number_id)
+        if (!bots) {
+            throw new Error("Bot não encontrado")
+        }
+
+        const accessToken = bots.services?.whatsapp?.accessToken
+        console.log(accessToken)
 
         if (data.hasOwnProperty("messages")) {
-            const whatsappInstance = new WhatsappService(
-                data.metadata.phone_number_id,
-                data.contacts[0].profile.name,
-                data.messages[0].from
-            );
+            const whatsappInstance = new WhatsappService({
+                senderPhoneNumberId: data.metadata.phone_number_id,
+                recipientName: data.contacts[0].profile.name,
+                recipientPhoneNumberId: data.messages[0].from,
+                accessToken
+            });
 
             try { // Marca msg como lida
                 let sendReadStatus = messageStatuses?.read;
                 sendReadStatus.message_id = data.messages[0].id;
 
-                const response = await msgStatusChange(sendReadStatus?.message_id, whatsappInstance.getApi());
+                const response = await msgStatusChange(sendReadStatus?.message_id, whatsappInstance);
 
+                console.log("Atualização de Status: " + response.status);
             } catch (error) {
                 console.log(error);
             }

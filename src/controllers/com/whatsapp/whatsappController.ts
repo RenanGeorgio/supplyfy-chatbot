@@ -47,7 +47,7 @@ export const sendTextMessage = async (messageText: string, wb: any) => {
             }
         };
 
-        const response = await sendMsg(data, wb.getApi());
+        const response = await sendMsg(data, wb);
 
         return response;
     } catch (error) {

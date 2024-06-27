@@ -2,14 +2,13 @@ import { Response } from "express";
 import { facebookApi, instagramApi } from "../../../api";
 import { FaceMsgData, MsgProps, Obj } from "../../../types";
 
-export const sendMsg = async (data: MsgProps, useWhatsappApi: any) => {
+export const sendMsg = async (data: MsgProps, wb: any) => {
   try {
-    const response = await useWhatsappApi("/messages", {
+    const response = await wb.useWhatsappApi("/messages", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.
-          WHATSAPP_ACCESS_TOKEN}`,
+        Authorization: `Bearer ${wb.getAccessToken()}`,
       },
       data: data,
     });
@@ -25,7 +24,7 @@ export const sendMsg = async (data: MsgProps, useWhatsappApi: any) => {
   }
 };
 
-export const msgStatusChange = async (messageId: string | number, wbApi: any) => {
+export const msgStatusChange = async (messageId: string | number, wb: any) => {
   const data = {
     messaging_product: "whatsapp",
     status: 'read',
@@ -33,7 +32,7 @@ export const msgStatusChange = async (messageId: string | number, wbApi: any) =>
     message_id: messageId
   }
 
-  const response = await sendMsg(data, wbApi);
+  const response = await sendMsg(data, wb);
 
   return response;
 }
