@@ -63,7 +63,7 @@ export const sendButtonsMessage = async (
     try {
         const { messageText, buttonsList } = req.body;
 
-        const useWhatsappApi = whatsappCloudApi("v19.0", req.body.entry[0].changes[0].value.metadata.phone_number_id);
+        const useWhatsappApi = whatsappCloudApi("v20.0", req.body.entry[0].changes[0].value.metadata.phone_number_id);
 
         const data: SendInterativeButton = {
           messaging_product: "whatsapp",
@@ -107,7 +107,7 @@ export const sendContacts = async (
     try {
         const { contactsList } = req.body;
 
-        const useWhatsappApi = whatsappCloudApi("v19.0", req.body.entry[0].changes[0].value.metadata.phone_number_id);
+        const useWhatsappApi = whatsappCloudApi("v20.0", req.body.entry[0].changes[0].value.metadata.phone_number_id);
 
         const data: SendContacts = {
           messaging_product: "whatsapp",
@@ -136,7 +136,7 @@ export const sendRadioButtons = async (
     try {
         const { headerText, bodyText, footerText, sectionsList } = req.body;
 
-        const useWhatsappApi = whatsappCloudApi("v19.0", req.body.entry[0].changes[0].value.metadata.phone_number_id);
+        const useWhatsappApi = whatsappCloudApi("v20.0", req.body.entry[0].changes[0].value.metadata.phone_number_id);
 
         const data: SendInterativeList = {
           messaging_product: "whatsapp",
@@ -182,7 +182,7 @@ export const sendImageByLink = async (
     try {
         const { imageLink, caption } = req.body;
 
-        const useWhatsappApi = whatsappCloudApi("v19.0", req.body.entry[0].changes[0].value.metadata.phone_number_id);
+        const useWhatsappApi = whatsappCloudApi("v20.0", req.body.entry[0].changes[0].value.metadata.phone_number_id);
 
         const data: SendImg = {
           messaging_product: "whatsapp",
@@ -241,7 +241,7 @@ export const sendDocumentMessage = async (
     try {
         const { documentPath, caption } = req.body;
 
-        const useWhatsappApi = whatsappCloudApi("v19.0", req.body.entry[0].changes[0].value.metadata.phone_number_id);
+        const useWhatsappApi = whatsappCloudApi("v20.0", req.body.entry[0].changes[0].value.metadata.phone_number_id);
 
         const docId: any = await uploadMedia(documentPath, useWhatsappApi);
 
