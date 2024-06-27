@@ -22,10 +22,11 @@ import { createMessage } from "../../repositories/message";
 import { findWebhook } from "../../repositories/webhook";
 import { userExist } from "../../repositories/user";
 import { findBot } from "../../helpers/findBot";
-import { Platforms } from "../../types/enums";
+import { Events, Platforms } from "../../types/enums";
 import { whatsappCloudApi } from "../../api";
 import { sendMsg } from "../com/service";
 import WhatsappService from "../../services/whatsapp";
+import { webhookTrigger } from "../../webhooks/custom/webhookTrigger";
 
 const ServiceList = {
   telegram: "telegramServices",
@@ -199,13 +200,20 @@ export const sendMessage = async (
         accessToken: bot.services?.whatsapp?.accessToken
       })
       
-      console.log(data)
-      console.log(whatsappService.getSenderPhoneNumberId())
       const send = await sendMsg(
         data,
         whatsappService
       );
-      console.log(send);
+      const webhook = await findWebhook({ companyId: user?.companyId })
+
+      if (webhook) {
+        webhookTrigger({
+          url: webhook?.url,
+          event: Events.MESSAGE_RECEIVED,
+          message: message.text,
+          service: "whatsapp",
+        });
+      }
       return res.status(201).json();
     }
   } catch (error: any) {

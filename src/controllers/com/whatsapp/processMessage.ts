@@ -67,18 +67,11 @@ export async function processMessage(message: MsgTypes, wb: any) {
           service: "whatsapp",
         });
       }
+
       const answer = await processQuestion(textMessage);
 
       await sendTextMessage(answer, wb);
 
-      if (webhook) {
-        webhookTrigger({
-          url: webhook?.url,
-          event: Events.MESSAGE_SENT,
-          message: answer,
-          service: "whatsapp",
-        });
-      }
       /*let replyButtonMessage = interactiveReplyButton;
       replyButtonMessage.to = process.env.RECIPIENT_PHONE_NUMBER;
 
