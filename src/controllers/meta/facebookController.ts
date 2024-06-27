@@ -3,7 +3,7 @@ import { userExist } from "../../repositories/user";
 import { botExist } from "../../repositories/bot";
 import Queue from "../../libs/Queue";
 import { CustomRequest } from "../../types";
-
+// esse controller é de teste
 export const verifyWebhook = async (
   req: CustomRequest,
   res: Response,
@@ -39,9 +39,9 @@ export const verifyWebhook = async (
     if (mode && token) {
       if (mode === "subscribe" && token === facebookCredentials.verifyToken) {
         console.log("WEBHOOK_VERIFIED");
-        res.status(200).send(challenge);
+        return res.status(200).send(challenge);
       } else {
-        res.sendStatus(403);
+        return res.sendStatus(403);
       }
     }
   } catch (error: any) {
@@ -60,7 +60,7 @@ export const eventsHandler = async (
     if (req.body.object !== "page") {
       res.sendStatus(404);
     }
-
+    console.log(req.body)
     const id = req.body.entry[0].id;
  
     Queue.add("MessengerService", { id, messages: req.body.entry });

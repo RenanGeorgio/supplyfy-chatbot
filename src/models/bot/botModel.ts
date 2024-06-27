@@ -91,6 +91,25 @@ const messengerSchema = new Schema({
   },
 });
 
+const whatsappSchema = new Schema({
+  accessToken: {
+    type: String,
+    required: true,
+  },
+  number: {
+    type: String,
+    required: true
+  },
+  numberId: {
+    type: String,
+    required: true,
+  },
+  businessId: {
+    type: String,
+    required: true,
+  }
+});
+
 const botSchema = new Schema(
   {
     companyId: {
@@ -106,13 +125,17 @@ const botSchema = new Schema(
         _id: { auto: false },
         type: instagramSchema,
       },
-      email: {
-        _id: { auto: false },
-        type: emailSchema,
-      },
       facebook: {
         _id: { auto: false },
         type: messengerSchema,
+      },
+      whatsapp: {
+        _id: { auto: false },
+        type: whatsappSchema,
+      },
+      email: {
+        _id: { auto: false },
+        type: emailSchema,
       },
     },
     socket: {

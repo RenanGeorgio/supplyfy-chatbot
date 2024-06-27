@@ -20,7 +20,7 @@ export const markMessageAsRead = async (
     try {
         const { messageId } = req.body;
         
-        const useWhatsappApi = whatsappCloudApi("v19.0", req.body.entry[0].changes[0].value.metadata.phone_number_id);
+        const useWhatsappApi = whatsappCloudApi("v20.0", req.body.entry[0].changes[0].value.metadata.phone_number_id);
 
         const response = await msgStatusChange(messageId, useWhatsappApi);
 

@@ -18,6 +18,7 @@ import * as chatClientController from "../../controllers/chat/chatClientControll
 import * as messageController from "../../controllers/chat/messageController";
 import * as apiTokenController from "../../controllers/api/apiTokenController";
 import * as auth0Controller from "../../controllers/user/auth0Controller";
+import * as whatsappController from "../../controllers/com/whatsapp/whatsappController";
 
 const routes = Router();
 
@@ -35,14 +36,15 @@ routes
   // .get("/chat/:id", authMiddleware.JWT, chatController.list)
 
   // // whatsapp plugin
-  // .post("/whatsapp/set-status", whatsappController.markMessageAsRead)
-  // .post("/whatsapp/send-msg", whatsappController.sendTextMessage)
-  // .post("/whatsapp/inte-btn", whatsappController.sendButtonsMessage)
-  // .post("/whatsapp/send-contact", whatsappController.sendContacts)
-  // .post("/whatsapp/inte-list", whatsappController.sendRadioButtons)
-  // .post("/whatsapp/send-img", whatsappController.sendImageByLink)
-  // .post("/whatsapp/upload", whatsappController.uploadMedia)
-  // .post("/whatsapp/send-doc", whatsappController.sendDocumentMessage)
+  .post("/whatsapp/set-status", whatsappController.markMessageAsRead)
+  .post("/whatsapp/send-msg", whatsappController.sendTextMessage)
+  .post("/whatsapp/inte-btn", whatsappController.sendButtonsMessage)
+  .post("/whatsapp/send-contact", whatsappController.sendContacts)
+  .post("/whatsapp/inte-list", whatsappController.sendRadioButtons)
+  .post("/whatsapp/send-img", whatsappController.sendImageByLink)
+  .post("/whatsapp/upload", whatsappController.uploadMedia)
+  .post("/whatsapp/send-doc", whatsappController.sendDocumentMessage)
+  
   // user
   .get("/user", authMiddleware.JWT, userController.info)
   .get("/user/:email", userController.findByEmail)
