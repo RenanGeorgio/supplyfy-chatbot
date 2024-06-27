@@ -1,6 +1,13 @@
 import { processQuestion } from "../../../libs/trainModel";
 import { sendTextMessage } from "./whatsappController";
 import { SendContacts, SendDoc, SendImg, SendInterativeButton, SendInterativeList, SendText } from "../../../types";
+import { webhookTrigger } from "../../../webhooks/custom/webhookTrigger";
+import { Events } from "../../../types/enums";
+import WhatsappService from "../../../services/whatsapp";
+import { findUserByField } from "../../../repositories/user";
+import { findWebhook } from "../../../repositories/webhook";
+import { findBot } from "../../../helpers/findBot";
+import { botExist } from "../../../repositories/bot";
 
 type MsgTypes = SendDoc | SendImg | SendContacts | SendInterativeList | SendInterativeButton | SendText;
 
@@ -38,23 +45,49 @@ function interactiveMessage(message: SendInterativeList | SendInterativeButton) 
 
 export async function processMessage(message: MsgTypes, wb: any) {
   const customerPhoneNumber = message.from;
-
+  const companyPhoneNumber = wb.getRecipientPhoneNumber();
   try {
+    const bots = await botExist("services.whatsapp.numberId", companyPhoneNumber)
+    if (!bots){
+      throw new Error("Bot não encontrado")
+    }
+
+    const companyId = bots.companyId
+
+    const webhook = await findWebhook({ companyId })
+
     if ("text" in message) {
       const textMessage = message.text.body;
 
       try {
+        if (webhook) {
+          webhookTrigger({
+            url: webhook?.url,
+            event: Events.MESSAGE_RECEIVED,
+            message: textMessage,
+            service: "whatsapp",
+          });
+        }
         const answer = await processQuestion(textMessage);
 
-        const response = await sendTextMessage(answer, wb);
+        await sendTextMessage(answer, wb);
 
+        if (webhook) {
+          webhookTrigger({
+            url: webhook?.url,
+            event: Events.MESSAGE_SENT,
+            message: answer,
+            service: "whatsapp",
+          });
+        }
         /*let replyButtonMessage = interactiveReplyButton;
         replyButtonMessage.to = process.env.RECIPIENT_PHONE_NUMBER;
 
         const replyButtonSent = await sendWhatsAppMessage(replyButtonMessage);
         console.log(replyButtonSent);*/
-      } catch (error) {
-        console.log(error);
+        return null;
+      } catch (error: any) {
+        throw new Error(error?.message)
       }
     } else if ("interactive" in message) {
       interactiveMessage(message as SendInterativeButton | SendInterativeList);
@@ -67,9 +100,7 @@ export async function processMessage(message: MsgTypes, wb: any) {
     } else {
       // TODO
     }
-  } catch (error) {
-    console.log(error);
-
-    return null;
+  } catch (error: any) {
+    throw new Error(error?.message)
   }
 }

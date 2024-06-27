@@ -1,6 +1,6 @@
 import { NextFunction, Response } from "express";
 import XHubSignature from "x-hub-signature";
-import { CustomRequest, statUses } from "../../../types";
+import { CustomRequest } from "../../../types";
 import { messageStatuses } from "../../../helpers/messageStatuses";
 import { processMessage } from "./processMessage";
 import { msgStatusChange } from "../service";
@@ -20,8 +20,7 @@ export const messageHandler = async (
 
         if (req.headers['x-hub-signature-256'] != calcXHubSignature) {
             console.log("Warning - request header X-Hub-Signature not present or invalid");
-
-            res.sendStatus(401);
+            return res.sendStatus(401);
         }
 
         console.log("request header X-Hub-Signature validated");
@@ -29,7 +28,7 @@ export const messageHandler = async (
         const body = req.body.entry[0].changes[0];
         
         if (body.field !== "messages") {
-            res.sendStatus(400);
+            return res.sendStatus(400);
         }
 
         const data = body.value;
@@ -55,7 +54,7 @@ export const messageHandler = async (
             data.messages.forEach(message => processMessage(message, whatsappInstance));
         }
 
-        res.sendStatus(200);
+        return res.sendStatus(200);
     } catch (error: any) {
         next(error);
     }           
