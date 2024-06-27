@@ -2,20 +2,20 @@ import { whatsappCloudApi } from "../../api";
 
 interface Props {
   senderPhoneNumberId: string | number;
-  recipientName: string;
+  recipientName?: string;
   recipientPhoneNumberId: string | number;
   accessToken: string;
 };
 
 const WhatsappService = class<Props> {
   senderPhoneNumberId: string | number;
-  recipientName: string;
+  recipientName?: string ;
   recipientPhoneNumberId: string | number;
   accessToken: string;
   useWhatsappApi: unknown;
-  constructor({ senderPhoneNumberId, recipientName, recipientPhoneNumberId, accessToken }) {
+  constructor({ senderPhoneNumberId, recipientName = undefined, recipientPhoneNumberId, accessToken }) {
     this.senderPhoneNumberId = senderPhoneNumberId;
-    this.recipientName = recipientName;
+    this.recipientName = recipientName ? recipientName : undefined;
     this.recipientPhoneNumberId = recipientPhoneNumberId;
     this.accessToken = accessToken;
     this.setWhatsappCloudApi('v20.0', senderPhoneNumberId);

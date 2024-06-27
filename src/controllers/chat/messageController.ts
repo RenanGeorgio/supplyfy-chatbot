@@ -25,6 +25,7 @@ import { findBot } from "../../helpers/findBot";
 import { Platforms } from "../../types/enums";
 import { whatsappCloudApi } from "../../api";
 import { sendMsg } from "../com/service";
+import WhatsappService from "../../services/whatsapp";
 
 const ServiceList = {
   telegram: "telegramServices",
@@ -191,11 +192,21 @@ export const sendMessage = async (
           body: message.text,
         },
       };
+
+      const whatsappService = new WhatsappService({
+        senderPhoneNumberId: bot.services?.whatsapp?.numberId,
+        recipientPhoneNumberId: message.recipientId as string,
+        accessToken: bot.services?.whatsapp?.accessToken
+      })
+      
+      console.log(data)
+      console.log(whatsappService.getSenderPhoneNumberId())
       const send = await sendMsg(
         data,
-        whatsappCloudApi("v20.0", credentials.numberId as string)
+        whatsappService
       );
       console.log(send);
+      return res.status(201).json();
     }
   } catch (error: any) {
     next(error);
