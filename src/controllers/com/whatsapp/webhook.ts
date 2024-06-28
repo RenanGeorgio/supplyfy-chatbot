@@ -6,14 +6,13 @@ import { processMessage } from "./processMessage";
 import { msgStatusChange } from "../service";
 import WhatsappService from "../../../services/whatsapp";
 import { botExist } from "../../../repositories/bot";
+import { error } from "node:console";
 
 const appSecret = process.env.APP_SECRET ? process.env.APP_SECRET.replace(/[\\"]/g, '') : "secret";
 const xhub = new XHubSignature("SHA256", appSecret);
 
 export const messageHandler = async (
     req: CustomRequest,
-    res: Response,
-    next: NextFunction
 ) => {
     try {
         // Calcula o valor da assinatura x-hub para comparar com o valor no request header
@@ -25,28 +24,27 @@ export const messageHandler = async (
         // }
 
         const body = req.body.entry?.[0]?.changes?.[0];
-        
+
         if (!body) {
-            return res.sendStatus(404);
+            throw new Error("Body indefinido")
         }
 
         if (body.field !== "messages") {
-            return res.sendStatus(404);
+            throw new Error("Menssagens indefinidas")
         }
 
         const data = body.value;
-        console.log(data)
 
-        const bots = await botExist("services.whatsapp.numberId", data.metadata.phone_number_id)
-        if (!bots) {
-            return res.sendStatus(404);
-        }
 
-        const accessToken = bots.services?.whatsapp?.accessToken
-        
         // TO-DO: Corrigir spam de eventos para responder apenas evento de mensagem recebida 
-        // if (data.hasOwnProperty("messages")) {
         if (data.messages?.[0]) {
+            const bots = await botExist("services.whatsapp.numberId", data.metadata.phone_number_id)
+            if (!bots) {
+                throw new Error("Bot não encontrado")
+            }
+
+            const accessToken = bots.services?.whatsapp?.accessToken
+
             const whatsappInstance = new WhatsappService({
                 senderPhoneNumberId: data.metadata.phone_number_id,
                 recipientName: data.contacts[0].profile.name,
@@ -67,13 +65,14 @@ export const messageHandler = async (
 
             data.messages.map((message, index) => {
                 console.log("mensagem: ", index)
-                return processMessage(message, whatsappInstance)}
-            );
+                return processMessage(message, whatsappInstance)
+            }).catch((error: any) => { throw new Error(error?.message) });
         }
 
-        return res.sendStatus(200);
+        return null;
     } catch (error: any) {
         console.log(error?.message);
-        next(error);
-    }           
+        throw new Error(error?.message)
+
+    }
 };

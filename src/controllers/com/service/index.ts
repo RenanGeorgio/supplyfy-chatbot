@@ -14,7 +14,6 @@ export const sendMsg = async (data: MsgProps, wb: any) => {
       },
       data: data,
     });
-    console.log(data)
 
     if (response) {
       return response;
@@ -23,7 +22,6 @@ export const sendMsg = async (data: MsgProps, wb: any) => {
       return null;
     }
   } catch (error: any) {
-    console.log(error?.message);
     throw new Error(error?.message);
   }
 };

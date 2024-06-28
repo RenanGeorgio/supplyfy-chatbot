@@ -47,11 +47,11 @@ export const sendTextMessage = async (messageText: string, wb: any) => {
             }
         };
 
+        console.log("send text message called: " + messageText)
         const response = await sendMsg(data, wb);
 
         return response;
     } catch (error: any) {
-        console.log(error?.message);
         throw new Error(error?.message);
     }
 };
