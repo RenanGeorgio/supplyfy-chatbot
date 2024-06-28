@@ -39,7 +39,7 @@ router.post('/', async function (req: CustomRequest, res: Response, next: NextFu
             igMessageHandler(req, res, next);
         } else {
             if ((data.object != undefined) || (data.entry != undefined)) {
-                wbMessageHandler(req, res, next);
+                wbMessageHandler(req);
             } else {
                 return res.status(404).json({ error: 'Service not defined' });
             }
