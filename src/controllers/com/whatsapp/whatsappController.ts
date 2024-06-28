@@ -51,6 +51,7 @@ export const sendTextMessage = async (messageText: string, wb: any) => {
 
         return response;
     } catch (error: any) {
+        console.log(error?.message);
         throw new Error(error?.message);
     }
 };
