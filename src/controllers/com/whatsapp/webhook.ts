@@ -39,7 +39,7 @@ export const messageHandler = async (
 
         const bots = await botExist("services.whatsapp.numberId", data.metadata.phone_number_id)
         if (!bots) {
-            throw new Error("Bot não encontrado")
+            return res.sendStatus(404);
         }
 
         const accessToken = bots.services?.whatsapp?.accessToken
