@@ -42,32 +42,29 @@ export const messageHandler = async (
                 throw new Error("Bot não encontrado")
             }
 
-            const accessToken = bots.services?.whatsapp?.accessToken
-
-            const whatsappInstance = new WhatsappService({
+            const whatsappData = {
                 senderPhoneNumberId: data.metadata.phone_number_id,
                 recipientName: data.contacts[0].profile.name,
                 recipientPhoneNumberId: data.messages[0].from,
-                accessToken
-            });
+                accessToken: bots.services?.whatsapp?.accessToken
+            }
 
             try { // Marca msg como lida
                 let sendReadStatus = messageStatuses?.read;
                 sendReadStatus.message_id = data.messages[0].id;
 
-                const response = await msgStatusChange(sendReadStatus?.message_id, whatsappInstance);
+                const response = await msgStatusChange(sendReadStatus?.message_id, whatsappData);
 
-                console.log("Atualização de Status: " + response.status);
+                console.log("Atualização de Status: " + response?.status);
             } catch (error: any) {
                 console.log(error?.message);
             }
 
             data.messages.map((message, index) => {
                 console.log("mensagem: ", index)
-                return processMessage(message, whatsappInstance)
-            })        
+                return processMessage(message, whatsappData)
+            })
         }
-
         return null;
     } catch (error: any) {
         console.log(error?.message);

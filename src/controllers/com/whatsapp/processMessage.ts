@@ -3,10 +3,7 @@ import { sendTextMessage } from "./whatsappController";
 import { SendContacts, SendDoc, SendImg, SendInterativeButton, SendInterativeList, SendText } from "../../../types";
 import { webhookTrigger } from "../../../webhooks/custom/webhookTrigger";
 import { Events } from "../../../types/enums";
-import WhatsappService from "../../../services/whatsapp";
-import { findUserByField } from "../../../repositories/user";
 import { findWebhook } from "../../../repositories/webhook";
-import { findBot } from "../../../helpers/findBot";
 import { botExist } from "../../../repositories/bot";
 
 type MsgTypes = SendDoc | SendImg | SendContacts | SendInterativeList | SendInterativeButton | SendText;
@@ -80,15 +77,20 @@ export async function processMessage(message: MsgTypes, wb: any) {
       return null;
       
     } else if ("interactive" in message) {
-      interactiveMessage(message as SendInterativeButton | SendInterativeList);
+      // interactiveMessage(message as SendInterativeButton | SendInterativeList);
+      return null;
     } else if ("contacts" in message) {
-      // TODO
+      // TODO      
+      return null;
     } else if ("image" in message) {
-      // TODO
+      // TODO      
+      return null;
     } else if ("document" in message) {
-      // TODO
+      // TODO      
+      return null;
     } else {
       // TODO
+      return null;
     }
   } catch (error: any) {
     throw new Error(error?.message)

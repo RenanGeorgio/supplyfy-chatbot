@@ -1,16 +1,16 @@
 import { Response } from "express";
-import { facebookApi, instagramApi } from "../../../api";
+import { facebookApi, instagramApi, whatsappCloudApi } from "../../../api";
 import { FaceMsgData, MsgProps, Obj } from "../../../types";
 
 export const sendMsg = async (data: MsgProps, wb: any) => {
   try {
     console.log("send message called")
-
-    const response = await wb.useWhatsappApi("/messages", {
+    const useWhatsappApi = whatsappCloudApi("v20.0", wb.senderPhoneNumberId);
+    const response = await useWhatsappApi("/messages", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${wb.getAccessToken()}`,
+        Authorization: `Bearer ${wb.access_token}`,
       },
       data: data,
     });
