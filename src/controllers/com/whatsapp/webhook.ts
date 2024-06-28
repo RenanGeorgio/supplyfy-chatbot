@@ -65,7 +65,7 @@ export const messageHandler = async (
             data.messages.map((message, index) => {
                 console.log("mensagem: ", index)
                 return processMessage(message, whatsappInstance)
-            }).catch((error: any) => { throw new Error(error?.message) });
+            })        
         }
 
         return null;
