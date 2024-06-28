@@ -42,7 +42,7 @@ function interactiveMessage(message: SendInterativeList | SendInterativeButton) 
 
 export async function processMessage(message: MsgTypes, wb: any) {
   try {
-    const companyPhoneNumber = wb.getSenderPhoneNumberId();
+    const companyPhoneNumber = wb.senderPhoneNumberId;
 
     const bots = await botExist("services.whatsapp.numberId", companyPhoneNumber)
     if (!bots){
