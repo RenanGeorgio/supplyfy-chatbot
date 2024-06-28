@@ -1,7 +1,7 @@
 import { Response, NextFunction, Router } from "express";
 import { messageHandler as wbMessageHandler } from "../controllers/com/whatsapp/webhook";
 import { CustomRequest } from "../types";
-const router = Router(); 
+const router = Router();
 
 router.get('/', function (req: CustomRequest, res: Response, next: NextFunction) {
     let verificationToken;
@@ -27,8 +27,8 @@ router.post('/', async function (req: CustomRequest, res: Response, next: NextFu
     const data = req.body;
     
     try {
-        if (data == undefined) {
-            return res.sendStatus(400);
+        if (data != undefined) {
+            next()
         }
         
         if ((data.object != undefined) || (data.entry != undefined)) {
