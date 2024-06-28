@@ -14,7 +14,7 @@ interface DataProps {
     preview_url?: boolean;
     to: string | number;
     from?: string | number;
-    type: "text";
+    type: string;
 };
 
 export interface SendText extends DataProps {
@@ -22,6 +22,15 @@ export interface SendText extends DataProps {
         preview_url?: boolean;
         body: string | any;
     }
+};
+
+export interface SendTemplate extends DataProps {
+    template: {
+        name: string;
+        language: {
+          code: string;
+        },
+      },
 };
 
 export interface SendInterativeButton extends DataProps {
@@ -82,4 +91,4 @@ export interface MsgStatus {
     message_id: number | string;
 };
 
-export type MsgProps = MsgStatus | SendDoc | SendImg | SendContacts | SendInterativeList | SendInterativeButton | SendText
+export type MsgProps = MsgStatus | SendDoc | SendImg | SendContacts | SendInterativeList | SendInterativeButton | SendText | SendTemplate;
