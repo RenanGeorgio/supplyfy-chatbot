@@ -6,7 +6,6 @@ import { processMessage } from "./processMessage";
 import { msgStatusChange } from "../service";
 import WhatsappService from "../../../services/whatsapp";
 import { botExist } from "../../../repositories/bot";
-import { error } from "node:console";
 
 const appSecret = process.env.APP_SECRET ? process.env.APP_SECRET.replace(/[\\"]/g, '') : "secret";
 const xhub = new XHubSignature("SHA256", appSecret);
