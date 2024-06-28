@@ -61,7 +61,7 @@ export const messageHandler = async (
                 console.log(error?.message);
             }
         
-            if (data.statuses[0].status === 'sent') {
+            if (!data.statuses) {
                 data.messages.forEach((message) => {
                     return processMessage(message, whatsappInstance)}
                 );
