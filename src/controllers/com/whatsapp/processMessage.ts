@@ -91,6 +91,7 @@ export async function processMessage(message: MsgTypes, wb: any) {
       // TODO
     }
   } catch (error: any) {
+    console.log(error?.message);
     throw new Error(error?.message)
   }
 }

@@ -73,6 +73,7 @@ export const messageHandler = async (
 
         return res.sendStatus(200);
     } catch (error: any) {
+        console.log(error?.message);
         next(error);
     }           
 };
