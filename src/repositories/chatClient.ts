@@ -32,7 +32,7 @@ export async function findChatClientById(_id: string) {
     return client;
   }
   catch (error: any) {
-    return mongoErrorHandler(error);
+    mongoErrorHandler(error);
   }
 }
 

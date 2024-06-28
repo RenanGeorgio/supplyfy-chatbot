@@ -15,3 +15,12 @@ export async function createMessage(sender: string, chat: string, messageText: s
         return mongoErrorHandler(error);
     }
 }
+
+export async function listChatMessages(chatId: string){
+    try {
+        return await MessageModel.find({ chatId });
+    }
+    catch (error) {
+        mongoErrorHandler(error);
+    }
+}

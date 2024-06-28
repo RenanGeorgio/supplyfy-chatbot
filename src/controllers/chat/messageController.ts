@@ -10,6 +10,7 @@ import { servicesActions } from "../../services";
 import {
   clientChatExist,
   createChatClient,
+  findChatClientById,
 } from "../../repositories/chatClient";
 import {
   CustomRequest,
@@ -18,7 +19,7 @@ import {
   IEmailCredentials,
   IMessage,
 } from "../../types/types";
-import { createMessage } from "../../repositories/message";
+import { createMessage, listChatMessages } from "../../repositories/message";
 import { findWebhook } from "../../repositories/webhook";
 import { userExist } from "../../repositories/user";
 import { findBot } from "../../helpers/findBot";
@@ -32,6 +33,17 @@ const ServiceList = {
   telegram: "telegramServices",
   email: "emailServices",
   whatsapp: "whatsappServices",
+};
+
+const templateMessage = {
+  messaging_product: "whatsapp",
+  type: "template",
+  template: {
+    name: "hello_world",
+    language: {
+      code: "en_US",
+    },
+  },
 };
 
 export const create = async (
@@ -146,6 +158,11 @@ export const sendMessage = async (
 
       return res.status(201).json();
     }
+    const client = await findChatClientById(message.recipientId as string)
+
+    if (!client && "error") {
+      return res.status(404).json({ message: "Cliente não encontrado" });
+    }
 
     const chat = await findChatById(message.chatId);
 
@@ -156,7 +173,9 @@ export const sendMessage = async (
     if (chat && (chat as IChat).status !== "active") {
       return res.status(400).json({ message: "Chat não está ativo" });
     }
-
+    
+    // verificando se há messagens no chat
+    const listMessages = await listChatMessages(message.chatId);
     const createdMessage = await createMessage(
       user._id.toString(),
       message.chatId,
@@ -183,10 +202,11 @@ export const sendMessage = async (
     }
 
     if (message.service === Platforms.WHATSAPP) {
+
       const data: SendText = {
         messaging_product: "whatsapp",
         recipient_type: "individual",
-        to: message.recipientId as string,
+        to: client?.username as string,
         type: "text",
         text: {
           preview_url: true,
@@ -196,15 +216,19 @@ export const sendMessage = async (
 
       const whatsappService = new WhatsappService({
         senderPhoneNumberId: bot.services?.whatsapp?.numberId,
-        recipientPhoneNumberId: message.recipientId as string,
-        accessToken: bot.services?.whatsapp?.accessToken
-      })
-      
-      const send = await sendMsg(
-        data,
-        whatsappService
-      );
-      const webhook = await findWebhook({ companyId: user?.companyId })
+        recipientPhoneNumberId: client?.username as string,
+        accessToken: bot.services?.whatsapp?.accessToken,
+      });
+
+      if (listMessages?.length === 0) {
+        console.log("entrou no if")
+        const send = await sendMsg({...templateMessage, to: client?.username as string}, whatsappService);
+      } else {
+        console.log("entrou no else")
+        const send = await sendMsg(data, whatsappService);
+      }
+
+      const webhook = await findWebhook({ companyId: user?.companyId });
 
       if (webhook) {
         webhookTrigger({
@@ -214,6 +238,7 @@ export const sendMessage = async (
           service: "whatsapp",
         });
       }
+
       return res.status(201).json();
     }
   } catch (error: any) {
