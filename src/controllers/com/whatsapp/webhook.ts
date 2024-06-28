@@ -41,7 +41,8 @@ export const messageHandler = async (
         const accessToken = bots.services?.whatsapp?.accessToken
         
         // TO-DO: Corrigir spam de eventos para responder apenas evento de mensagem recebida 
-        if (data.hasOwnProperty("messages")) {
+        // if (data.hasOwnProperty("messages")) {
+        if (data.messages[0]) {
             const whatsappInstance = new WhatsappService({
                 senderPhoneNumberId: data.metadata.phone_number_id,
                 recipientName: data.contacts[0].profile.name,
