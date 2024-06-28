@@ -224,7 +224,7 @@ export const sendMessage = async (
         senderPhoneNumberId: bot.services?.whatsapp?.numberId,
         recipientPhoneNumberId: client?.username as string,
         accessToken: bot.services?.whatsapp?.accessToken,
-      });
+      };
 
       if (listMessages?.length === 0) {
         console.log("entrou no if")
