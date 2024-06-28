@@ -44,6 +44,7 @@ export const messageHandler = async (
 
             const whatsappData = {
                 senderPhoneNumberId: data.metadata.phone_number_id,
+                senderPhoneNumber: data.metadata.display_phone_number,
                 recipientName: data.contacts[0].profile.name,
                 recipientPhoneNumberId: data.messages[0].from,
                 accessToken: bots.services?.whatsapp?.accessToken
