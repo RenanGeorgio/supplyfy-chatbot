@@ -28,7 +28,6 @@ export const msgStatusChange = async (messageId: string | number, wb: any) => {
   const data = {
     messaging_product: "whatsapp",
     status: 'read',
-    //to: this.recipientPhoneNumber,
     message_id: messageId
   }
 
