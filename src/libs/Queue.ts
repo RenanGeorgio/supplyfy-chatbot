@@ -8,10 +8,10 @@ const redisOpts: RedisOptions = {
   port: parseInt(redisConfig.port.replace(/[\\"]/g, '')),
   password: redisConfig.password.replace(/[\\"]/g, ''),
   // descomentar antes de mandar para main
-  // tls: {
-  //   host: redisConfig.host.replace(/[\\"]/g, ''),
-  //   port: parseInt(redisConfig.port.replace(/[\\"]/g, ''))
-  // }
+  tls: {
+    host: redisConfig.host.replace(/[\\"]/g, ''),
+    port: parseInt(redisConfig.port.replace(/[\\"]/g, ''))
+  }
 }
 
 const queues = Object.values(jobs).map((job) => ({
