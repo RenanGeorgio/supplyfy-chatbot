@@ -4,19 +4,16 @@ import { FaceMsgData, MsgProps, Obj } from "../../../types";
 
 export const sendMsg = async (data: MsgProps, wb: any) => {
   try {
-    console.log("sender ID: " + wb.senderPhoneNumberId)
-    console.log(data)
     console.log("send message called")
     const useWhatsappApi = whatsappCloudApi("v20.0", wb.senderPhoneNumberId);
     const response = await useWhatsappApi("/messages", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${wb.access_token}`,
+        Authorization: `Bearer ${wb.accessToken}`,
       },
       data: data,
     });
-
     if (response) {
       return response;
     }

@@ -27,9 +27,9 @@ router.post('/', async function (req: CustomRequest, res: Response, next: NextFu
     const data = req.body;
     
     try {
-        if (data != undefined) {
-            next()
-        }
+        // if (data != undefined) {
+        //     next()
+        // }
         
         if ((data.object != undefined) || (data.entry != undefined)) {
             await wbMessageHandler(req);
