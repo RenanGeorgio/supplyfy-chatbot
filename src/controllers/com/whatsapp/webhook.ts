@@ -24,8 +24,12 @@ export const messageHandler = async (
         //     return res.sendStatus(401);
         // }
 
-        const body = req.body.entry[0].changes[0];
+        const body = req.body.entry?.[0]?.changes?.[0];
         
+        if (!body) {
+            return res.sendStatus(404);
+        }
+
         if (body.field !== "messages") {
             return res.sendStatus(404);
         }
@@ -42,7 +46,7 @@ export const messageHandler = async (
         
         // TO-DO: Corrigir spam de eventos para responder apenas evento de mensagem recebida 
         // if (data.hasOwnProperty("messages")) {
-        if (data.messages[0]) {
+        if (data.messages?.[0]) {
             const whatsappInstance = new WhatsappService({
                 senderPhoneNumberId: data.metadata.phone_number_id,
                 recipientName: data.contacts[0].profile.name,
@@ -60,12 +64,11 @@ export const messageHandler = async (
             } catch (error: any) {
                 console.log(error?.message);
             }
-        
-            if (!data.statuses) {
-                data.messages.forEach((message) => {
-                    return processMessage(message, whatsappInstance)}
-                );
-            }
+
+            data.messages.map((message, index) => {
+                console.log("mensagem: ", index)
+                return processMessage(message, whatsappInstance)}
+            );
         }
 
         return res.sendStatus(200);

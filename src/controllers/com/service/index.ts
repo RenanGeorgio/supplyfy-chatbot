@@ -4,6 +4,8 @@ import { FaceMsgData, MsgProps, Obj } from "../../../types";
 
 export const sendMsg = async (data: MsgProps, wb: any) => {
   try {
+    console.log("send message called")
+
     const response = await wb.useWhatsappApi("/messages", {
       method: "POST",
       headers: {
@@ -12,6 +14,7 @@ export const sendMsg = async (data: MsgProps, wb: any) => {
       },
       data: data,
     });
+    console.log(data)
 
     if (response) {
       return response;
