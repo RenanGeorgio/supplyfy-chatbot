@@ -27,7 +27,7 @@ export const messageHandler = async (
         const body = req.body.entry[0].changes[0];
         
         if (body.field !== "messages") {
-            return res.sendStatus(400);
+            return res.sendStatus(404);
         }
 
         const data = body.value;
@@ -61,9 +61,11 @@ export const messageHandler = async (
                 console.log(error?.message);
             }
         
-            data.messages.forEach((message) => 
-                processMessage(message, whatsappInstance)
-            );
+            if (data.statuses[0].status === 'sent') {
+                data.messages.forEach((message) => {
+                    return processMessage(message, whatsappInstance)}
+                );
+            }
         }
 
         return res.sendStatus(200);
