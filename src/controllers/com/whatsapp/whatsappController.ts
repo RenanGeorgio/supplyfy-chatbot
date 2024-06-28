@@ -269,3 +269,38 @@ export const sendDocumentMessage = async (
         next(error);
     }           
 };
+
+/*
+async function listTemplates() {
+    return await axios({
+      method: 'get',
+      url: `https://graph.facebook.com/${apiVersion}/${myBizAcctId}/message_templates`
+        + '?limit=1000',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json'
+      }
+    })
+  }
+  
+async function createMessageTemplate(template) {
+    console.log('name:'  +  process.env.TEMPLATE_NAME_PREFIX + '_' + template.name);
+
+    const config = {
+        method: 'post',
+        url: `https://graph.facebook.com/${apiVersion}/${myBizAcctId}/message_templates`,
+        headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json'
+        },
+        data: {
+        name:  process.env.TEMPLATE_NAME_PREFIX + '_' + template.name,
+        category: template.category,
+        components: template.components,
+        language: template.language
+        }
+    };
+
+    return await axios(config)
+}
+*/
