@@ -62,6 +62,11 @@ export async function processMessage(message: MsgTypes, wb: any) {
           event: Events.MESSAGE_RECEIVED,
           message: textMessage,
           service: "whatsapp",
+          metadata: {
+            senderPhoneNumber: wb.senderPhoneNumber,
+            recipientName: wb.recipientName,
+            recipientphoneNumber: wb.recipientPhoneNumberId,
+          }
         });
       }
 
