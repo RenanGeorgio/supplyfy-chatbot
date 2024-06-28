@@ -22,7 +22,7 @@ export const sendMsg = async (data: MsgProps, wb: any) => {
       return null;
     }
   } catch (error: any) {
-    throw new Error(error?.message);
+    return null;
   }
 };
 

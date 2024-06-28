@@ -46,7 +46,7 @@ export async function processMessage(message: MsgTypes, wb: any) {
 
     const bots = await botExist("services.whatsapp.numberId", companyPhoneNumber)
     if (!bots){
-      throw new Error("Bot não encontrado")
+      return null;
     }
 
     const companyId = bots.companyId
@@ -98,6 +98,6 @@ export async function processMessage(message: MsgTypes, wb: any) {
       return null;
     }
   } catch (error: any) {
-    throw new Error(error?.message)
+    return null;
   }
 }

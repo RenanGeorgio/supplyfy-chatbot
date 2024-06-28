@@ -52,7 +52,7 @@ export const sendTextMessage = async (messageText: string, wb: any) => {
 
         return response;
     } catch (error: any) {
-        throw new Error(error?.message);
+        return null;
     }
 };
 
