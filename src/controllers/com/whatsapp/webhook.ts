@@ -15,7 +15,7 @@ export const messageHandler = async (
 ) => {
     try {
         // Calcula o valor da assinatura x-hub para comparar com o valor no request header
-        const calcXHubSignature = xhub.sign(req.rawBody).toLowerCase();
+        // const calcXHubSignature = xhub.sign(req.rawBody).toLowerCase();
 
         // if (req.headers['x-hub-signature-256'] != calcXHubSignature) {
         //     console.log("Warning - request header X-Hub-Signature not present or invalid");
