@@ -94,7 +94,7 @@ export const sendMessage = async (
     message: IMessage;
   } = req.body; // conteudo da mensagem, conteudo do cliente
   try {
-    console.log(message);
+    
     if (!message.text || !message.service) {
       return res.status(400).json({ message: "Dados não informados" });
     }
@@ -227,10 +227,8 @@ export const sendMessage = async (
       };
 
       if (listMessages?.length === 0) {
-        console.log("entrou no if")
         const send = await sendMsg({...templateMessage, to: client?.username as string}, whatsappService);
       } else {
-        console.log("entrou no else")
         const send = await sendMsg(data, whatsappService);
       }
 
