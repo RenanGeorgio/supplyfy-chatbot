@@ -1,7 +1,7 @@
 import { Response, NextFunction, Router } from "express";
 import { messageHandler as wbMessageHandler } from "../controllers/com/whatsapp/webhook";
 import { CustomRequest } from "../types";
-const router = Router();
+const router = Router(); 
 
 router.get('/', function (req: CustomRequest, res: Response, next: NextFunction) {
     let verificationToken;
