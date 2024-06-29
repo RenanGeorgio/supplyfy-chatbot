@@ -51,7 +51,8 @@ import {
   PageEntry, 
   FaceMsgSender, 
   FaceMsgRecipient, 
-  FaceMessage 
+  FaceMessage,
+  WaMsgMetaData 
 } from "./meta";
 
 export {
@@ -104,5 +105,6 @@ export {
   PageEntry, 
   FaceMsgSender, 
   FaceMsgRecipient, 
-  FaceMessage 
+  FaceMessage,
+  WaMsgMetaData
 };

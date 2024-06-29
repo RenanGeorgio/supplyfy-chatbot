@@ -1,10 +1,9 @@
-import { processQuestion } from "../../../libs/trainModel";
 import { sendTextMessage } from "./whatsappController";
-import { SendContacts, SendDoc, SendImg, SendInterativeButton, SendInterativeList, SendText } from "../../../types";
+import { processQuestion } from "../../../libs/trainModel";
 import { webhookTrigger } from "../../../webhooks/custom/webhookTrigger";
-import { Events } from "../../../types/enums";
 import { findWebhook } from "../../../repositories/webhook";
-import { botExist } from "../../../repositories/bot";
+import { SendContacts, SendDoc, SendImg, SendInterativeButton, SendInterativeList, SendText } from "../../../types";
+import { Events } from "../../../types/enums";
 
 type MsgTypes = SendDoc | SendImg | SendContacts | SendInterativeList | SendInterativeButton | SendText;
 
@@ -40,19 +39,10 @@ function interactiveMessage(message: SendInterativeList | SendInterativeButton) 
   return;
 }
 
-export async function processMessage(message: MsgTypes, wb: any) {
+export async function processWaMessage(message: MsgTypes, wb: any, companyId: string) {
+  const webhook = await findWebhook({ companyId });
+
   try {
-    const companyPhoneNumber = wb.senderPhoneNumberId;
-
-    const bots = await botExist("services.whatsapp.numberId", companyPhoneNumber)
-    if (!bots){
-      return null;
-    }
-
-    const companyId = bots.companyId
-
-    const webhook = await findWebhook({ companyId })
-
     if ("text" in message) {
       const textMessage = message.text.body;
 
@@ -71,7 +61,6 @@ export async function processMessage(message: MsgTypes, wb: any) {
       }
 
       const answer = await processQuestion(textMessage);
-
       await sendTextMessage(answer, wb);
 
       /*let replyButtonMessage = interactiveReplyButton;
@@ -80,7 +69,6 @@ export async function processMessage(message: MsgTypes, wb: any) {
       const replyButtonSent = await sendWhatsAppMessage(replyButtonMessage);
       console.log(replyButtonSent);*/
       return null;
-      
     } else if ("interactive" in message) {
       // interactiveMessage(message as SendInterativeButton | SendInterativeList);
       return null;

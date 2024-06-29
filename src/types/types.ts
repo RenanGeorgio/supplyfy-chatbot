@@ -4,12 +4,10 @@ import { Types } from "mongoose";
 import { Session } from "express-session";
 import TelegramBot from "node-telegram-bot-api";
 import { Transporter } from "nodemailer";
-import { IMailListener } from "../services/email/lib/types";
 import { IgApiClientRealtime } from "instagram_mqtt";
 import { Socket } from "socket.io-client";
-import { Server } from "socket.io";
+import { IMailListener } from "../services/email/lib/types";
 import { Events } from "./enums";
-
 
 export interface User {
   sub: Types.ObjectId | string;

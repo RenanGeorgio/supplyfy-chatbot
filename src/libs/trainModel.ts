@@ -102,6 +102,7 @@ manager.addAnswer("pt", "user.back", "Bom te ver de volta, em que posso ajudá-l
 })();
 
 export async function processQuestion(pergunta: string): Promise<string> {
-    const response = await manager.process('pt', pergunta);
-    return response.answer || 'Desculpe, não tenho uma resposta para isso.';
+    const response: any = await manager.process("pt", pergunta);
+
+    return response.answer || "Desculpe, não tenho uma resposta para isso.";
 }
