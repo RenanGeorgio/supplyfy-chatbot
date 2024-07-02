@@ -59,6 +59,7 @@ userState = new UserState(memoryStorage);
 // Create the main dialog.
 const myBot = new WelcomeBot(userState);
 const bot = new DialogBot(conversationState, userState, myBot);
+const storeBot = new StateManagementBot(conversationState, userState);
 
 // Create HTTP server.
 const server = restify.createServer();
