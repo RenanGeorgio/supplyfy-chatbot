@@ -22,6 +22,7 @@ export const create = async (
   res: Response,
   next: NextFunction
 ) => {
+  // to-do: implementr transação
   const {
     name,
     category,
@@ -109,7 +110,7 @@ export const remove = async (
   next: NextFunction
 ) => {
   const { id, name } = req.query;
-
+  // to-do: implementr transação
   try {
     if (!id || !name) {
       return res.status(400).send({ message: "Campos obrigatórios ausentes" });
