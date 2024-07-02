@@ -1,7 +1,8 @@
 //@ts-ignore
-import { NlpManager } from "node-nlp";
+import { NlpManager, ConversationContext } from "node-nlp";
 
-const manager = new NlpManager({ languages: ['pt'], forceNER: true });
+const manager = new NlpManager({ languages: ['pt'], forceNER: true, autoSave: false, nlu: { useNoneFeature: true } });
+const context = new ConversationContext();
 //const manager = new NlpManager({ languages: ['pt'], nlu: { useNoneFeature: false } }); // remoção da obstrução de falsos positivos, utilização de intent nao classificada
 
 manager.addDocument("pt", "qual a diferença do ingrow para outros aminoácidos do mercado", "agent.ingrow");
@@ -103,7 +104,12 @@ manager.addAnswer("pt", "user.back", "Bom te ver de volta, em que posso ajudá-l
 })();
 
 export async function processQuestion(pergunta: string): Promise<string> {
-    const context = {};
+    const activity = {
+        conversation: {
+          id: 'a1'
+        }
+    }
+    // const response = await manager.process({ locale: 'en', utterance: 'what is the real name of spiderman?', activity });
     //const response: any = await manager.process("pt", pergunta, context);
     const response: any = await manager.process("pt", pergunta);
 
