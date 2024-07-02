@@ -164,3 +164,36 @@ export const repplyFaceAction = (comment_id: string, message: Obj) => {
   
   return;
 }
+
+export const whatsappMsgTemplateApi = async ({
+  data,
+  wb,
+  method,
+  query,
+}: { 
+  data?: any,
+  wb: any,
+  method: string,
+  query?: string
+}) => {
+  try {
+    const useWhatsappApi = whatsappCloudApi("v20.0", wb.wabaId);
+    const response = await useWhatsappApi(`/message_templates/${query || ''}`, {
+      method: method,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${wb.accessToken}`,
+      },
+      data: data,
+    })
+
+    if (response) {
+      return response;
+    }
+    else {
+      return null;
+    }
+  } catch (error: any) {
+    return error;
+  }
+};
