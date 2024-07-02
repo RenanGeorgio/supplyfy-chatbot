@@ -4,16 +4,15 @@ import * as restify from 'restify';
 import { INodeSocket } from 'botframework-streaming';
 
 import {
-    CloudAdapter,
-    ConfigurationBotFrameworkAuthentication,
-    ConfigurationBotFrameworkAuthenticationOptions,
-    ConversationState,
-    MemoryStorage,
-    UserState
+  CloudAdapter,
+  ConfigurationBotFrameworkAuthentication,
+  ConfigurationBotFrameworkAuthenticationOptions,
+  ConversationState,
+  MemoryStorage,
+  UserState
 } from 'botbuilder';
 
-// This bot's main dialog.
-import { WelcomeBot } from './bot';
+import { ConversationBot } from './conversation';
 
 const ENV_FILE = path.join(__dirname, '.env');
 config({ path: ENV_FILE });
@@ -56,10 +55,8 @@ const memoryStorage = new MemoryStorage();
 conversationState = new ConversationState(memoryStorage);
 userState = new UserState(memoryStorage);
 
-// Create the main dialog.
-const myBot = new WelcomeBot(userState);
-const bot = new DialogBot(conversationState, userState, myBot);
-const storeBot = new StateManagementBot(conversationState, userState);
+const conversationReferences = {};
+const bot = new ConversationBot(conversationState, userState, conversationReferences);
 
 // Create HTTP server.
 const server = restify.createServer();
@@ -83,5 +80,33 @@ server.on('upgrade', async (req, socket, head) => {
   // Set onTurnError for the CloudAdapter created for each connection.
   streamingAdapter.onTurnError = onTurnErrorHandler;
 
-  await streamingAdapter.process(req, socket as unknown as INodeSocket, head, (context) => myBot.run(context));
+  await streamingAdapter.process(req, socket as unknown as INodeSocket, head, (context) => bot.run(context));
+});
+
+// Listen for incoming notifications and send proactive messages to users.
+server.get('/api/notify', async (req, res) => {
+  for (const conversationReference of Object.values(userState)) {
+      await adapter.continueConversationAsync(process.env.MicrosoftAppId, conversationReference, async (context) => {
+          await context.sendActivity('proactive hello');
+      });
+  }
+  res.setHeader('Content-Type', 'text/html');
+  res.writeHead(200);
+  res.write('<html><body><h1>Proactive messages have been sent.</h1></body></html>');
+  res.end();
+});
+
+// Listen for incoming custom notifications and send proactive messages to users.
+server.post('/api/notify', async (req, res) => {
+  for (const msg of req.body) {
+      for (const conversationReference of Object.values(userState)) {
+          await adapter.continueConversationAsync(process.env.MicrosoftAppId, conversationReference, async (turnContext) => {
+              await turnContext.sendActivity(msg);
+          });
+      }
+  }
+  res.setHeader('Content-Type', 'text/html');
+  res.writeHead(200);
+  res.write('Proactive messages have been sent.');
+  res.end();
 });
