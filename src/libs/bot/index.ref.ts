@@ -1,5 +1,7 @@
 import { config } from 'dotenv';
 import * as path from 'path';
+import * as restify from 'restify';
+import { INodeSocket } from 'botframework-streaming';
 
 import {
   CloudAdapter,
@@ -57,10 +59,29 @@ userState = new UserState(memoryStorage);
 let conversationReferences: ConversationReference = {};
 const bot = new ConversationBot(conversationState, userState, conversationReferences);
 
+// Create HTTP server.
+const server = restify.createServer();
+server.use(restify.plugins.bodyParser());
+
+server.listen(process.env.port || process.env.PORT || 3978, () => {
+  console.log(`\n${ server.name } listening to ${ server.url }`);
+});
+
 // Listen for incoming requests.
 server.post('/api/messages', async (req, res) => {
   // Route received a request to adapter for processing
   await adapter.process(req, res, (context) => bot.run(context));
+});
+
+// Listen for Upgrade requests for Streaming.
+server.on('upgrade', async (req, socket, head) => {
+  // Create an adapter scoped to this WebSocket connection to allow storing session data.
+  const streamingAdapter = new CloudAdapter();
+
+  // Set onTurnError for the CloudAdapter created for each connection.
+  streamingAdapter.onTurnError = onTurnErrorHandler;
+
+  await streamingAdapter.process(req, socket as unknown as INodeSocket, head, (context) => bot.run(context));
 });
 
 // Listen for incoming notifications and send proactive messages to users.

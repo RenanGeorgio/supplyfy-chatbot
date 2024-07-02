@@ -101,9 +101,22 @@ export class ConversationBot extends ActivityHandler {
         });
 
         this.onMembersAdded(async (context, next) => {
-            for (const idx in context.activity.membersAdded) {
-                if (context.activity.membersAdded[idx].id !== context.activity.recipient.id) {
+            const membersAdded = context.activity.membersAdded;
+            for (const idx in membersAdded) {
+                if (membersAdded[idx].id !== context.activity.recipient.id) {
                     await context.sendActivity('Welcome');
+                }
+            }
+
+            await next();
+        });
+
+        this.onMembersRemoved(async (context, next) => {
+            const membersRemoved = context.activity.membersRemoved;
+            for (const idx in membersRemoved) {
+                if (membersRemoved[idx].id !== context.activity.recipient.id) {
+                    await context.sendActivity('Welcome');
+                    //await this._userState.ClearStateAsync(turnContext, cancellationToken);
                 }
             }
 
