@@ -294,7 +294,7 @@ const telegramService = async (
           "TelegramService",
           { id: chat.origin?.chatId, message: { text: message.text } },
           credentials._id
-        );
+        ); 
       }
       console.log(
         `📗 Telegram: \x1b[4m${botName}\x1b[0m received message from socket`

@@ -1,4 +1,5 @@
 import { ActivityHandler, StatePropertyAccessor, UserState, BotState, MessageFactory } from 'botbuilder';
+import { processQuestion } from "../trainModel";
 
 const WELCOMED_USER = 'welcomedUserProperty';
 const CONVERSATION_DATA_PROPERTY = 'conversationData';
@@ -90,8 +91,9 @@ export class ConversationBot extends ActivityHandler {
                 conversationData.timestamp = context.activity.timestamp.toLocaleString();
                 conversationData.channelId = context.activity.channelId;
 
-                const text = context.activity.text.toLowerCase();
-                await context.sendActivity(text);
+                const answer = await processQuestion(context.activity.text.toLowerCase());
+
+                await context.sendActivity(answer);
             }
             // Save updated utterance inputs.
             await logMessageText(this.userState, context);

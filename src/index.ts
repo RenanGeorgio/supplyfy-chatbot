@@ -1,3 +1,9 @@
+import * as XMLHttpRequest from "xhr2";
+import * as WebSocket from "ws";
+
+global.XMLHttpRequest = XMLHttpRequest;
+global.WebSocket = WebSocket;
+
 import "express-async-errors";
 import * as path from "path";
 import * as dotenv from "dotenv";
@@ -9,7 +15,7 @@ import { CloudAdapter } from "botbuilder";
 import { INodeSocket } from "botframework-streaming";
 
 import "./database";
-import { serverHttp } from "./core/http";
+import { serverHttp, directLineService } from "./core/http";
 import { onTurnErrorHandler } from "./placeholder";
 import "./websocket";
 
@@ -19,6 +25,8 @@ const HOST = process.env.HOST ? process.env.HOST.replace(/[\\"]/g, '') : "http:/
 serverHttp.listen(PORT, () => {
     console.log(`Server running on ${HOST}:${PORT}`);
 });
+
+directLineService.subscribeBot("bot");
 
 // Listen for Upgrade requests for Streaming.
 serverHttp.on('upgrade', async (req, socket, head) => {
