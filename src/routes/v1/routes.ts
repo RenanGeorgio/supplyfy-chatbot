@@ -19,6 +19,7 @@ import * as messageController from "../../controllers/chat/messageController";
 import * as apiTokenController from "../../controllers/api/apiTokenController";
 import * as auth0Controller from "../../controllers/user/auth0Controller";
 import * as whatsappController from "../../controllers/com/whatsapp/whatsappController";
+import * as whatsappTemplateController from "../../controllers/com/whatsapp/templateController";
 
 const routes = Router();
 
@@ -44,7 +45,9 @@ routes
   .post("/whatsapp/send-img", whatsappController.sendImageByLink)
   .post("/whatsapp/upload", whatsappController.uploadMedia)
   .post("/whatsapp/send-doc", whatsappController.sendDocumentMessage)
-  
+  // template whatsapp
+  .post("/whatsapp/template", authMiddleware.JWT, whatsappTemplateController.create)
+  .delete("/whatsapp/template", authMiddleware.JWT, whatsappTemplateController.remove)
   // user
   .get("/user", authMiddleware.JWT, userController.info)
   .get("/user/:email", userController.findByEmail)
