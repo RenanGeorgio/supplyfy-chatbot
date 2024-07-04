@@ -91,7 +91,8 @@ export class ConversationBot extends ActivityHandler {
                 conversationData.timestamp = context.activity.timestamp.toLocaleString();
                 conversationData.channelId = context.activity.channelId;
 
-                const answer = await processQuestion(context.activity.text.toLowerCase());
+                const text = context.activity.text.trim().toLocaleLowerCase();
+                const answer = await processQuestion(text);
 
                 await context.sendActivity(answer);
             }

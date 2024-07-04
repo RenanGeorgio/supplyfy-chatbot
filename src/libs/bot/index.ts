@@ -64,7 +64,7 @@ server.post('/api/messages', async (req, res) => {
 });
 
 // Listen for incoming notifications and send proactive messages to users.
-server.get('/api/notify', async (req, res) => {
+/*server.get('/api/notify', async (req, res) => {
   for (const conversationReference of Object.values(userState)) {
       await adapter.continueConversationAsync(process.env.MicrosoftAppId, conversationReference, async (context) => {
           await context.sendActivity('proactive hello');
@@ -74,10 +74,10 @@ server.get('/api/notify', async (req, res) => {
   res.writeHead(200);
   res.write('<html><body><h1>Proactive messages have been sent.</h1></body></html>');
   res.end();
-});
+});*/
 
 // Listen for incoming custom notifications and send proactive messages to users.
-server.post('/api/notify', async (req, res) => {
+/*server.post('/api/notify', async (req, res) => {
   for (const msg of req.body) {
       for (const conversationReference of Object.values(userState)) {
           await adapter.continueConversationAsync(process.env.MicrosoftAppId, conversationReference, async (turnContext) => {
@@ -89,7 +89,7 @@ server.post('/api/notify', async (req, res) => {
   res.writeHead(200);
   res.write('Proactive messages have been sent.');
   res.end();
-});
+});*/
 
 
 

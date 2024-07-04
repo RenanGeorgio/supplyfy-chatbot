@@ -1,6 +1,6 @@
 import { DirectLine, ConnectionStatus } from "botframework-directlinejs";
 import { Observable, Subject } from "../../../node_modules/rxjs";
-import { msgQueue } from "./bot/queue";
+import { msgQueuev2 } from "../../queue";
 
 const directLine = new DirectLine({
   secret: /* put your Direct Line secret here */,
@@ -43,7 +43,7 @@ export class DirectlineService {
       .subscribe(
         message => {
           console.log(message);
-          msgQueue.add({ msg: message });
+          msgQueuev2.add({ msg: message });
         }
       )
   }

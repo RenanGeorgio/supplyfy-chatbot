@@ -1,7 +1,7 @@
 import { sendTextMessage } from "./whatsappController";
 import { webhookTrigger } from "../../../webhooks/custom/webhookTrigger";
 import { findWebhook } from "../../../repositories/webhook";
-import { msgQueue } from "../../../libs/bot/queue";
+import { msgQueuev2, msgQueuev1, useVersion1 } from "../../../libs/bot/queue";
 import { directLineService } from "../../../core/http";
 import { SendContacts, SendDoc, SendImg, SendInterativeButton, SendInterativeList, SendText } from "../../../types";
 import { Events } from "../../../types/enums";
@@ -61,11 +61,14 @@ export async function processWaMessage(message: MsgTypes, wb: any, companyId: st
         });
       }
 
-      directLineService.sendMessageToBot("uuid", wb.recipientName, textMessage);
+      if (useVersion1) {
+        msgQueuev1.add({ msg: textMessage });
+      } else {
+        directLineService.sendMessageToBot("uuid", wb.recipientName, textMessage);
+      }
 
-      msgQueue.process(async (job, done) => {
+      msgQueuev2.process(async (job, done) => {
         await sendTextMessage(job.data.msg, wb);
-        done();
       });
 
       /*let replyButtonMessage = interactiveReplyButton;

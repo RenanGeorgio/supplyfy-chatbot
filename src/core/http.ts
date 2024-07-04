@@ -1,7 +1,7 @@
 import http from "http";
 import { Server } from "socket.io";
 import { app } from "../server";
-import { DirectlineService } from "../libs/connector";
+import { DirectlineService } from "../libs/bot/connector/v2/direct-line";
 
 const serverHttp = http.createServer(app);
 
