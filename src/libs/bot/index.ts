@@ -55,6 +55,6 @@ conversationState = new ConversationState(memoryStorage);
 userState = new UserState(memoryStorage);
 
 let conversationReferences: ConversationReference = {};
-const bot = new ConversationBot(conversationState, userState, conversationReferences);
+const conversationBot = new ConversationBot(conversationState, userState, conversationReferences);
 
-export { bot, adapter, onTurnErrorHandler }
+export { conversationBot, adapter, onTurnErrorHandler }

@@ -1,10 +1,18 @@
+import * as path from "path";
+import * as dotenv from "dotenv";
+//const ENV_FILE = path.join(__dirname, '.env');
+//dotenv.config({ path: ENV_FILE });
+dotenv.config();
+
 import http from "http";
 import { Server } from "socket.io";
 import { CloudAdapter } from "botbuilder";
 import { INodeSocket } from "botframework-streaming";
 import { app, bot } from "../server";
 import { DirectlineServiceV2 as DirectlineService } from "../libs/bot/connector";
-import { adapter, onTurnErrorHandler } from "../libs/bot";
+import { conversationBot, adapter, onTurnErrorHandler } from "../libs/bot";
+
+const BOTPORT = process.env.BOTPORT ? process.env.BOTPORT.replace(/[\\"]/g, '') : 3978;
 
 const serverHttp = http.createServer(app);
 const botServer = http.createServer(bot);
@@ -16,7 +24,7 @@ const io = new Server(serverHttp, {
 });
 
 botServer.post('/api/messages', async (req, res) => {
-  await adapter.process(req, res, (context) => myBot.run(context));
+  await adapter.process(req, res, (context) => conversationBot.run(context));
 });
 
 // Listen for Upgrade requests for Streaming.
@@ -27,7 +35,7 @@ botServer.on('upgrade', async (req, socket, head) => {
   // Set onTurnError for the CloudAdapter created for each connection.
   streamingAdapter.onTurnError = onTurnErrorHandler;
 
-  await streamingAdapter.process(req, socket as unknown as INodeSocket, head, (context) => bot.run(context));
+  await streamingAdapter.process(req, socket as unknown as INodeSocket, head, (context) => conversationBot.run(context));
 });
 
 // Listen for incoming notifications and send proactive messages to users.
@@ -58,6 +66,10 @@ botServer.on('upgrade', async (req, socket, head) => {
   res.end();
 });*/
 
+botServer.listen(BOTPORT, () => {
+  console.log(`\n${ botServer.name } listening to ${ botServer.url }`);
+});
+
 const directLineService = new DirectlineService();
 
-export { serverHttp, io, directLineService, botServer };
+export { serverHttp, io, directLineService };
