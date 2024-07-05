@@ -1,4 +1,4 @@
-import { processQuestion } from "../../libs/trainModel";
+import { processQuestion } from "../../libs/nlp/trainModel";
 import callSendApi from "./api/callSendApi";
 
 export default async function messengerService(data) {

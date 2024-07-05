@@ -9,7 +9,8 @@ import {
   MemoryStorage,
   UserState
 } from 'botbuilder';
-import { ConversationReference } from 'botbuilder-core';
+import { ConversationReference, ActivityTypes, TurnContext } from 'botbuilder-core';
+import * as HandleActivityType from "@botbuildercommunity/middleware-activity-type";
 
 import { ConversationBot } from './conversation';
 
@@ -21,7 +22,7 @@ config({ path: ENV_FILE });
 const adapter = new CloudAdapter();
 
 // Catch-all for errors.
-const onTurnErrorHandler = async (context, error) => {
+const onTurnErrorHandler = async (context: TurnContext, error: any) => {
   console.error(`\n [onTurnError] unhandled error: ${ error }`);
 
   // Send a trace activity, which will be displayed in Bot Framework Emulator
@@ -41,6 +42,11 @@ const onTurnErrorHandler = async (context, error) => {
 };
 
 adapter.onTurnError = onTurnErrorHandler; // Set the onTurnError for the singleton CloudAdapter.
+
+/*
+adapter.use(new HandleActivityType(ActivityTypes.Message, async (context, next) => {
+  await context.sendActivity('Hello, middleware!');
+}));*/
 
 let conversationState: ConversationState;
 let userState: UserState;

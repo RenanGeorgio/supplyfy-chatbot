@@ -1,6 +1,6 @@
 import Queue from "../../libs/Queue";
 import { produceMessage } from "../../core/kafka/producer";
-import { processQuestion } from "../../libs/trainModel";
+import { processQuestion } from "../../libs/nlp/trainModel";
 import { botExist } from "../../repositories/bot";
 import { IEmailCredentials, IWebhook } from "../../types";
 import { Events } from "../../types/enums";

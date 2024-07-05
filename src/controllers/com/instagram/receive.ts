@@ -1,4 +1,4 @@
-import { processQuestion } from "../../../libs/trainModel";
+import { processQuestion } from "../../../libs/nlp/trainModel";
 import Response, { processMessage } from "./processMessage";
 import { 
   Consumer, 
