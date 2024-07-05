@@ -49,6 +49,8 @@ app.use(cookieParser());
 
 app.use(customSession);
 
+const bot = app;
+
 const schema = makeExecutableSchema({
   resolvers,
   typeDefs,
@@ -90,4 +92,4 @@ app.use(((error: any, req: CustomRequest, res: Response, next: NextFunction) => 
   res.status(error.status || 500).send({ message: error.message });
 }) as ErrorRequestHandler);
 
-export { app };
+export { app, bot };

@@ -15,7 +15,7 @@ import { CloudAdapter } from "botbuilder";
 import { INodeSocket } from "botframework-streaming";
 
 import "./database";
-import { serverHttp, directLineService } from "./core/http";
+import { serverHttp, directLineService, botServer } from "./core/http";
 import { onTurnErrorHandler } from "./placeholder";
 import "./websocket";
 
@@ -27,16 +27,5 @@ serverHttp.listen(PORT, () => {
 });
 
 directLineService.subscribeBot("bot");
-
-// Listen for Upgrade requests for Streaming.
-serverHttp.on('upgrade', async (req, socket, head) => {
-    // Create an adapter scoped to this WebSocket connection to allow storing session data.
-    const streamingAdapter = new CloudAdapter();
-  
-    // Set onTurnError for the CloudAdapter created for each connection.
-    streamingAdapter.onTurnError = onTurnErrorHandler;
-  
-    await streamingAdapter.process(req, socket as unknown as INodeSocket, head, (context) => bot.run(context));
-});
 
 import "./services";
