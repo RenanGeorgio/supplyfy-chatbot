@@ -11,16 +11,18 @@ import * as dotenv from "dotenv";
 //dotenv.config({ path: ENV_FILE });
 dotenv.config();
 
-import { CloudAdapter } from "botbuilder";
-import { INodeSocket } from "botframework-streaming";
-
 import "./database";
 import { serverHttp, directLineService, botServer } from "./core/http";
 import { onTurnErrorHandler } from "./placeholder";
 import "./websocket";
 
+const BOTPORT = process.env.BOTPORT ? process.env.BOTPORT.replace(/[\\"]/g, '') : 3978;
 const PORT = process.env.PORT ? process.env.PORT.replace(/[\\"]/g, '') : 8000;
 const HOST = process.env.HOST ? process.env.HOST.replace(/[\\"]/g, '') : "http://localhost";
+
+botServer.listen(BOTPORT, () => {
+    console.log(`\n${ botServer.name } listening to ${ botServer.url }`);
+});
 
 serverHttp.listen(PORT, () => {
     console.log(`Server running on ${HOST}:${PORT}`);

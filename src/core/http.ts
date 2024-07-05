@@ -1,7 +1,10 @@
 import http from "http";
 import { Server } from "socket.io";
+import { CloudAdapter } from "botbuilder";
+import { INodeSocket } from "botframework-streaming";
 import { app, bot } from "../server";
 import { DirectlineServiceV2 as DirectlineService } from "../libs/bot/connector";
+import { adapter, onTurnErrorHandler } from "../libs/bot";
 
 const serverHttp = http.createServer(app);
 const botServer = http.createServer(bot);
