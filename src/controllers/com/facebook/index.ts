@@ -45,10 +45,8 @@ export const eventsHandler = async (
                     processComments(entry?.changes[0].value);
                 }
             });
-
-            res.status(200).send("EVENT_RECEIVED");
-        } else {
-            res.status(404).send();  
+            // return res.status(200).send("EVENT_RECEIVED");
+            return null;
         }
     } catch (error: any) {
         next(error)
