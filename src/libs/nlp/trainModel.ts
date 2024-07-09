@@ -3,6 +3,19 @@ import { containerBootstrap } from "@nlpjs/core";
 import { NlpManager, ConversationContext } from "node-nlp";
 import { LangPt } from "@nlpjs/lang-pt";
 import { BuiltinMicrosoft } from "@nlpjs/builtin-microsoft";
+import { removeEmojis } from "@nlpjs/emoji";
+
+/*
+test('Should classify an utterance without None feature', async () => {
+      const manager = new NlpManager({ nlu: { useNoneFeature: false } });
+      addFrJp(manager);
+      await manager.train();
+      const result = await manager.classify('fr', 'où sont mes clés');
+      expect(result.classifications).toHaveLength(2);
+      expect(result.intent).toEqual('keys');
+      expect(result.score).toBeGreaterThan(0.7);
+    });
+*/
 
 type ContainerType = typeof containerBootstrap;
 type ManagerType = typeof NlpManager;
@@ -79,7 +92,8 @@ export class NlpService {
         }
     
         // const response = await manager.process({ locale: 'en', utterance: 'what is the real name of spiderman?', activity });
-        const response: any = await this.manager.process("pt", pergunta, context);
+        const actual = removeEmojis(pergunta);
+        const response: any = await this.manager.process("pt", actual, context);
     
         return response.answer || "Desculpe, não tenho uma resposta para isso.";
     }
