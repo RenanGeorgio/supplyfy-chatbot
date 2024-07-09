@@ -1,10 +1,9 @@
 import { sendTextMessage } from "./whatsappController";
 import { webhookTrigger } from "../../../webhooks/custom/webhookTrigger";
 import { findWebhook } from "../../../repositories/webhook";
-import { msgQueuev2, msgQueuev1, useVersion1 } from "../../../libs/bot/queue";
-import { directLineService } from "../../../core/http";
 import { SendContacts, SendDoc, SendImg, SendInterativeButton, SendInterativeList, SendText } from "../../../types";
 import { Events } from "../../../types/enums";
+import { DirectlineService } from "../../../libs/bot/directLine";
 
 type MsgTypes = SendDoc | SendImg | SendContacts | SendInterativeList | SendInterativeButton | SendText;
 
@@ -61,15 +60,12 @@ export async function processWaMessage(message: MsgTypes, wb: any, companyId: st
         });
       }
 
-      if (useVersion1) {
-        msgQueuev1.add({ msg: textMessage });
-      } else {
-        directLineService.sendMessageToBot("uuid", wb.recipientName, textMessage);
-      }
+      const directLineService = DirectlineService.getInstance();
+      
+      directLineService.sendMessageToBot("uuid", wb.recipientName, textMessage);
+      
 
-      msgQueuev2.process(async (job, done) => {
-        await sendTextMessage(job.data.msg, wb);
-      });
+      
 
       /*let replyButtonMessage = interactiveReplyButton;
       replyButtonMessage.to = process.env.RECIPIENT_PHONE_NUMBER;

@@ -31,6 +31,8 @@
     "@graphql-tools/merge": "^9.0.3",
     "@graphql-tools/schema": "^10.0.3",
     "axios": "^1.6.7",
+    "botbuilder": "^4.22.3",
+    "botframework-directlinejs": "^0.15.5",
     "bull": "^4.12.2",
     "connect-redis": "^7.1.1",
     "cookie-parser": "^1.4.6",
@@ -56,7 +58,9 @@
     "socket.io-client": "^4.7.4",
     "ts-node": "^10.9.2",
     "whatsapp-web.js": "^1.23.0",
+    "ws": "^8.18.0",
     "wwebjs-mongo": "^1.1.0",
-    "x-hub-signature": "^2.1.2"
+    "x-hub-signature": "^2.1.2",
+    "xhr2": "^0.2.1"
   }
 }

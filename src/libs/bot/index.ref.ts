@@ -13,7 +13,7 @@ import {
 } from 'botbuilder';
 import { ConversationReference } from 'botbuilder-core';
 
-import { ConversationBot } from './conversation';
+import { ConversationBot } from './conversation.old';
 
 const ENV_FILE = path.join(__dirname, '.env');
 config({ path: ENV_FILE });
