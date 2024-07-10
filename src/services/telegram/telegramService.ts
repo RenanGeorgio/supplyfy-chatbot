@@ -1,5 +1,5 @@
 import TelegramBot from "node-telegram-bot-api";
-import { processQuestion } from "../../libs/nlp/trainModel";
+import { processQuestion } from "../../libs/nlp/manager";
 import { askEmail } from "./helpers/askEmail";
 import { botExist } from "../../repositories/bot";
 import {

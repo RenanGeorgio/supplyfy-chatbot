@@ -1,6 +1,6 @@
-import { ActivityHandler, StatePropertyAccessor, UserState, BotState, MessageFactory, ActivityTypes } from 'botbuilder';
+import { ActivityHandler, StatePropertyAccessor, UserState, BotState, MessageFactory, ActivityTypes } from "botbuilder";
 import { TurnContext } from "botbuilder-core";
-import { processQuestion } from "../nlp/trainModel";
+import { processQuestion } from "../nlp/manager";
 
 const WELCOMED_USER = 'welcomedUserProperty';
 const CONVERSATION_DATA_PROPERTY = 'conversationData';

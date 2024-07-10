@@ -5,6 +5,16 @@ const manager = new NlpManager({ languages: ['pt'], forceNER: true, autoSave: fa
 const context = new ConversationContext();
 //const manager = new NlpManager({ languages: ['pt'], nlu: { useNoneFeature: false } }); // remoção da obstrução de falsos positivos, utilização de intent nao classificada
 
+const loggerInstance = {
+    trace: msg => console.trace(`[TRACE] ${msg}`),
+    debug: msg => console.debug(`[DEBUG] ${msg}`),
+    info: msg => console.info(`[INFO] ${msg}`),
+    log: msg => console.log(`[LOG] ${msg}`),
+    warn: msg => console.warn(`[WARN] ${msg}`),
+    error: msg => console.error(`[ERROR] ${msg}`),
+    fatal: msg => console.error(`[FATAL] ${msg}`),
+}
+
 manager.addDocument("pt", "qual a diferença do ingrow para outros aminoácidos do mercado", "agent.ingrow");
 manager.addAnswer("pt", "agent.ingrow", "Nosso produto, além de ser orgânico, tem uma porcentagem de 7% de aminoácidos, distribuídos entre 19 tipos. Existe uma grande diferença de distribuição, por isso entregamos ao cliente nosso aminograma. A % de ácido glutâmico de outros aminoácidos no mercado é alta, deixando a desejar em outros aminoácidos. Isso traz um desequilíbrio para a planta. O Ingrow além de trazer mais produtividade nutrindo a planta, deixa o solo mais fértil.");
 manager.addDocument("pt", "o que é o marin", "agent.marin");
@@ -104,11 +114,21 @@ manager.addAnswer("pt", "user.back", "Bom te ver de volta, em que posso ajudá-l
 })();
 
 export async function processQuestion(pergunta: string): Promise<string> {
+    const container = await containerBootstrap();
+    container.use(LangPt);
+    container.register('logger', loggerInstance);
+
     const activity = {
         conversation: {
           id: 'a1'
         }
     }
+
+    const manager = new NlpManager({
+        container,
+        locales: ['en', 'es'],
+        trainByDomain: true,
+    });
     // const response = await manager.process({ locale: 'en', utterance: 'what is the real name of spiderman?', activity });
     //const response: any = await manager.process("pt", pergunta, context);
     const response: any = await manager.process("pt", pergunta);

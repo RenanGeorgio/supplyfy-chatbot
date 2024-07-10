@@ -4,7 +4,8 @@ import {
   ConfigurationBotFrameworkAuthenticationOptions,
   ConversationState,
   MemoryStorage,
-  UserState
+  UserState,
+  InputHints
 } from 'botbuilder';
 import { ConversationReference, ActivityTypes, TurnContext } from "botbuilder-core";
 import * as HandleActivityType from "@botbuildercommunity/middleware-activity-type";
@@ -38,10 +39,15 @@ const onTurnErrorHandler = async (context: TurnContext, error: any) => {
     value: `${error}`,
     valueType: 'https://www.botframework.com/schemas/error'
   };
-
   await context.sendActivity(traceActivity);
-  await context.sendActivity('The bot encountered an error or bug.');
-
+  
+  // Send a message to the user
+  let onTurnErrorMessage = 'The bot encountered an error or bug.';
+  await context.sendActivity(onTurnErrorMessage, onTurnErrorMessage, InputHints.ExpectingInput);
+  onTurnErrorMessage = 'To continue to run this bot, please fix the bot source code.';
+  await context.sendActivity(onTurnErrorMessage, onTurnErrorMessage, InputHints.ExpectingInput);
+  
+  // Clear out state
   await conversationState.delete(context);
 };
 
