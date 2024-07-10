@@ -1,6 +1,3 @@
-import { config } from 'dotenv';
-import * as path from 'path';
-
 import {
   CloudAdapter,
   ConfigurationBotFrameworkAuthentication,
@@ -9,58 +6,53 @@ import {
   MemoryStorage,
   UserState
 } from 'botbuilder';
-import { ConversationReference, ActivityTypes, TurnContext } from 'botbuilder-core';
+import { ConversationReference, ActivityTypes, TurnContext } from "botbuilder-core";
 import * as HandleActivityType from "@botbuildercommunity/middleware-activity-type";
+import { ConversationBot } from "./conversation";
 
-import { ConversationBot } from './conversation';
+const botFrameworkAuthentication = new ConfigurationBotFrameworkAuthentication(process.env as ConfigurationBotFrameworkAuthenticationOptions);
+const adapter = new CloudAdapter(botFrameworkAuthentication);
 
-const ENV_FILE = path.join(__dirname, '.env');
-config({ path: ENV_FILE });
-
-//const botFrameworkAuthentication = new ConfigurationBotFrameworkAuthentication(process.env as ConfigurationBotFrameworkAuthenticationOptions);
-
-const adapter = new CloudAdapter();
-
-// Catch-all for errors.
-const onTurnErrorHandler = async (context: TurnContext, error: any) => {
-  console.error(`\n [onTurnError] unhandled error: ${ error }`);
-
-  // Send a trace activity, which will be displayed in Bot Framework Emulator
-  await context.sendTraceActivity(
-    'OnTurnError Trace',
-    `${ error }`,
-    'https://www.botframework.com/schemas/error',
-    'TurnError'
-  );
-
-  // Send a message to the user
-  await context.sendActivity('The bot encounted an error or bug.');
-  await context.sendActivity('To continue to run this bot, please fix the bot source code.');
-
-  // Clear out state
-  await conversationState.delete(context);
-};
-
-adapter.onTurnError = onTurnErrorHandler; // Set the onTurnError for the singleton CloudAdapter.
-
-/*
-adapter.use(new HandleActivityType(ActivityTypes.Message, async (context, next) => {
-  await context.sendActivity('Hello, middleware!');
-}));*/
-
-let conversationState: ConversationState;
+let conversationState: ConversationState;	
 let userState: UserState;
 
-// For local development, in-memory storage is used.
-// CAUTION: The Memory Storage used here is for local bot debugging only. When the bot
-// is restarted, anything stored in memory will be gone.
 const memoryStorage = new MemoryStorage();
-
-// Create conversation state with in-memory storage provider.
 conversationState = new ConversationState(memoryStorage);
 userState = new UserState(memoryStorage);
 
-let conversationReferences: ConversationReference = {};
+const onTurnErrorHandler = async (context: TurnContext, error: any) => {
+  await context.sendTraceActivity(
+    'OnTurnError Trace',	
+    `${ error }`,	
+    'https://www.botframework.com/schemas/error',	
+    'TurnError'	
+  );
+
+  console.log(`\n [onTurnError] unhandled error: ${error}`);
+
+  const traceActivity = {
+    type: ActivityTypes.Trace,
+    timestamp: new Date(),
+    name: 'onTurnError Trace',
+    label: 'TurnError',
+    value: `${error}`,
+    valueType: 'https://www.botframework.com/schemas/error'
+  };
+
+  await context.sendActivity(traceActivity);
+  await context.sendActivity('The bot encountered an error or bug.');
+
+  await conversationState.delete(context);
+};
+
+adapter.onTurnError = onTurnErrorHandler;
+
+/*	
+adapter.use(new HandleActivityType(ActivityTypes.Message, async (context, next) => {	
+  await context.sendActivity('Hello, middleware!');	
+}));*/
+
+let conversationReferences: ConversationReference = {};	
 const conversationBot = new ConversationBot(conversationState, userState, conversationReferences);
 
-export { conversationBot, adapter, onTurnErrorHandler }
+export { adapter, conversationBot, botFrameworkAuthentication, onTurnErrorHandler };
