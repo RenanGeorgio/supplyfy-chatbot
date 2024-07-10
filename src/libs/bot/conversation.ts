@@ -1,5 +1,5 @@
 import { ActivityHandler, StatePropertyAccessor, UserState, BotState, MessageFactory } from 'botbuilder';
-import { processQuestion } from "../nlp/trainModel";
+import { processQuestion } from "../nlp/manager";
 
 const WELCOMED_USER = 'welcomedUserProperty';
 const CONVERSATION_DATA_PROPERTY = 'conversationData';
