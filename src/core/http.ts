@@ -2,7 +2,7 @@ import http from "http";
 import { INodeSocket } from "botframework-streaming";
 import { Server } from "socket.io";
 import { CloudAdapter } from "botbuilder";
-import { conversationBot, adapter, botFrameworkAuthentication } from "../lib/bot";
+import { conversationBot, adapter, botFrameworkAuthentication, onTurnErrorHandler } from "../lib/bot";
 import app from "../server";
 import bot from "../botServer";
 
