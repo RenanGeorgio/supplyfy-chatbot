@@ -13,6 +13,10 @@ import { IWebhook } from "../types";
 
 import "./queue";
 import { whatsappServiceController } from "./whatsappTest";
+import { DirectlineService } from "../libs/bot/directLine";
+
+const directLineService = DirectlineService.getInstance();
+directLineService.subscribeBot("ignai-bot");
 
 (async () => {
   const bots = await listAllBots();

@@ -1,4 +1,5 @@
-import { ActivityHandler, StatePropertyAccessor, UserState, BotState, MessageFactory } from 'botbuilder';
+import { ActivityHandler, StatePropertyAccessor, UserState, BotState, MessageFactory, ActivityTypes } from "botbuilder";
+import { TurnContext } from "botbuilder-core";
 import { processQuestion } from "../nlp/manager";
 
 const WELCOMED_USER = 'welcomedUserProperty';
@@ -94,7 +95,8 @@ export class ConversationBot extends ActivityHandler {
                 const text = context.activity.text.trim().toLocaleLowerCase();
                 const answer = await processQuestion(text);
 
-                await context.sendActivity(answer);
+                const activity = { type: ActivityTypes.Message, text: answer }
+                await context.sendActivity(activity);
             }
             // Save updated utterance inputs.
             await logMessageText(this.userState, context);
@@ -140,7 +142,7 @@ export class ConversationBot extends ActivityHandler {
         }
     }
 
-    public async run(context): Promise<void> {
+    public async run(context: TurnContext): Promise<void> {
         await super.run(context);
 
         await this.conversationState.saveChanges(context, false);

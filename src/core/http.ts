@@ -1,36 +1,23 @@
-import * as path from "path";
-import * as dotenv from "dotenv";
-//const ENV_FILE = path.join(__dirname, '.env');
-//dotenv.config({ path: ENV_FILE });
-dotenv.config();
-
 import http from "http";
+import { INodeSocket } from "botframework-streaming";
 import { Server } from "socket.io";
 import { CloudAdapter } from "botbuilder";
-import { INodeSocket } from "botframework-streaming";
-import { app, bot } from "../server";
-import { DirectlineServiceV2 as DirectlineService } from "../libs/bot/connector";
-import { conversationBot, adapter, onTurnErrorHandler } from "../libs/bot";
+import { conversationBot, botFrameworkAuthentication, onTurnErrorHandler } from "../lib/bot";
+import app from "../server";
+import bot from "../botServer";
 
-const BOTPORT = process.env.BOTPORT ? process.env.BOTPORT.replace(/[\\"]/g, '') : 3978;
-
-const serverHttp = http.createServer(app);
+const httpServer = http.createServer(app);
 const botServer = http.createServer(bot);
 
-const io = new Server(serverHttp, {
+const io = new Server(httpServer, {
   cors: {
     origin: "*",
   },
 });
 
-botServer.post('/api/messages', async (req, res) => {
-  await adapter.process(req, res, (context) => conversationBot.run(context));
-});
-
-// Listen for Upgrade requests for Streaming.
 botServer.on('upgrade', async (req, socket, head) => {
   // Create an adapter scoped to this WebSocket connection to allow storing session data.
-  const streamingAdapter = new CloudAdapter();
+  const streamingAdapter = new CloudAdapter(botFrameworkAuthentication);
 
   // Set onTurnError for the CloudAdapter created for each connection.
   streamingAdapter.onTurnError = onTurnErrorHandler;
@@ -66,10 +53,4 @@ botServer.on('upgrade', async (req, socket, head) => {
   res.end();
 });*/
 
-botServer.listen(BOTPORT, () => {
-  console.log(`\n${ botServer.name } listening to ${ botServer.url }`);
-});
-
-const directLineService = new DirectlineService();
-
-export { serverHttp, io, directLineService };
+export { httpServer, botServer, io };
