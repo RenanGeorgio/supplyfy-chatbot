@@ -33,4 +33,4 @@ adapter.onTurnError = async (context, error) => {
 
 const conversationBot = new QABot(conversationState, userState);
 
-export { adapter, conversationBot };
+export { adapter, conversationBot, botFrameworkAuthentication };
