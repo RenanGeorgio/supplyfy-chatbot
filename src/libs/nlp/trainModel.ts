@@ -70,7 +70,11 @@ export class NlpService {
         });
 
         if (filename) {
-            this.loadModel(filename);
+            try {
+                this.loadModel(filename);
+            } catch (err) {
+                console.log(err);
+            }
         }
 
         const context = new ConversationContext();  
