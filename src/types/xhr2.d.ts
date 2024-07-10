@@ -68,7 +68,6 @@ declare module 'xhr2'
         new(): ErrorEvent;
     }
 
-
     declare var ProgressEvent: {
         prototype: ProgressEvent;
         new(type: string, eventInitDict?: ProgressEventInit): ProgressEvent;

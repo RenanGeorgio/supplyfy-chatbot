@@ -2,16 +2,13 @@ import botService from "./botService";
 
 export const botServiceController: any = {
     botServices: [],
-
     async start() {
         
     },
-
     async stop() {
         
     }
 };
-
 
 export default {
     key: "BotService",

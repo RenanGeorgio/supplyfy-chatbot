@@ -50,7 +50,7 @@ export class DirectlineService {
             );
     }
 
-    public subscribeBot(botName: string): void {
+    public subscribeBot(botName: string = "ignai-bot"): void {
         directLine.activity$
             .filter(activity => activity.type === ActivityTypes.Message && activity.from.id === botName)
             .subscribe(
@@ -64,7 +64,7 @@ export class DirectlineService {
         if (this._instance) {
             return this._instance;
         }
-        
+
         this._instance = new DirectlineService();
         return this._instance;
     }

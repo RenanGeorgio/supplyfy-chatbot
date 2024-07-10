@@ -2,7 +2,7 @@ import http from "http";
 import { INodeSocket } from "botframework-streaming";
 import { Server } from "socket.io";
 import { CloudAdapter } from "botbuilder";
-import { conversationBot, adapter, botFrameworkAuthentication, onTurnErrorHandler } from "../lib/bot";
+import { conversationBot, botFrameworkAuthentication, onTurnErrorHandler } from "../lib/bot";
 import app from "../server";
 import bot from "../botServer";
 
@@ -23,7 +23,6 @@ botServer.on('upgrade', async (req, socket, head) => {
   streamingAdapter.onTurnError = onTurnErrorHandler;
 
   await streamingAdapter.process(req, socket as unknown as INodeSocket, head, (context) => conversationBot.run(context));
-  //await adapter.process(req, socket as unknown as INodeSocket, head, (context) => conversationBot.run(context));
 });
 
 // Listen for incoming notifications and send proactive messages to users.
