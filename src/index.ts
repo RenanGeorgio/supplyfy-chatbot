@@ -1,5 +1,5 @@
-import { XMLHttpRequest } from 'xhr2';
-import ws from 'ws';
+import { XMLHttpRequest } from "xhr2";
+import ws from "ws";
 
 global.XMLHttpRequest = XMLHttpRequest;
 global.WebSocket = ws;

@@ -62,11 +62,8 @@ export async function processWaMessage(message: MsgTypes, wb: any, companyId: st
 
       const directLineService = DirectlineService.getInstance();
       
-      directLineService.sendMessageToBot("uuid", wb.recipientName, textMessage);
+      directLineService.sendMessageToBot(textMessage, "uuid", wb.recipientName);
       
-
-      
-
       /*let replyButtonMessage = interactiveReplyButton;
       replyButtonMessage.to = process.env.RECIPIENT_PHONE_NUMBER;
 

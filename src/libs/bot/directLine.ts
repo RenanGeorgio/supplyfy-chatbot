@@ -34,7 +34,7 @@ export class DirectlineService {
         });
     }
 
-    public sendMessageToBot(id: string, name?: string, text?: string) {
+    public sendMessageToBot(text: string, id: string, name?: string) {
         directLine
             .postActivity({
                 from: { id, name },
@@ -64,8 +64,8 @@ export class DirectlineService {
         if (this._instance) {
             return this._instance;
         }
+        
         this._instance = new DirectlineService();
         return this._instance;
     }
 }
-
