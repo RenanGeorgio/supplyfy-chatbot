@@ -2,6 +2,11 @@ import { ConversationContext } from "node-nlp";
 import { removeEmojis } from "@nlpjs/emoji";
 import { ConversationContextType, ManagerType } from "./types";
 
+/*
+const activity = { address: { conversation: { id } } };
+const context = await contextManager.getContext({ activity });
+*/
+
 export class ConversationService {
     private manager: ManagerType
     private conversationContext: ConversationContextType

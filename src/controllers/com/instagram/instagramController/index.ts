@@ -1,4 +1,4 @@
-import { processQuestion } from "../../../../libs/nlp/manager";
+import { processQuestion } from "../../../../libs/bot/nlp/manager";
 import { Obj } from "../../../../types";
 import { callSendApi, getUserComment } from "../../service";
 

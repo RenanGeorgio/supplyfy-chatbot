@@ -1,4 +1,4 @@
-import { processQuestion } from "../../libs/nlp/manager";
+import { processQuestion } from "../../libs/bot/nlp/manager";
 import callSendApi from "./api/callSendApi";
 
 export default async function messengerService(data) {

@@ -3,7 +3,7 @@ import { webhookTrigger } from "../../../webhooks/custom/webhookTrigger";
 import { findWebhook } from "../../../repositories/webhook";
 import { SendContacts, SendDoc, SendImg, SendInterativeButton, SendInterativeList, SendText } from "../../../types";
 import { Events } from "../../../types/enums";
-import { DirectlineService } from "../../../libs/bot/directLine";
+import { DirectlineService } from "../../../libs/bot/connector/directLine";
 
 type MsgTypes = SendDoc | SendImg | SendContacts | SendInterativeList | SendInterativeButton | SendText;
 

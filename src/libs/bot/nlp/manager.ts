@@ -1,5 +1,6 @@
 import { NlpManager } from "node-nlp";
-import { ContainerType, ManagerType } from "./types";
+import { ContainerType, ContextManagerType, ManagerType } from "./types";
+import { ConversationService } from "./conversation";
 
 /*
 test('Should classify an utterance without None feature', async () => {
@@ -16,6 +17,8 @@ test('Should classify an utterance without None feature', async () => {
 export class NlpService {
     private container: ContainerType
     private manager: ManagerType
+    private contextManager: ContextManagerType
+    private conversation: ConversationService
 
     /**
      *
@@ -26,6 +29,8 @@ export class NlpService {
         if (!containerRef) throw new Error('[NlpService]: Missing parameter. containerRef is required');
 
         this.container = containerRef;
+
+        this.contextManager = this.container.get('context-manager');
 
         this.manager = new NlpManager({ 
             container: this.container,
@@ -48,6 +53,8 @@ export class NlpService {
                 console.log(err);
             }
         }
+
+        this.conversation = new ConversationService(this.manager);
     }
 
     private loadModel(fileName: string = './model.nlp'): void {

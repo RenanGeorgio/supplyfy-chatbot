@@ -1,6 +1,6 @@
 import { BotState } from 'botbuilder';
 import { Dialog, DialogState } from 'botbuilder-dialogs';
-import { MainDialog } from './mainDialog';
+import { MainDialog } from './dialogs/mainDialog';
 import { ConversationBot } from './conversation';
 
 export class DialogAndWelcomeBot extends ConversationBot {

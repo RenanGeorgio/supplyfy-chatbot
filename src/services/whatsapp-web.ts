@@ -1,7 +1,7 @@
 import { Client, RemoteAuth } from "whatsapp-web.js";
 import { MongoStore } from "wwebjs-mongo";
 import mongoose from "mongoose";
-import { processQuestion } from "../libs/nlp/manager";
+import { processQuestion } from "../libs/bot/nlp/manager";
 import qrcode from "qrcode-terminal";
 
 const whatsappWebService = (id: string) => {

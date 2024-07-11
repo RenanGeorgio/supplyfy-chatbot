@@ -1,10 +1,12 @@
 import { containerBootstrap } from "@nlpjs/core";
 import { LangPt } from "@nlpjs/lang-pt";
 import { BuiltinMicrosoft } from "@nlpjs/builtin-microsoft";
+import { Ner } from "@nlpjs/ner";
+import { ContextManager } from "@nlpjs/nlp";
+import { ContainerType } from "./types";
 
-type ContainerType = typeof containerBootstrap;
-
-const builtin = new BuiltinMicrosoft();
+let builtin;
+let contextManager;
 
 const loggerInstance = {
   trace: msg => console.trace(`[TRACE] ${msg}`),
@@ -21,14 +23,25 @@ export class ContainerService {
   static _instance: ContainerService;
 
   constructor() {
+    builtin = new BuiltinMicrosoft();
+    contextManager = new ContextManager();
+
     this.init();
   }
 
   private async init(): Promise<void> {
     this.container = await containerBootstrap();
+
     this.container.use(LangPt);
+    this.container.use(Ner); // TODO: Verificar se a chamada deste trecho esta correta
+
+    this.container.registerConfiguration('context-manager', {
+      tableName: 'context'
+    });
+
     this.container.register('logger', loggerInstance);
     this.container.register('extract-builtin-??', builtin, true);
+    this.container.register('context-manager', contextManager, true);
   }
 
   static getInstance(): ContainerService {

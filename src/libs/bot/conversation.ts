@@ -1,6 +1,7 @@
 import { ActivityHandler, StatePropertyAccessor, UserState, BotState, MessageFactory, ActivityTypes } from "botbuilder";
 import { TurnContext } from "botbuilder-core";
-import { processQuestion } from "../nlp/manager";
+import { NlpService } from "./nlp/manager";
+import { ManagerType } from "./nlp/types";
 
 const WELCOMED_USER = 'welcomedUserProperty';
 const CONVERSATION_DATA_PROPERTY = 'conversationData';
@@ -54,6 +55,7 @@ export class ConversationBot extends ActivityHandler {
     private welcomedUserProperty: StatePropertyAccessor<boolean>;
     private conversationDataAccessor: StatePropertyAccessor<BotState>;
     private userProfileAccessor: StatePropertyAccessor<BotState>;
+    private manager: ManagerType
     /**
      *
      * @param {ConversationState} conversationState
@@ -75,6 +77,8 @@ export class ConversationBot extends ActivityHandler {
 
         this.currentConversationReferences = conversationReferences;
 
+        this.manager = new NlpService()
+
         this.onMessage(async (context, next) => {
             addConversationReference(context.activity);
             
@@ -93,7 +97,9 @@ export class ConversationBot extends ActivityHandler {
                 conversationData.channelId = context.activity.channelId;
 
                 const text = context.activity.text.trim().toLocaleLowerCase();
-                const answer = await processQuestion(text);
+                // TO-DO: verificar quem é o usuario, puxar modelo e carregar por msg por conta de custo computacional e overflow do servidor
+                this.manager.setModel('./model.nlp'); // trocar forma de carregamento, arquivo para json e etc.
+                const answer = await this.manager.conversation.processQuestion(text);
 
                 const activity = { type: ActivityTypes.Message, text: answer }
                 await context.sendActivity(activity);

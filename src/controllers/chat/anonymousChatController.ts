@@ -1,6 +1,6 @@
 import { Response, NextFunction } from "express";
 import { CustomRequest } from "../../types";
-import { processQuestion } from "../../libs/nlp/manager";
+import { processQuestion } from "../../libs/bot/nlp/manager";
 
 export const create = async (
     req: CustomRequest,
