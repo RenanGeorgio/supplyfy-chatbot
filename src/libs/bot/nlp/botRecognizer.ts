@@ -1,5 +1,5 @@
 import { RecognizerResult, TurnContext } from "botbuilder";
-import { NluManagerType } from "./types";
+import { NluManagerType } from "../types";
 
 export class BotRecognizer {
   private recognizer: NluManagerType

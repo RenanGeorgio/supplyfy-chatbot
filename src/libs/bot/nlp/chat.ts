@@ -1,5 +1,5 @@
 import { ConversationContext } from "node-nlp";
-import { ConversationContextType, ManagerType } from "./types";
+import { ConversationContextType, ManagerType } from "../types";
 import { ConversationService } from "./conversation";
 
 export class ChatService {

@@ -1,5 +1,5 @@
 import { NlpManager } from "node-nlp";
-import { ContainerType, ContextManagerType, ManagerType } from "./types";
+import { ContainerType, ContextManagerType, ManagerType } from "../types";
 import { ConversationService } from "./conversation";
 import { ChatService } from "./chat";
 

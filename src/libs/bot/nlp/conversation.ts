@@ -1,6 +1,6 @@
 import { ConversationContext } from "node-nlp";
 import { removeEmojis } from "@nlpjs/emoji";
-import { ConversationContextType, ManagerType } from "./types";
+import { ConversationContextType, ManagerType } from "../types";
 
 /*
 const activity = { address: { conversation: { id } } };

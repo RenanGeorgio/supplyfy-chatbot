@@ -10,7 +10,7 @@ import {
   WaterfallStepContext
 } from 'botbuilder-dialogs';
 import { BookingDialog } from './bookingDialog';
-import { NluManagerType } from '../nlp/types';
+import { NluManagerType } from '../types';
 const moment = require('moment');
 
 const MAIN_WATERFALL_DIALOG = 'mainWaterfallDialog';

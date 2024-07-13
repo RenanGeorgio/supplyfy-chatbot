@@ -3,7 +3,7 @@ import { LangPt } from "@nlpjs/lang-pt";
 import { BuiltinMicrosoft } from "@nlpjs/builtin-microsoft";
 import { Ner } from "@nlpjs/ner";
 import { ContextManager } from "@nlpjs/nlp";
-import { ContainerType } from "./nlp/types";
+import { ContainerType } from "./types";
 import { NlpService } from "./nlp/manager";
 
 let builtin;
