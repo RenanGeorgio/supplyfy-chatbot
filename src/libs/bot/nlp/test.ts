@@ -695,6 +695,7 @@ class Nlp extends Clonable {
     let sourceInput;
     let context = srcContext;
 
+    // NUNCA ENTRAR NESTE IF
     if (typeof locale === 'object') {
       if (typeof utterance === 'object' && utterance.value) {
         locale = undefined;
@@ -705,12 +706,13 @@ class Nlp extends Clonable {
     }
 
     if (!sourceInput) {
+      // NUNCA ATENDER ESTA LOCALIZAÇAO
       if (!utterance) {
         utterance = locale;
         locale = undefined;
       }
 
-      if (!locale) {
+      if (!locale) { // SE A LINGUAGEM NAO FOI INFORMADA, TENTA ADIVINHAR
         locale = this.guessLanguage(utterance);
       }
 
@@ -725,7 +727,7 @@ class Nlp extends Clonable {
           sourceInput.activity = settings.activity;
         }
 
-        if (settings.conversationId && !sourceInput.activity) {
+        if (settings.conversationId && !sourceInput.activity) { // PRIORIZAR
           sourceInput.activity = {
             conversation: {
               id: settings.conversationId,
@@ -733,15 +735,18 @@ class Nlp extends Clonable {
           };
         }
       }
-    } else {
+    } else { // NUNCA SATISFAZ ESTA CONDIÇÃO (PARA O NOSSO CASO DE USO)
       locale = sourceInput.locale;
       utterance = sourceInput.utterance || sourceInput.message || sourceInput.text;
     }
 
+    // PREFERENCIALMENTE NOSSO CASO DE USO NAO ENTRAR NESTA CONDIÇÃO
     if (!context) {
       context = await this.contextManager.getContext(sourceInput);
     }
 
+    // ISSO FAZ SENTIDO?
+    // ESTA É A PARTE QUE AINDA NAO ESTA CLARA
     context.channel = sourceInput.channel;
     context.app = sourceInput.app;
     context.from = sourceInput.from || null;
@@ -760,7 +765,7 @@ class Nlp extends Clonable {
 
     let output = await this.nluManager.process(input);
 
-    if (forceNER || !this.slotManager.isEmpty) {
+    if (forceNER || !this.slotManager.isEmpty) { // VERIFICA OUTPUT ALTERNATIVO SE A CONDIÇÃO É SATISFEITA
       const optionalUtterance = await this.ner.generateEntityUtterance(output.locale || locale, utterance);
 
       if (optionalUtterance && optionalUtterance !== utterance) {

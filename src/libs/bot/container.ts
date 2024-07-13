@@ -4,6 +4,7 @@ import { BuiltinMicrosoft } from "@nlpjs/builtin-microsoft";
 import { Ner } from "@nlpjs/ner";
 import { ContextManager } from "@nlpjs/nlp";
 import { ContainerType } from "./nlp/types";
+import { NlpService } from "./nlp/manager";
 
 let builtin;
 let contextManager;
@@ -20,6 +21,8 @@ const loggerInstance = {
 
 export class ContainerService {
   private container: ContainerType
+  private managerService: any
+  // TODO: Precisa conter o bot
   static _instance: ContainerService;
 
   constructor() {
@@ -42,6 +45,8 @@ export class ContainerService {
     this.container.register('logger', loggerInstance);
     this.container.register('extract-builtin-??', builtin, true);
     this.container.register('context-manager', contextManager, true);
+
+    this.managerService = new NlpService(this.container);
   }
 
   static getInstance(): ContainerService {

@@ -1,7 +1,7 @@
 import { BotState } from 'botbuilder';
 import { Dialog, DialogState } from 'botbuilder-dialogs';
-import { MainDialog } from './dialogs/mainDialog';
-import { ConversationBot } from './conversation';
+import { MainDialog } from './mainDialog';
+import { ConversationBot } from '../conversation-bot';
 
 export class DialogAndWelcomeBot extends ConversationBot {
   constructor(conversationState: BotState, userState: BotState, dialog: Dialog) {

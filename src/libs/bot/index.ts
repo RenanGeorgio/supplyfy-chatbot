@@ -1,4 +1,4 @@
-import { ConversationBot } from "./conversation";
+import { ConversationBot } from "./conversation-bot";
 import { BotRecognizer } from "./nlp/botRecognizer";
 import { BookingDialog } from "./dialogs/bookingDialog";
 import { MainDialog } from "./dialogs/mainDialog";
