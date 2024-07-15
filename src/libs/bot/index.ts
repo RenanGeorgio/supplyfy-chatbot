@@ -1,5 +1,5 @@
 import { BotRecognizer } from "./nlp/botRecognizer";
-import { BookingDialog } from "./dialogs/bookingDialog";
+import { BookingDialog } from "./dialogs/conversationDialog";
 import { MainDialog } from "./dialogs/mainDialog";
 import { conversationReferences, conversationState, userState } from "./adapter";
 import { BotRoom } from "./conversation/room";

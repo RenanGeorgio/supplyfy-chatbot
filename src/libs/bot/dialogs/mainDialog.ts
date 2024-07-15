@@ -1,37 +1,34 @@
-import { InputHints, MessageFactory, StatePropertyAccessor, TurnContext } from 'botbuilder';
+import { InputHints, StatePropertyAccessor, TurnContext } from "botbuilder";
 import {
   ComponentDialog,
   DialogSet,
   DialogState,
   DialogTurnResult,
   DialogTurnStatus,
-  TextPrompt,
   WaterfallDialog,
   WaterfallStepContext
-} from 'botbuilder-dialogs';
-import { BookingDialog } from './bookingDialog';
-import { NluManagerType } from '../types';
-import { ChatDetails } from '../data';
-const moment = require('moment');
+} from "botbuilder-dialogs";
+import { ConversationDialog } from "./conversationDialog";
+import { NluManagerType } from "../types";
+import { ChatDetails } from "../data";
 
 const MAIN_WATERFALL_DIALOG = 'mainWaterfallDialog';
 
 export class MainDialog extends ComponentDialog {
   private recognizer: NluManagerType
 
-  constructor(manager: NluManagerType, bookingDialog: BookingDialog) {
+  constructor(manager: NluManagerType, conversationDialog: ConversationDialog) {
       super('MainDialog');
 
       if (!manager) throw new Error('[MainDialog]: Missing parameter \'manager\' is required');
       this.recognizer = manager;
 
-      if (!bookingDialog) throw new Error('[MainDialog]: Missing parameter \'bookingDialog\' is required');
+      if (!conversationDialog) throw new Error('[MainDialog]: Missing parameter \'conversationDialog\' is required');
 
       this.userState = userState;
       this.userProfileAccessor = userState.createProperty(USER_PROFILE_PROPERTY);
 
-      this.addDialog(bookingDialog);
-      this.addDialog(new TopLevelDialog());
+      this.addDialog(conversationDialog);
 
       // Define the main dialog and its related components.
       // This is a sample "book a flight" dialog.
@@ -87,22 +84,17 @@ export class MainDialog extends ComponentDialog {
     const chatDetails = new ChatDetails();
 
     if (!this.recognizer.isConfigured) {
-      return await stepContext.beginDialog('bookingDialog', chatDetails);
+      return await stepContext.beginDialog('conversationDialog', chatDetails);
     }
 
     const result = await this.recognizer.executeLuisQuery(stepContext.context);
-    switch (result.intent) {
-      case 'BookFlight': {
-        
-
-        // Run the BookingDialog passing in whatever details we have from the LUIS call, it will fill out the remainder.
-        return await stepContext.beginDialog('bookingDialog', {});
-      }
-      default: {
-        // Catch all for unhandled intents
-        const didntUnderstandMessageText = "Sorry, I didn't get that. Please try asking in a different way";
-        await stepContext.context.sendActivity(didntUnderstandMessageText, didntUnderstandMessageText, InputHints.IgnoringInput);
-      }
+    const intent = result.intent;
+    
+    if (intent) {
+      return await stepContext.beginDialog('conversationDialog', {});
+    } else { // Catch all for unhandled intents
+      const didntUnderstandMessageText = "Sorry, I didn't get that. Please try asking in a different way";
+      await stepContext.context.sendActivity(didntUnderstandMessageText, didntUnderstandMessageText, InputHints.IgnoringInput);
     }
 
     return await stepContext.next();
