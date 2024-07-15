@@ -1,7 +1,7 @@
-import { BotState } from 'botbuilder';
-import { Dialog, DialogState } from 'botbuilder-dialogs';
-import { MainDialog } from '../dialogs/mainDialog';
-import { ConversationBot } from './bot';
+import { BotState } from "botbuilder";
+import { Dialog, DialogState } from "botbuilder-dialogs";
+import { MainDialog } from "../dialogs/mainDialog";
+import { ConversationBot } from "./bot";
 
 export class BotRoom extends ConversationBot {
   constructor(conversationState: BotState, userState: BotState, dialog: Dialog) {
@@ -18,5 +18,16 @@ export class BotRoom extends ConversationBot {
 
       await next();
     });
+
+    this.onMembersRemoved(async (context, next) => {
+      const membersRemoved = context.activity.membersRemoved;
+      for (const idx in membersRemoved) {
+          if (membersRemoved[idx].id !== context.activity.recipient.id) {
+            //await this._userState.ClearStateAsync(turnContext, cancellationToken);
+          }
+      }
+
+      await next();
+  });
   }
 }

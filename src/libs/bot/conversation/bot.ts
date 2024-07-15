@@ -111,29 +111,6 @@ export class ConversationBot extends ActivityHandler {
             await next();
         });
 
-        this.onMembersAdded(async (context, next) => {
-            const membersAdded = context.activity.membersAdded;
-            for (const idx in membersAdded) {
-                if (membersAdded[idx].id !== context.activity.recipient.id) {
-                    await context.sendActivity('Welcome');
-                }
-            }
-
-            await next();
-        });
-
-        this.onMembersRemoved(async (context, next) => {
-            const membersRemoved = context.activity.membersRemoved;
-            for (const idx in membersRemoved) {
-                if (membersRemoved[idx].id !== context.activity.recipient.id) {
-                    await context.sendActivity('Welcome');
-                    //await this._userState.ClearStateAsync(turnContext, cancellationToken);
-                }
-            }
-
-            await next();
-        });
-
         this.onConversationUpdate(async (context, next) => { 
             addConversationReference(context.activity);
             console.log('this gets called (conversation update)');
