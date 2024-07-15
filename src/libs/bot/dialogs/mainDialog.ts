@@ -11,6 +11,7 @@ import {
 } from 'botbuilder-dialogs';
 import { BookingDialog } from './bookingDialog';
 import { NluManagerType } from '../types';
+import { ChatDetails } from '../data';
 const moment = require('moment');
 
 const MAIN_WATERFALL_DIALOG = 'mainWaterfallDialog';
@@ -26,15 +27,27 @@ export class MainDialog extends ComponentDialog {
 
       if (!bookingDialog) throw new Error('[MainDialog]: Missing parameter \'bookingDialog\' is required');
 
+      this.userState = userState;
+      this.userProfileAccessor = userState.createProperty(USER_PROFILE_PROPERTY);
+
+      this.addDialog(bookingDialog);
+      this.addDialog(new TopLevelDialog());
+
       // Define the main dialog and its related components.
       // This is a sample "book a flight" dialog.
+      this.addDialog(new WaterfallDialog(MAIN_WATERFALL_DIALOG, [
+        this.introStep.bind(this),
+        this.actStep.bind(this),
+        this.finalStep.bind(this)
+      ]));
+      /*
       this.addDialog(new TextPrompt('TextPrompt'))
           .addDialog(bookingDialog)
           .addDialog(new WaterfallDialog(MAIN_WATERFALL_DIALOG, [
               this.introStep.bind(this),
               this.actStep.bind(this),
               this.finalStep.bind(this)
-          ]));
+          ]));*/
 
       this.initialDialogId = MAIN_WATERFALL_DIALOG;
   }
@@ -55,22 +68,15 @@ export class MainDialog extends ComponentDialog {
     }
   }
 
-  /**
-   * First step in the waterfall dialog. Prompts the user for a command.
-   * Currently, this expects a booking request, like "book me a flight from Paris to Berlin on march 22"
-   * Note that the sample LUIS model will only recognize Paris, Berlin, New York and London as airport cities.
-   */
   private async introStep(stepContext: WaterfallStepContext): Promise<DialogTurnResult> {
-    if (!this.recognizer.isConfigured) {
-      const configMsg = 'NOTE: NLU Manager is not configured.';
-      await stepContext.context.sendActivity(configMsg, null, InputHints.IgnoringInput);
-      return await stepContext.next();
+    const mensagemcustomizada = null;
+
+    if (mensagemcustomizada) {
+      const msg = 'NOTE: NLU Manager is not configured.';
+      await stepContext.context.sendActivity(msg);
     }
 
-    const weekLaterDate = moment().add(7, 'days').format('MMMM D, YYYY');
-    const messageText = (stepContext.options as any).restartMsg ? (stepContext.options as any).restartMsg : `What can I help you with today?\nSay something like "Book a flight from Paris to Berlin on ${ weekLaterDate }"`;
-    const promptMessage = MessageFactory.text(messageText, messageText, InputHints.ExpectingInput);
-    return await stepContext.prompt('TextPrompt', { prompt: promptMessage });
+    return await stepContext.next();
   }
 
   /**
@@ -78,6 +84,11 @@ export class MainDialog extends ComponentDialog {
    * Then, it hands off to the bookingDialog child dialog to collect any remaining details.
    */
   private async actStep(stepContext: WaterfallStepContext): Promise<DialogTurnResult> {
+    const chatDetails = new ChatDetails();
+
+    if (!this.recognizer.isConfigured) {
+      return await stepContext.beginDialog('bookingDialog', chatDetails);
+    }
 
     const result = await this.recognizer.executeLuisQuery(stepContext.context);
     switch (result.intent) {
