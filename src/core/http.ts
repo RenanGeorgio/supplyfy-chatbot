@@ -2,9 +2,10 @@ import http from "http";
 import { INodeSocket } from "botframework-streaming";
 import { Server } from "socket.io";
 import { CloudAdapter } from "botbuilder";
-import { conversationBot, botFrameworkAuthentication, onTurnErrorHandler } from "../lib/bot";
+import { botFrameworkAuthentication } from "../libs/bot/auth";
+import { onTurnErrorHandler } from "../libs/bot/adapter";
+import { bot, conversationBot } from "../botServer";
 import app from "../server";
-import bot from "../botServer";
 
 const httpServer = http.createServer(app);
 const botServer = http.createServer(bot);

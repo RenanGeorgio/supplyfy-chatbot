@@ -3,10 +3,10 @@ import { LangPt } from "@nlpjs/lang-pt";
 import { BuiltinMicrosoft } from "@nlpjs/builtin-microsoft";
 import { Ner } from "@nlpjs/ner";
 import { ContextManager } from "@nlpjs/nlp";
-import { ContainerType } from "./types";
 import { NlpService } from "./nlp/manager";
 import { BotService } from "./init";
 import { ConversationBot } from "./conversation/bot";
+import { ContainerType } from "./types";
 
 let builtin;
 let contextManager;
