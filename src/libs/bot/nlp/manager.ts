@@ -2,18 +2,6 @@ import { NlpManager } from "node-nlp";
 import { ConversationService } from "./conversation";
 import { ContainerType, ContextManagerType, ManagerType, NluManagerType } from "../types";
 
-/*
-test('Should classify an utterance without None feature', async () => {
-      const manager = new NlpManager({ nlu: { useNoneFeature: false } });
-      addFrJp(manager);
-      await manager.train();
-      const result = await manager.classify('fr', 'où sont mes clés');
-      expect(result.classifications).toHaveLength(2);
-      expect(result.intent).toEqual('keys');
-      expect(result.score).toBeGreaterThan(0.7);
-    });
-*/
-
 export class NlpService {
     private manager: ManagerType
     private nluManager: NluManagerType
