@@ -11,7 +11,7 @@ import { botFrameworkAuthentication } from "./auth";
 
 const adapter = new CloudAdapter(botFrameworkAuthentication);
 
-let conversationReferences: ConversationReference = {};	
+let conversationReferences: ConversationReference[] = [];	
 let conversationState: ConversationState;	
 let userState: UserState;
 

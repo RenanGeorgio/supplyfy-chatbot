@@ -1,5 +1,6 @@
-import { ActivityHandler, StatePropertyAccessor, UserState, BotState, MessageFactory, ActivityTypes } from "botbuilder";
-import { TurnContext } from "botbuilder-core";
+import { ActivityHandler, StatePropertyAccessor, UserState, ConversationState, BotState, MessageFactory, ActivityTypes } from "botbuilder";
+import { TurnContext, ConversationReference } from "botbuilder-core";
+import { Dialog, DialogState } from "botbuilder-dialogs";
 import { NlpService } from "../nlp/manager";
 import { ManagerType } from "../types";
 
@@ -49,86 +50,101 @@ async function logMessageText(storage, context) { // This function stores new us
 }
 
 export class ConversationBot extends ActivityHandler {
-    public currentConversationReferences: any;
-    private conversationState: BotState;
-    private userState: UserState;
-    private welcomedUserProperty: StatePropertyAccessor<boolean>;
-    private conversationDataAccessor: StatePropertyAccessor<BotState>;
-    private userProfileAccessor: StatePropertyAccessor<BotState>;
-    private manager: ManagerType
-    /**
-     *
-     * @param {ConversationState} conversationState
-     * @param {UserState} userState
-     * @param {any} conversationReferences
-     */
-    constructor(conversationState: BotState, userState: UserState, conversationReferences?: any) {
-        super();
-        if (!conversationState) throw new Error('[ConversationBot]: Missing parameter. conversationState is required');
-        if (!userState) throw new Error('[ConversationBot]: Missing parameter. userState is required');
+  public currentConversationReferences: ConversationReference[];
+  private conversationState: BotState;
+  private userState: UserState;
+  private dialog: Dialog;
+  private conversationDataAccessor: StatePropertyAccessor<DialogState>;
+  private userProfileAccessor: StatePropertyAccessor<BotState>;
+  private manager: ManagerType
+  private welcomedUserProperty: StatePropertyAccessor<boolean>;
+  /**
+   *
+   * @param {ConversationState} conversationState
+   * @param {UserState} userState
+   * @param {ConversationReference[]} conversationReferences
+   */
+  constructor(conversationState: BotState, userState: UserState, conversationReferences: ConversationReference[], dialog?: Dialog) {
+    super();
+    if (!conversationState) throw new Error('[ConversationBot]: Missing parameter. conversationState is required');
+    if (!userState) throw new Error('[ConversationBot]: Missing parameter. userState is required');
 
-        this.conversationDataAccessor = conversationState.createProperty(CONVERSATION_DATA_PROPERTY);
-        this.userProfileAccessor = userState.createProperty(USER_PROFILE_PROPERTY);
+    this.conversationState = conversationState as ConversationState;
+    this.userState = userState as UserState;
+    this.currentConversationReferences = conversationReferences as ConversationReference[];
+    this.dialog = dialog;
 
-        this.conversationState = conversationState as ConversationState;
-        this.userState = userState as UserState;
+    this.conversationDataAccessor = conversationState.createProperty<DialogState>(CONVERSATION_DATA_PROPERTY);
+    this.userProfileAccessor = userState.createProperty<UserState>(USER_PROFILE_PROPERTY);
 
-        this.welcomedUserProperty = this.userState.createProperty(WELCOMED_USER);
+    this.welcomedUserProperty = this.userState.createProperty(WELCOMED_USER);
 
-        this.currentConversationReferences = conversationReferences;
+    this.manager = new NlpService()
 
-        this.manager = new NlpService()
+    this.onMessage(async (context, next) => {
+      this.addConversationReference(context.activity);
+      
+      const didBotWelcomedUser = await this.welcomedUserProperty.get(context, false);
+      const userProfile = await this.userProfileAccessor.get(context, {});
+      const conversationData = await this.conversationDataAccessor.get(context, {});
 
-        this.onMessage(async (context, next) => {
-            addConversationReference(context.activity);
-            
-            const didBotWelcomedUser = await this.welcomedUserProperty.get(context, false);
-            const userProfile = await this.userProfileAccessor.get(context, {});
-            const conversationData = await this.conversationDataAccessor.get(context, {});
+      // COMO PODEMOS MANDAR A MENSAGEM QUANDO O USUARIO ENTRA NO CHAT, ESTA MENSAGEM PODE NAO SER NECESSARIA
+      /*if (didBotWelcomedUser === false) {
+        const userName = context.activity.from.name;
+        await context.sendActivity('You are seeing this message because this was your first message ever sent to this bot.');
+        await context.sendActivity(`It is a good practice to welcome the user and provide personal greeting. For example, welcome ${ userName }.`);
 
-            if (didBotWelcomedUser === false) {
-                const userName = context.activity.from.name;
-                await context.sendActivity('You are seeing this message because this was your first message ever sent to this bot.');
-                await context.sendActivity(`It is a good practice to welcome the user and provide personal greeting. For example, welcome ${ userName }.`);
+        await this.welcomedUserProperty.set(context, true);
+      } else {
+        conversationData.timestamp = context.activity.timestamp.toLocaleString();
+        conversationData.channelId = context.activity.channelId;
 
-                await this.welcomedUserProperty.set(context, true);
-            } else {
-                conversationData.timestamp = context.activity.timestamp.toLocaleString();
-                conversationData.channelId = context.activity.channelId;
+        const text = context.activity.text.trim().toLocaleLowerCase();
+        // TO-DO: verificar quem é o usuario, puxar modelo e carregar por msg por conta de custo computacional e overflow do servidor
+        this.manager.setModel('./model.nlp'); // trocar forma de carregamento, arquivo para json e etc.
+        const answer = await this.manager.conversation.processQuestion(text);
 
-                const text = context.activity.text.trim().toLocaleLowerCase();
-                // TO-DO: verificar quem é o usuario, puxar modelo e carregar por msg por conta de custo computacional e overflow do servidor
-                this.manager.setModel('./model.nlp'); // trocar forma de carregamento, arquivo para json e etc.
-                const answer = await this.manager.conversation.processQuestion(text);
+        const activity = { type: ActivityTypes.Message, text: answer }
+        await context.sendActivity(activity);
+      }*/
 
-                const activity = { type: ActivityTypes.Message, text: answer }
-                await context.sendActivity(activity);
-            }
-            // Save updated utterance inputs.
-            await logMessageText(this.userState, context);
+      if (context.activity) {
+        userProfile.userName = context.activity.from.name
+        conversationData.timestamp = context.activity.timestamp.toLocaleString();
+        conversationData.channelId = context.activity.channelId;
 
-            // By calling next() you ensure that the next BotHandler is run.
-            await next();
-        });
+        const text = context.activity.text.trim().toLocaleLowerCase();
+        // TO-DO: verificar quem é o usuario, puxar modelo e carregar por msg por conta de custo computacional e overflow do servidor
+        this.manager.setModel('./model.nlp'); // trocar forma de carregamento, arquivo para json e etc.
+        const answer = await this.manager.conversation.processQuestion(text);
 
-        this.onConversationUpdate(async (context, next) => { 
-            addConversationReference(context.activity);
-            console.log('this gets called (conversation update)');
-            await context.sendActivity('Welcome, enter an item to save to your list.'); 
+        const activity = { type: ActivityTypes.Message, text: answer }
+        await context.sendActivity(activity);
+      }
 
-            await next();
-        });
+      // Save updated utterance inputs.
+      await logMessageText(this.userState, context);
 
-        function addConversationReference(activity): void {
-            const conversationReference = context.getConversationReference(activity);
-            currentConversationReferences[conversationReference.conversation.id] = conversationReference;
-        }
-    }
+      // By calling next() you ensure that the next BotHandler is run.
+      await next();
+    });
 
-    public async run(context: TurnContext): Promise<void> {
-        await super.run(context);
+    this.onConversationUpdate(async (context, next) => { 
+      this.addConversationReference(context.activity);
 
-        await this.conversationState.saveChanges(context, false);
-        await this.userState.saveChanges(context, false);
-    }
+      await next();
+    });
+  }
+
+  private addConversationReference(activity): void {
+    const conversationReference: ConversationReference = TurnContext.getConversationReference(activity);
+    this.currentConversationReferences[conversationReference.conversation.id] = conversationReference;
+  }
+
+  public async run(context: TurnContext): Promise<void> {
+    await super.run(context);
+
+    await this.conversationState.saveChanges(context, false);
+    await this.userState.saveChanges(context, false);
+  }
 }

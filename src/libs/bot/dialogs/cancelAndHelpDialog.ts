@@ -1,5 +1,5 @@
-import { InputHints } from 'botbuilder';
-import { ComponentDialog, DialogContext, DialogTurnResult, DialogTurnStatus } from 'botbuilder-dialogs';
+import { InputHints } from "botbuilder";
+import { ComponentDialog, DialogContext, DialogTurnResult, DialogTurnStatus } from "botbuilder-dialogs";
 
 export class CancelAndHelpDialog extends ComponentDialog {
   constructor(id: string) {

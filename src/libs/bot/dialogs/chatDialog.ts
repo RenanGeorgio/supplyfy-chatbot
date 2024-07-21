@@ -1,11 +1,9 @@
 import { ComponentDialog, WaterfallDialog, WaterfallStepContext } from "botbuilder-dialogs";
-
-const REVIEW_SELECTION_DIALOG = 'REVIEW_SELECTION_DIALOG';
-const WATERFALL_DIALOG = 'WATERFALL_DIALOG';
+import { CHAT_DIALOG, WATERFALL_DIALOG } from "./constants";
 
 export class ChatDialog extends ComponentDialog {
     constructor() {
-        super(REVIEW_SELECTION_DIALOG);
+        super(CHAT_DIALOG);
 
         // Define a "done" response for the company selection prompt.
         this.doneOption = 'done';

@@ -4,8 +4,8 @@ import { MainDialog } from "../dialogs/mainDialog";
 import { ConversationBot } from "./bot";
 
 export class BotRoom extends ConversationBot {
-  constructor(conversationState: BotState, userState: BotState, dialog: Dialog) {
-    super(conversationState, userState, dialog);
+  constructor(conversationState: BotState, userState: BotState, conversationReferences?: any, dialog?: Dialog) {
+    super(conversationState, userState, conversationReferences, dialog);
 
     this.onMembersAdded(async (context, next) => {
       const membersAdded = context.activity.membersAdded;

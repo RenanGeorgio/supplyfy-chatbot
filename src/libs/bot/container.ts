@@ -5,6 +5,8 @@ import { Ner } from "@nlpjs/ner";
 import { ContextManager } from "@nlpjs/nlp";
 import { ContainerType } from "./types";
 import { NlpService } from "./nlp/manager";
+import { BotService } from "./init";
+import { ConversationBot } from "./conversation/bot";
 
 let builtin;
 let contextManager;
@@ -22,7 +24,8 @@ const loggerInstance = {
 export class ContainerService {
   private container: ContainerType
   private managerService: any
-  // TODO: Precisa conter o bot
+  private conversationBot: any
+  
   static _instance: ContainerService;
 
   constructor() {
@@ -47,6 +50,12 @@ export class ContainerService {
     this.container.register('context-manager', contextManager, true);
 
     this.managerService = new NlpService(this.container);
+
+    this.conversationBot = new BotService(this.managerService.getNluManager()).getBot();
+  }
+
+  public getConversationBot(): ConversationBot {
+    return this.conversationBot;
   }
 
   static getInstance(): ContainerService {

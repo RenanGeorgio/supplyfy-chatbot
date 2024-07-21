@@ -1,4 +1,4 @@
-import { InputHints, StatePropertyAccessor, TurnContext } from "botbuilder";
+import { InputHints, StatePropertyAccessor, TurnContext, BotState, UserState } from "botbuilder";
 import {
   ComponentDialog,
   DialogSet,
@@ -11,14 +11,16 @@ import {
 import { ConversationDialog } from "./conversationDialog";
 import { NluManagerType } from "../types";
 import { ChatDetails } from "../data";
+import { CONVERSATION_DIALOG, MAIN_DIALOG, MAIN_WATERFALL_DIALOG, USER_PROFILE_PROPERTY } from "./constants";
 
-const MAIN_WATERFALL_DIALOG = 'mainWaterfallDialog';
 
 export class MainDialog extends ComponentDialog {
   private recognizer: NluManagerType
+  private userState: UserState;
+  private userProfileAccessor: StatePropertyAccessor<BotState>;
 
-  constructor(manager: NluManagerType, conversationDialog: ConversationDialog) {
-      super('MainDialog');
+  constructor(userState: BotState, manager: NluManagerType, conversationDialog: ConversationDialog) {
+      super(MAIN_DIALOG);
 
       if (!manager) throw new Error('[MainDialog]: Missing parameter \'manager\' is required');
       this.recognizer = manager;
@@ -84,14 +86,14 @@ export class MainDialog extends ComponentDialog {
     const chatDetails = new ChatDetails();
 
     if (!this.recognizer.isConfigured) {
-      return await stepContext.beginDialog('conversationDialog', chatDetails);
+      return await stepContext.beginDialog(CONVERSATION_DIALOG, chatDetails);
     }
 
     const result = await this.recognizer.executeLuisQuery(stepContext.context);
     const intent = result.intent;
     
     if (intent) {
-      return await stepContext.beginDialog('conversationDialog', {});
+      return await stepContext.beginDialog(CONVERSATION_DIALOG, {});
     } else { // Catch all for unhandled intents
       const didntUnderstandMessageText = "Sorry, I didn't get that. Please try asking in a different way";
       await stepContext.context.sendActivity(didntUnderstandMessageText, didntUnderstandMessageText, InputHints.IgnoringInput);

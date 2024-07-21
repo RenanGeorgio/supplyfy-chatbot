@@ -22,6 +22,10 @@ export class ConversationService {
         this.conversationContext = new ConversationContext();  
     }
 
+    public setModel(fileName: string): void {
+        this.manager.load(fileName);
+    }
+
     public async processQuestion(pergunta: string): Promise<string> {
         const activity = {
             conversation: {

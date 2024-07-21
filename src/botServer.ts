@@ -6,7 +6,7 @@ import bodyParser from "body-parser";
 import RedisStore from "connect-redis";
 import { redisClient } from "./core/redis";
 import { CustomRequest } from "./types/types";
-import { adapter, conversationBot } from "./libs/bot";
+import { adapter, conversationBot } from "./libs/bot/init";
 
 const store = new RedisStore({ client: redisClient, prefix: "bot:" });
 

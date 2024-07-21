@@ -1,42 +1,35 @@
-import { TimexProperty } from "@microsoft/recognizers-text-data-types-timex-expression";
 import { DialogTurnResult, WaterfallDialog, WaterfallStepContext } from "botbuilder-dialogs";
-import { BookingDetails } from "./bookingDetails";
 import { CancelAndHelpDialog } from "./cancelAndHelpDialog";
 import { ChatDialog } from "./chatDialog";
-
-const DATE_RESOLVER_DIALOG = 'dateResolverDialog';
-const WATERFALL_DIALOG = 'waterfallDialog';
+import { ChatDetails } from "../data";
+import { CHAT_DIALOG, CONVERSATION_DIALOG, WATERFALL_DIALOG } from "./constants";
 
 export class ConversationDialog extends CancelAndHelpDialog {
-    constructor() {
-        super('conversationDialog');
+    constructor(id?: string) {
+        super(id || CONVERSATION_DIALOG);
 
         this.addDialog(new ChatDialog());
 
         this.addDialog(new WaterfallDialog(WATERFALL_DIALOG, [
-                this.travelDateStep.bind(this),
+                this.chatStep.bind(this),
                 this.finalStep.bind(this)
             ]));
 
         this.initialDialogId = WATERFALL_DIALOG;
     }
 
-    /**
-     * If a travel date has not been provided, prompt for one.
-     * This will use the DATE_RESOLVER_DIALOG.
-     */
-    private async travelDateStep(stepContext: WaterfallStepContext): Promise<DialogTurnResult> {
-        const bookingDetails = stepContext.options as BookingDetails;
+    private async chatStep(stepContext: WaterfallStepContext): Promise<DialogTurnResult> {
+        const chatDetails = stepContext.options as ChatDetails;
 
         // Capture the results of the previous step
-        bookingDetails.origin = stepContext.result;
-        if (!bookingDetails.travelDate || this.isAmbiguous(bookingDetails.travelDate)) {
-            return await stepContext.beginDialog(DATE_RESOLVER_DIALOG, { date: bookingDetails.travelDate });
+        chatDetails.origin = stepContext.result;
+        if (!chatDetails.travelDate) {
+            return await stepContext.beginDialog(CHAT_DIALOG, { date: chatDetails.travelDate });
         } else {
-            return await stepContext.next(bookingDetails.travelDate);
+            return await stepContext.next(chatDetails.travelDate);
         }
 
-        return await stepContext.beginDialog(REVIEW_SELECTION_DIALOG);
+        return await stepContext.beginDialog(CHAT_DIALOG);
     }
 
     /**
@@ -44,15 +37,10 @@ export class ConversationDialog extends CancelAndHelpDialog {
      */
     private async finalStep(stepContext: WaterfallStepContext): Promise<DialogTurnResult> {
         if (stepContext.result === true) {
-            const bookingDetails = stepContext.options as BookingDetails;
+            const chatDetails = stepContext.options as ChatDetails;
 
-            return await stepContext.endDialog(bookingDetails);
+            return await stepContext.endDialog(chatDetails);
         }
         return await stepContext.endDialog();
-    }
-
-    private isAmbiguous(timex: string): boolean {
-        const timexPropery = new TimexProperty(timex);
-        return !timexPropery.types.has('definite');
     }
 }

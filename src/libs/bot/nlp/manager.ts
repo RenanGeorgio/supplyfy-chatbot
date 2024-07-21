@@ -1,5 +1,5 @@
 import { NlpManager } from "node-nlp";
-import { ContainerType, ContextManagerType, ManagerType } from "../types";
+import { ContainerType, ContextManagerType, ManagerType, NluManagerType } from "../types";
 import { ConversationService } from "./conversation";
 import { ChatService } from "./chat";
 
@@ -17,10 +17,9 @@ test('Should classify an utterance without None feature', async () => {
 
 export class NlpService {
     private manager: ManagerType
+    private nluManager: NluManagerType
     private contextManager: ContextManagerType
     private chat: ConversationService
-
-    static _instance: NlpService; // TALVEZ ???
 
     /**
      *
@@ -54,6 +53,8 @@ export class NlpService {
             }
         }
 
+        this.nluManager = containerRef.get('nlu-manager', containerRef.getConfiguration('nlu-manager'));
+
         this.chat = new ChatService(this.manager);
     }
 
@@ -65,12 +66,7 @@ export class NlpService {
         this.manager.load(fileName);
     }
 
-    static getInstance(): NlpService {
-        if (this._instance) {
-          return this._instance;
-        }
-    
-        this._instance = new NlpService();
-        return this._instance;
-      }
+    public getNluManager(): NluManagerType {
+        return this.nluManager;
+    }
 }

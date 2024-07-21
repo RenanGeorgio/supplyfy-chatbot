@@ -16,6 +16,6 @@ export class BotRecognizer {
    * @param {TurnContext} context
    */
   public async executeLuisQuery(context: TurnContext): Promise<RecognizerResult> {
-    return this.recognizer.recognize(context); // TO-DO: qual classe usar
+    return this.recognizer.getClassifications(context.activity.text.trim().toLocaleLowerCase());
   }
 }
