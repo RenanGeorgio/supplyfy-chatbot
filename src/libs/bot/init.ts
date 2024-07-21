@@ -1,4 +1,4 @@
-import { BotRecognizer } from "./nlp/botRecognizer";
+import { BotRecognizer } from "./reconizer/botRecognizer";
 import { ConversationDialog } from "./dialogs/conversationDialog";
 import { MainDialog } from "./dialogs/mainDialog";
 import { conversationReferences, conversationState, userState } from "./adapter";
