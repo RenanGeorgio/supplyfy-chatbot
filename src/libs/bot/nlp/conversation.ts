@@ -1,7 +1,7 @@
 import { ConversationContext } from "node-nlp";
 import { removeEmojis } from "@nlpjs/emoji";
-import { ContextMap, ManagerType } from "../types";
 import { ContextKey, CurrentContext } from "../data";
+import { ContextMap, ManagerType } from "../types";
 
 /*
 const activity = { address: { conversation: { id } } };
@@ -50,21 +50,18 @@ export class ConversationService {
         this.manager.load(fileName);
     }
 
-    updateProperty(key: string, value: any): void {
-        this.otherObjects[key] = value;
+    public updateProperty(key: string, value: any): void {
+        this.contextMap[key] = value;
     }
 
-    releaseResources() {
-        for (let key in this.resources) {
-            if (this.resources[key] && typeof this.resources[key].close === 'function') {
-                this.resources[key].close(); // Assuming resources have a close method
+    public cleanup() {
+        for (let key in this.contextMap) {
+            if (this.contextMap[key] && typeof this.contextMap[key].close === 'function') {
+                this.contextMap[key]?.close();
             }
-            delete this.resources[key];
-        }
-    }
 
-    cleanup() {
-        this.releaseResources();
+            delete this.contextMap[key];
+        }
     }
 
     public async processQuestion(pergunta: string): Promise<string> {

@@ -25,7 +25,7 @@ export class BotRoom extends ConversationBot {
       const membersRemoved = context.activity.membersRemoved;
       for (const idx in membersRemoved) {
           if (membersRemoved[idx].id !== context.activity.recipient.id) {
-            currentManager.deleteConversation("id da conversa");
+            await currentManager.deleteConversation("id da conversa");
             //await this._userState.ClearStateAsync(turnContext, cancellationToken);
           }
       }

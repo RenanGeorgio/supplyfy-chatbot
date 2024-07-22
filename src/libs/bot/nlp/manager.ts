@@ -66,7 +66,7 @@ export class NlpService {
         return this.nluManager;
     }
 
-    getConversationById(id: string): ConversationService | null {
+    private getConversationById(id: string): ConversationService | null {
         const conversationObj: ConversationDict | undefined = this.conversations.find(convo => convo.userId === id);
         
         if (conversationObj?.conversation) {
@@ -76,7 +76,7 @@ export class NlpService {
         }
     }
 
-    updateConversationProperty(id: string, key: string, value: any): void {
+    public updateConversationProperty(id: string, key: string, value: any): void {
         const conversation: ConversationService | null = this.getConversationById(id);
 
         if (conversation) {
@@ -105,7 +105,9 @@ export class NlpService {
         this.conversations.push(conversation);
     }
 
-    deleteConversation(id: string): void {
+    public async deleteConversation(id: string): Promise<void> {
+        await this.contextManager.resetConversation(id);
+
         const index = this.conversations.findIndex(convo => convo.userId === id);
         if (index !== -1) {
             const conversation = this.conversations[index].conversation;
