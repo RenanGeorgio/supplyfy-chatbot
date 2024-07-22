@@ -1,5 +1,8 @@
-export class ChatDetails {
-  public intent: string;
-  public company: string;
-  public consumer: string;
+import { ChatDetails } from "./chat";
+import { ContextKey, CurrentContext } from "./context";
+
+export {
+  ChatDetails,
+  ContextKey,
+  CurrentContext
 }

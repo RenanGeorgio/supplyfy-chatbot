@@ -1,6 +1,7 @@
 import { ConversationContext } from "node-nlp";
 import { removeEmojis } from "@nlpjs/emoji";
-import { ConversationContextType, ManagerType } from "../types";
+import { ContextMap, ManagerType } from "../types";
+import { ContextKey, CurrentContext } from "../data";
 
 /*
 const activity = { address: { conversation: { id } } };
@@ -9,17 +10,40 @@ const context = await contextManager.getContext({ activity });
 
 export class ConversationService {
     private manager: ManagerType
-    private conversationContext: ConversationContextType
+    private contextMap: ContextMap
 
     /**
      *
      * @param {ManagerType} managerRef
+     * @param {string} conversationId
      */
-    constructor(managerRef: ManagerType) {
+    constructor(managerRef: ManagerType, conversationId: string | number) {
         if (!managerRef) throw new Error('[ConversationService]: Missing parameter. managerRef is required');
+        if (!conversationId) throw new Error('[ConversationService]: Missing parameter. conversationId is required');
 
-        this.manager = managerRef;
-        this.conversationContext = new ConversationContext();  
+        this.manager = managerRef; 
+
+        const contextKey = new ContextKey();
+        contextKey.activity = {
+            conversation: { 
+                id: conversationId
+            }
+        }
+        
+        this.init(contextKey);
+    }
+
+    private init(key: ContextKey): void {
+        this.contextMap.contextKey = key;
+        this.contextMap.conversationContext = new ConversationContext();
+    }
+
+    public setCurrentConversation(): ContextMap {
+        return this.contextMap;
+    }
+
+    public updateContextMap(value: CurrentContext): void {
+        this.contextMap.contextValue = value;
     }
 
     public setModel(fileName: string): void {

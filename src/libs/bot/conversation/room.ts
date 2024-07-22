@@ -11,8 +11,8 @@ export class BotRoom extends ConversationBot {
       const membersAdded = context.activity.membersAdded;
       for (const idx in membersAdded) {
         if (membersAdded[idx].id !== context.activity.recipient.id) {
-          currentManager.createConversation("id da conversa");
-          
+          await currentManager.createConversation("id da conversa");
+
           await context.sendActivity('Welcome');
           await (dialog as MainDialog).run(context, conversationState.createProperty<DialogState>('DialogState'));
         }

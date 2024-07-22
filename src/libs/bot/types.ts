@@ -2,6 +2,7 @@ import { containerBootstrap } from "@nlpjs/core";
 import { NlpManager, ConversationContext } from "node-nlp";
 import { NluManager } from "@nlpjs/nlu";
 import { ContextManager } from "@nlpjs/nlp";
+import { ContextKey, CurrentContext } from "./data";
 
 export type ContainerType = typeof containerBootstrap;
 
@@ -16,6 +17,19 @@ export type ContextManagerType = typeof ContextManager;
 export type AttachmentLayout = "list" | "carousel";
 
 export type UserRole = "bot" | "channel" | "user";
+
+export type ActivityProps = {
+  address?: {
+    conversation: { id: string | number }
+  };
+  conversation?: { id: string | number };
+}
+
+export type ContextMap = {
+  conversationContext?: ConversationContextType | undefined
+  contextValue?: CurrentContext | undefined
+  contextKey?: ContextKey | undefined
+}
 
 export interface IActivity {
   type: string,

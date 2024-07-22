@@ -24,7 +24,7 @@ export class BotService {
     
     const conversationDialog = new ConversationDialog(CONVERSATION_DIALOG);
     const dialog = new MainDialog(userState, botRecognizer, conversationDialog); // COMPARAR OQ userState AGREGOU NESTE EXEMPLO
-    this.conversationBot = new BotRoom(conversationState, userState, conversationReferences, dialog); 
+    this.conversationBot = new BotRoom(conversationState, userState, conversationReferences, this.currentManagerService, dialog); 
   }
 
   public getBot(): ConversationBot {
