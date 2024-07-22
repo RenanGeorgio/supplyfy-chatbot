@@ -4,13 +4,15 @@ import { MainDialog } from "../dialogs/mainDialog";
 import { ConversationBot } from "./bot";
 
 export class BotRoom extends ConversationBot {
-  constructor(conversationState: BotState, userState: BotState, conversationReferences?: any, dialog?: Dialog) {
-    super(conversationState, userState, conversationReferences, dialog);
+  constructor(conversationState: BotState, userState: BotState, conversationReferences: any, currentManager: any, dialog?: Dialog) {
+    super(conversationState, userState, conversationReferences, currentManager, dialog);
 
     this.onMembersAdded(async (context, next) => {
       const membersAdded = context.activity.membersAdded;
       for (const idx in membersAdded) {
         if (membersAdded[idx].id !== context.activity.recipient.id) {
+          currentManager.createConversation("id da conversa");
+          
           await context.sendActivity('Welcome');
           await (dialog as MainDialog).run(context, conversationState.createProperty<DialogState>('DialogState'));
         }
@@ -23,6 +25,7 @@ export class BotRoom extends ConversationBot {
       const membersRemoved = context.activity.membersRemoved;
       for (const idx in membersRemoved) {
           if (membersRemoved[idx].id !== context.activity.recipient.id) {
+            currentManager.deleteConversation("id da conversa");
             //await this._userState.ClearStateAsync(turnContext, cancellationToken);
           }
       }

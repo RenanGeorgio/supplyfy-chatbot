@@ -62,6 +62,7 @@ export async function processWaMessage(message: MsgTypes, wb: any, companyId: st
 
       const directLineService = DirectlineService.getInstance();
       
+      // TO-DO: UUID = ID; Precisa ser concizo é unico dentre os usuarios ativos
       directLineService.sendMessageToBot(textMessage, "uuid", wb.recipientName);
       
       /*let replyButtonMessage = interactiveReplyButton;

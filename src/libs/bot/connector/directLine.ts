@@ -35,10 +35,14 @@ export class DirectlineService {
     }
 
     public sendMessageToBot(text: string, id: string, name?: string) {
+        // TO-DO: ID Precisa ser concizo é unico dentre os usuarios ativos
         directLine
             .postActivity({
-                from: { id, name },
+                from: { id, name, role: 'user' },
+                //conversation?: { id: string },
                 type: ActivityTypes.Message,
+                //eTag?: string,
+                //id?: string,
                 text: text
             })
             .subscribe(

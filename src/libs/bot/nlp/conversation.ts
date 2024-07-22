@@ -26,10 +26,28 @@ export class ConversationService {
         this.manager.load(fileName);
     }
 
+    updateProperty(key: string, value: any): void {
+        this.otherObjects[key] = value;
+    }
+
+    releaseResources() {
+        for (let key in this.resources) {
+            if (this.resources[key] && typeof this.resources[key].close === 'function') {
+                this.resources[key].close(); // Assuming resources have a close method
+            }
+            delete this.resources[key];
+        }
+    }
+
+    cleanup() {
+        this.releaseResources();
+    }
+
     public async processQuestion(pergunta: string): Promise<string> {
+        const context = await this.contextManager.getContext(session);
         const activity = {
             conversation: {
-              id: 'a1'
+              id: 'a1' // settings.conversationId,
             }
         }
     

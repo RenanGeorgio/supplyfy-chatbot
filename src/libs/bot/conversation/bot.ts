@@ -56,15 +56,16 @@ export class ConversationBot extends ActivityHandler {
   private dialog: Dialog;
   private conversationDataAccessor: StatePropertyAccessor<DialogState>;
   private userProfileAccessor: StatePropertyAccessor<BotState>;
-  private manager: ManagerType
+  private currentManager: ManagerType
   private welcomedUserProperty: StatePropertyAccessor<boolean>;
   /**
    *
    * @param {ConversationState} conversationState
    * @param {UserState} userState
    * @param {ConversationReference[]} conversationReferences
+   * @param {any} currentManager
    */
-  constructor(conversationState: BotState, userState: UserState, conversationReferences: ConversationReference[], dialog?: Dialog) {
+  constructor(conversationState: BotState, userState: UserState, conversationReferences: ConversationReference[], currentManager: any, dialog?: Dialog) {
     super();
     if (!conversationState) throw new Error('[ConversationBot]: Missing parameter. conversationState is required');
     if (!userState) throw new Error('[ConversationBot]: Missing parameter. userState is required');
@@ -74,12 +75,12 @@ export class ConversationBot extends ActivityHandler {
     this.currentConversationReferences = conversationReferences as ConversationReference[];
     this.dialog = dialog;
 
+    this.currentManager = currentManager;
+
     this.conversationDataAccessor = conversationState.createProperty<DialogState>(CONVERSATION_DATA_PROPERTY);
     this.userProfileAccessor = userState.createProperty<UserState>(USER_PROFILE_PROPERTY);
 
     this.welcomedUserProperty = this.userState.createProperty(WELCOMED_USER);
-
-    this.manager = new NlpService()
 
     this.onMessage(async (context, next) => {
       this.addConversationReference(context.activity);
