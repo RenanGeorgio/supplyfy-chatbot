@@ -1,6 +1,8 @@
+import { ConversationContext } from "node-nlp";
 import { ContextKey, CurrentContext } from "../data";
 import { CurrentConversationContext } from "../packages";
-import { ContextMap, ManagerType } from "../types";
+import { ContextMap, ManagerType, ExtendedConversationContextType } from "../types";
+import { Obj } from "../../../types";
 
 /*
 const activity = { address: { conversation: { id } } };
@@ -8,19 +10,21 @@ const context = await contextManager.getContext({ activity });
 */
 
 export class ConversationService {
-    private manager: ManagerType
-    private contextMap: ContextMap
+    private manager: ManagerType;
+    private contextMap: ContextMap;
+    private settings: Obj | undefined;
 
     /**
      *
      * @param {ManagerType} managerRef
      * @param {string} conversationId
      */
-    constructor(managerRef: ManagerType, conversationId: string | number) {
+    constructor(managerRef: ManagerType, conversationId: string | number, options?: Obj) {
         if (!managerRef) throw new Error('[ConversationService]: Missing parameter. managerRef is required');
         if (!conversationId) throw new Error('[ConversationService]: Missing parameter. conversationId is required');
 
         this.manager = managerRef; 
+        this.settings = options || undefined;
 
         const contextKey = new ContextKey();
         contextKey.activity = {
@@ -29,12 +33,19 @@ export class ConversationService {
             }
         }
         
+        this.optimazeSettings(contextKey);
         this.init(contextKey);
     }
 
     private init(key: ContextKey): void {
         this.contextMap.contextKey = key;
-        this.contextMap.conversationContext = new CurrentConversationContext();
+        this.contextMap.conversationContext = new ConversationContext(); // CurrentConversationContext()
+    }
+
+    private optimazeSettings(key: ContextKey): void {
+        if (this.settings) {
+            this.settings['activity'] = key.activity;
+        }
     }
 
     public setCurrentConversation(): ContextMap {
@@ -54,11 +65,10 @@ export class ConversationService {
     }
 
     public async processQuestion(question: string): Promise<string> {
-        const activity = this.contextMap.contextKey;
-        const context = this.contextMap.conversationContext;
+        const context: ExtendedConversationContextType = this.contextMap.conversationContext;
     
         // const response = await manager.process({ locale: 'en', utterance: 'what is the real name of spiderman?', activity });
-        const response: any = await this.manager.process("pt", question, context);
+        const response: any = await this.manager.process("pt", question, context, this.settings);
     
         return response.answer || "Desculpe, não tenho uma resposta para isso.";
     }

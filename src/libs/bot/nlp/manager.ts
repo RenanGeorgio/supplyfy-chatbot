@@ -1,7 +1,8 @@
 import { NlpManager } from "node-nlp";
 import { ConversationService } from "./conversation";
-import { ContainerType, ContextManagerType, ContextMap, ManagerType, NluManagerType } from "../types";
+import { ContainerType, ContextManagerType, ContextMap, ExtendedConversationContextType, ManagerType, NluManagerType } from "../types";
 import { Obj } from "../../../types";
+import { ContextKey } from "../data";
 
 type ConversationDict = {
     conversation: ConversationService
@@ -66,6 +67,10 @@ export class NlpService {
         return this.nluManager;
     }
 
+    private getOptionsSettings(): Obj {
+        return this.options;
+    }
+
     private getConversationById(id: string): ConversationService | null {
         const conversationObj: ConversationDict | undefined = this.conversations.find(convo => convo.userId === id);
         
@@ -97,11 +102,11 @@ export class NlpService {
     }
 
     public async createConversation(id: string): Promise<void> {
-        const currentConversation = new ConversationService(this.manager, id);
+        const currentConversation = new ConversationService(this.manager, id, this.getOptionsSettings());
 
         const currentContextMap: ContextMap = currentConversation.setCurrentConversation();
-        const currentActivity = currentContextMap.contextKey;
-        const currentContext = currentContextMap.conversationContext;
+        const currentActivity: ContextKey | undefined = currentContextMap.contextKey;
+        const currentContext: ExtendedConversationContextType = currentContextMap.conversationContext;
 
         await this.contextManager.setContext({ currentActivity }, currentContext);
 

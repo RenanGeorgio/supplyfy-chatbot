@@ -1,7 +1,6 @@
 import { ActivityHandler, StatePropertyAccessor, UserState, ConversationState, BotState, MessageFactory, ActivityTypes } from "botbuilder";
 import { TurnContext, ConversationReference } from "botbuilder-core";
 import { Dialog, DialogState } from "botbuilder-dialogs";
-import { NlpService } from "../nlp/manager";
 import { ManagerType } from "../types";
 
 const WELCOMED_USER = 'welcomedUserProperty';
@@ -115,6 +114,7 @@ export class ConversationBot extends ActivityHandler {
         const id = context.activity.from.id;
         userProfile.userId = id;
         userProfile.userName = context.activity.from.name;
+        userProfile.info = context.activity?.value;
 
         conversationData.timestamp = context.activity.timestamp.toLocaleString();
         conversationData.locale = context.activity.locale;

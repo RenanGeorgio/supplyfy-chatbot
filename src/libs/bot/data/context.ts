@@ -19,6 +19,7 @@ export class CurrentContext {
   public validatorParameters: any;
   public errorLoops: number | undefined;
   public locale: string | undefined;
+  public entities: Obj | undefined;
 
   [key: string]: any;
 

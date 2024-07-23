@@ -13,6 +13,8 @@ export type NluManagerType = typeof NluManager;
 
 export type ConversationContextType = typeof ConversationContext;
 
+export type ExtendedConversationContextType = ConversationContextType & Obj;
+
 export type ContextManagerType = typeof ContextManager;
 
 export type AttachmentLayout = "list" | "carousel";
@@ -27,9 +29,9 @@ export type ActivityProps = {
 }
 
 export type ContextMap = {
-  conversationContext?: Obj
-  contextValue?: CurrentContext | undefined
-  contextKey?: ContextKey | undefined
+  conversationContext: ExtendedConversationContextType | undefined
+  contextValue: CurrentContext | undefined
+  contextKey: ContextKey | undefined
 }
 
 export interface IActivity {
