@@ -18,12 +18,13 @@ export class BotService {
     if (!manager) throw new Error('[BotService]: Missing parameter. manager is required');
     
     this.currentManagerService = manager;
+    let dialog: any = undefined;
 
     const nluManager = this.currentManagerService.getNluManager()
     const botRecognizer = new BotRecognizer(nluManager);
     
-    const conversationDialog = new ConversationDialog(CONVERSATION_DIALOG);
-    const dialog = new MainDialog(userState, botRecognizer, conversationDialog); // COMPARAR OQ userState AGREGOU NESTE EXEMPLO
+    //const conversationDialog = new ConversationDialog(CONVERSATION_DIALOG);
+    //dialog = new MainDialog(userState, botRecognizer, conversationDialog);
     this.conversationBot = new BotRoom(conversationState, userState, conversationReferences, this.currentManagerService, dialog); 
   }
 

@@ -1,11 +1,8 @@
 import { ActivityHandler, StatePropertyAccessor, UserState, ConversationState, BotState, MessageFactory, ActivityTypes } from "botbuilder";
 import { TurnContext, ConversationReference } from "botbuilder-core";
 import { Dialog, DialogState } from "botbuilder-dialogs";
+import { CONVERSATION_DATA_PROPERTY, USER_PROFILE_PROPERTY, WELCOMED_USER } from "../dialogs/constants";
 import { ManagerType } from "../types";
-
-const WELCOMED_USER = 'welcomedUserProperty';
-const CONVERSATION_DATA_PROPERTY = 'conversationData';
-const USER_PROFILE_PROPERTY = 'userProfile';
 
 async function logMessageText(storage, context) { // This function stores new user messages. Creates new utterance log if none exists.
     let utterance = context.activity.text;

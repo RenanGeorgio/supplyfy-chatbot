@@ -114,7 +114,7 @@ export class NlpService {
 
         const currentActivity: ContextKey | undefined | null = currentContextMap?.contextKey;
         const currentContext: ExtendedConversationContextType = currentContextMap?.conversationContext;
-        // CONTINUAR DAQUI
+        
         await this.contextManager.setContext({ currentActivity }, currentContext);
 
         const actual = await this.contextManager.getContext(currentActivity);
