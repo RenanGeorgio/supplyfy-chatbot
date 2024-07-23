@@ -96,9 +96,12 @@ export class NlpService {
             return "Desculpe, não tenho uma resposta para isso.";
         }
         
-        const response = await conversation?.processQuestion(question);
+        const { answer, activity } = await conversation?.processQuestion(question);
 
-        return response;
+        const actual = await this.contextManager.getContext(activity); // TO-DO: Ver se muda
+        this.updateConversationProperty(id, 'contextValue', actual);
+
+        return answer;
     }
 
     public async createConversation(id: string): Promise<void> {

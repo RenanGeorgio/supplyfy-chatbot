@@ -60,13 +60,18 @@ export class ConversationService {
         this.contextMap[key] = value;
     }
 
-    public async processQuestion(question: string): Promise<string> {
-        const context: ExtendedConversationContextType = this.contextMap.conversationContext;
+    public async processQuestion(question: string): Promise<Obj> {
+        const activity: ContextKey | undefined | null = this.contextMap?.contextKey;
+        const context: ExtendedConversationContextType = this.contextMap?.conversationContext;
     
         // const response = await manager.process({ locale: 'en', utterance: 'what is the real name of spiderman?', activity });
         const response: any = await this.manager.process("pt", question, context, this.settings);
     
-        return response.answer || "Desculpe, não tenho uma resposta para isso.";
+        if (response?.answer) {
+            return { answer: response.answer, activity: activity}
+        } else {
+            return { answer: "Desculpe, não tenho uma resposta para isso.", activity: activity }
+        }
     }
 
     public cleanup() {
