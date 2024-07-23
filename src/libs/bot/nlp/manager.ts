@@ -103,11 +103,15 @@ export class NlpService {
 
     public async createConversation(id: string): Promise<void> {
         const currentConversation = new ConversationService(this.manager, id, this.getOptionsSettings());
+        const currentContextMap: ContextMap = currentConversation?.getCurrentConversation();
+        
+        if (!currentContextMap) {
+            return;
+        }
 
-        const currentContextMap: ContextMap = currentConversation.setCurrentConversation();
-        const currentActivity: ContextKey | undefined = currentContextMap.contextKey;
-        const currentContext: ExtendedConversationContextType = currentContextMap.conversationContext;
-
+        const currentActivity: ContextKey | undefined | null = currentContextMap?.contextKey;
+        const currentContext: ExtendedConversationContextType = currentContextMap?.conversationContext;
+        // CONTINUAR DAQUI
         await this.contextManager.setContext({ currentActivity }, currentContext);
 
         const actual = await this.contextManager.getContext(currentActivity);

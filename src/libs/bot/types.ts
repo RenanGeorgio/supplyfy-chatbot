@@ -29,9 +29,9 @@ export type ActivityProps = {
 }
 
 export type ContextMap = {
-  conversationContext: ExtendedConversationContextType | undefined
-  contextValue: CurrentContext | undefined
-  contextKey: ContextKey | undefined
+  conversationContext?: ExtendedConversationContextType | null
+  contextValue?: CurrentContext | null
+  contextKey?: ContextKey | null
 }
 
 export interface IActivity {

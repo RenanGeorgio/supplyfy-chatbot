@@ -1,13 +1,8 @@
 import { ConversationContext } from "node-nlp";
 import { ContextKey, CurrentContext } from "../data";
-import { CurrentConversationContext } from "../packages";
+//import { CurrentConversationContext } from "../packages";
 import { ContextMap, ManagerType, ExtendedConversationContextType } from "../types";
 import { Obj } from "../../../types";
-
-/*
-const activity = { address: { conversation: { id } } };
-const context = await contextManager.getContext({ activity });
-*/
 
 export class ConversationService {
     private manager: ManagerType;
@@ -25,6 +20,7 @@ export class ConversationService {
 
         this.manager = managerRef; 
         this.settings = options || undefined;
+        this.contextMap = {};
 
         const contextKey = new ContextKey();
         contextKey.activity = {
@@ -48,7 +44,7 @@ export class ConversationService {
         }
     }
 
-    public setCurrentConversation(): ContextMap {
+    public getCurrentConversation(): ContextMap {
         return this.contextMap;
     }
 
