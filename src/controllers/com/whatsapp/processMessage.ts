@@ -1,3 +1,4 @@
+import { removeEmojis } from "@nlpjs/emoji";
 import { sendTextMessage } from "./whatsappController";
 import { webhookTrigger } from "../../../webhooks/custom/webhookTrigger";
 import { findWebhook } from "../../../repositories/webhook";
@@ -62,8 +63,9 @@ export async function processWaMessage(message: MsgTypes, wb: any, companyId: st
 
       const directLineService = DirectlineService.getInstance();
       
+      const msgToSend = removeEmojis(textMessage);
       // TO-DO: UUID = ID; Precisa ser concizo é unico dentre os usuarios ativos
-      directLineService.sendMessageToBot(textMessage, "uuid", wb.recipientName);
+      directLineService.sendMessageToBot(msgToSend, "uuid", wb.recipientName, "value");
       
       /*let replyButtonMessage = interactiveReplyButton;
       replyButtonMessage.to = process.env.RECIPIENT_PHONE_NUMBER;

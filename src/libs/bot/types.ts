@@ -3,6 +3,7 @@ import { NlpManager, ConversationContext } from "node-nlp";
 import { NluManager } from "@nlpjs/nlu";
 import { ContextManager } from "@nlpjs/nlp";
 import { ContextKey, CurrentContext } from "./data";
+import { Obj } from "../../types";
 
 export type ContainerType = typeof containerBootstrap;
 
@@ -26,7 +27,7 @@ export type ActivityProps = {
 }
 
 export type ContextMap = {
-  conversationContext?: ConversationContextType | undefined
+  conversationContext?: Obj
   contextValue?: CurrentContext | undefined
   contextKey?: ContextKey | undefined
 }

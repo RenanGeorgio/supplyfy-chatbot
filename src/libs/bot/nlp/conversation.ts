@@ -1,6 +1,5 @@
-import { ConversationContext } from "node-nlp";
-import { removeEmojis } from "@nlpjs/emoji";
 import { ContextKey, CurrentContext } from "../data";
+import { CurrentConversationContext } from "../packages";
 import { ContextMap, ManagerType } from "../types";
 
 /*
@@ -35,7 +34,7 @@ export class ConversationService {
 
     private init(key: ContextKey): void {
         this.contextMap.contextKey = key;
-        this.contextMap.conversationContext = new ConversationContext();
+        this.contextMap.conversationContext = new CurrentConversationContext();
     }
 
     public setCurrentConversation(): ContextMap {
@@ -54,6 +53,16 @@ export class ConversationService {
         this.contextMap[key] = value;
     }
 
+    public async processQuestion(question: string): Promise<string> {
+        const activity = this.contextMap.contextKey;
+        const context = this.contextMap.conversationContext;
+    
+        // const response = await manager.process({ locale: 'en', utterance: 'what is the real name of spiderman?', activity });
+        const response: any = await this.manager.process("pt", question, context);
+    
+        return response.answer || "Desculpe, não tenho uma resposta para isso.";
+    }
+
     public cleanup() {
         for (let key in this.contextMap) {
             if (this.contextMap[key] && typeof this.contextMap[key].close === 'function') {
@@ -62,20 +71,5 @@ export class ConversationService {
 
             delete this.contextMap[key];
         }
-    }
-
-    public async processQuestion(pergunta: string): Promise<string> {
-        const context = await this.contextManager.getContext(session);
-        const activity = {
-            conversation: {
-              id: 'a1' // settings.conversationId,
-            }
-        }
-    
-        // const response = await manager.process({ locale: 'en', utterance: 'what is the real name of spiderman?', activity });
-        const actual = removeEmojis(pergunta);
-        const response: any = await this.manager.process("pt", actual, context);
-    
-        return response.answer || "Desculpe, não tenho uma resposta para isso.";
     }
 }

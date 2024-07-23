@@ -84,6 +84,18 @@ export class NlpService {
         }
     }
 
+    public async executeConversation(id: string, question: string): Promise<string> {
+        const conversation: ConversationService | null = this.getConversationById(id);
+
+        if (conversation == null) {
+            return "Desculpe, não tenho uma resposta para isso.";
+        }
+        
+        const response = await conversation?.processQuestion(question);
+
+        return response;
+    }
+
     public async createConversation(id: string): Promise<void> {
         const currentConversation = new ConversationService(this.manager, id);
 

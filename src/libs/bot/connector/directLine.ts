@@ -34,7 +34,7 @@ export class DirectlineService {
         });
     }
 
-    public sendMessageToBot(text: string, id: string, name?: string) {
+    public sendMessageToBot(text: string, id: string, currentValue: any, name?: string) {
         // TO-DO: ID Precisa ser concizo é unico dentre os usuarios ativos
         directLine
             .postActivity({
@@ -42,8 +42,9 @@ export class DirectlineService {
                 //conversation?: { id: string },
                 type: ActivityTypes.Message,
                 //eTag?: string,
-                //id?: string,
-                text: text
+                id: uuid(), // TO-DO: lookup ou Hash -> datetime-zone
+                text: text,
+                value: currentValue
             })
             .subscribe(
                 (value: any) => { 
