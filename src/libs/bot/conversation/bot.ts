@@ -69,7 +69,9 @@ export class ConversationBot extends ActivityHandler {
     this.conversationState = conversationState as ConversationState;
     this.userState = userState as UserState;
     this.currentConversationReferences = conversationReferences as ConversationReference[];
-    this.dialog = dialog;
+    if (dialog){
+      this.dialog = dialog;
+    }
 
     this.currentManager = currentManager;
 

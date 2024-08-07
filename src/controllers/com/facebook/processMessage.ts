@@ -1,10 +1,10 @@
 import { repplyFaceAction, sendFaceAction } from "../service";
 import { FaceMsgData } from "../../../types";
-import { processQuestion } from "../../../libs/bot/nlp/manager";
+// import { processQuestion } from "../../../libs/bot/nlp/manager";
 
 export function sendFacebookText(recipientId: string, messageText: string) {
-  const data = processQuestion(messageText);
-  
+  // const data = processQuestion(messageText);
+  const data = "test"
   const messageData: FaceMsgData = {
     recipient: {
       id: recipientId

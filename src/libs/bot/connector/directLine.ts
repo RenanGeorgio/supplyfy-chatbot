@@ -1,5 +1,6 @@
 import { DirectLine, ConnectionStatus } from "botframework-directlinejs";
 import { ActivityTypes } from "botbuilder";
+import { randomUUID } from "crypto";
 
 const directLine = new DirectLine({
     secret: process.env.DIRECT_LINE_SECRET,
@@ -42,7 +43,7 @@ export class DirectlineService {
                 //conversation?: { id: string },
                 type: ActivityTypes.Message,
                 //eTag?: string,
-                id: uuid(), // TO-DO: lookup ou Hash -> datetime-zone
+                id: randomUUID(), // TO-DO: lookup ou Hash -> datetime-zone
                 text: text,
                 value: currentValue
             })

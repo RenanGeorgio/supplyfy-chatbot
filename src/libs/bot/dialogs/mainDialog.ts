@@ -19,7 +19,7 @@ export class MainDialog extends ComponentDialog {
   private userState: UserState;
   private userProfileAccessor: StatePropertyAccessor<BotState>;
 
-  constructor(userState: BotState, manager: NluManagerType, conversationDialog: ConversationDialog) {
+  constructor(userState: UserState, manager: NluManagerType, conversationDialog: ConversationDialog) {
       super(MAIN_DIALOG);
 
       if (!manager) throw new Error('[MainDialog]: Missing parameter \'manager\' is required');
@@ -84,11 +84,11 @@ export class MainDialog extends ComponentDialog {
    */
   private async actStep(stepContext: WaterfallStepContext): Promise<DialogTurnResult> {
     const chatDetails = new ChatDetails();
-
+    
     if (!this.recognizer.isConfigured) {
       return await stepContext.beginDialog(CONVERSATION_DIALOG, chatDetails);
     }
-
+    
     const result = await this.recognizer.executeLuisQuery(stepContext.context);
     const intent = result.intent;
     

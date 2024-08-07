@@ -1,4 +1,4 @@
-import { processQuestion } from "../../../../libs/bot/nlp/manager";
+// import { processQuestion } from "../../../../libs/bot/nlp/manager";
 import { Obj } from "../../../../types";
 import { callSendApi, getUserComment } from "../../service";
 
@@ -7,8 +7,8 @@ export const handlePrivateReply = (type: string, object_id: string, commentId: s
     const response = await getUserComment(object_id, commentId);
 
     if (response) {
-      const answer = await processQuestion(response);
-  
+      // const answer = await processQuestion(response);
+      const answer = "test"
       const requestBody = {
         recipient: {
           [type]: object_id,

@@ -20,7 +20,7 @@ export class BotService {
     this.currentManagerService = manager;
     let dialog: any = undefined;
 
-    const nluManager = this.currentManagerService.getNluManager()
+    const nluManager = this.currentManagerService.getNluManager
     const botRecognizer = new BotRecognizer(nluManager);
     
     //const conversationDialog = new ConversationDialog(CONVERSATION_DIALOG);

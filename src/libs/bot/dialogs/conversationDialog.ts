@@ -28,8 +28,6 @@ export class ConversationDialog extends CancelAndHelpDialog {
         } else {
             return await stepContext.next(chatDetails.travelDate);
         }
-
-        return await stepContext.beginDialog(CHAT_DIALOG);
     }
 
     /**

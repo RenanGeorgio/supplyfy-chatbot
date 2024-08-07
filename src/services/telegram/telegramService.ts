@@ -1,5 +1,5 @@
 import TelegramBot from "node-telegram-bot-api";
-import { processQuestion } from "../../libs/bot/nlp/manager";
+// import { processQuestion } from "../../libs/bot/nlp/manager";
 import { askEmail } from "./helpers/askEmail";
 import { botExist } from "../../repositories/bot";
 import {
@@ -188,28 +188,29 @@ const telegramService = async (
       client.flow === ClientFlow.CHABOT &&
       !ignoredMessages(msg.text as string)
     ) {
-      const responseMessage = await processQuestion(msg.text as string);
-      if (responseMessage === "Desculpe, não tenho uma resposta para isso.") {
-        await sendMessage(telegram, chatId, responseMessage, undefined, {
-          ...kafkaMessage,
-          from: botId.toString(),
-        });
-        return await sendMessage(
-          telegram,
-          chatId,
-          "Deseja falar com um atendente?",
-          {
-            reply_markup: {
-              keyboard: [[{ text: "/suporte" }]],
-              resize_keyboard: true,
-            },
-          },
-          {
-            ...kafkaMessage,
-            from: botId.toString(),
-          }
-        );
-      }
+      // const responseMessage = await processQuestion(msg.text as string);
+      const responseMessage = "test"
+      // if (responseMessage === "Desculpe, não tenho uma resposta para isso.") {
+      //   await sendMessage(telegram, chatId, responseMessage, undefined, {
+      //     ...kafkaMessage,
+      //     from: botId.toString(),
+      //   });
+      //   return await sendMessage(
+      //     telegram,
+      //     chatId,
+      //     "Deseja falar com um atendente?",
+      //     {
+      //       reply_markup: {
+      //         keyboard: [[{ text: "/suporte" }]],
+      //         resize_keyboard: true,
+      //       },
+      //     },
+      //     {
+      //       ...kafkaMessage,
+      //       from: botId.toString(),
+      //     }
+      //   );
+      // }
       await sendMessage(telegram, chatId, responseMessage, undefined, {
         ...kafkaMessage,
         from: botId.toString(),

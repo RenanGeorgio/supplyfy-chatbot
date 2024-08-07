@@ -1,4 +1,4 @@
-import { processQuestion } from "../../libs/bot/nlp/manager";
+// import { processQuestion } from "../../libs/bot/nlp/manager";
 import callSendApi from "./api/callSendApi";
 
 export default async function messengerService(data) {
@@ -8,7 +8,8 @@ export default async function messengerService(data) {
     const senderPsid = webhookEvent.sender.id;
 
     if (webhookEvent.message) {
-      const responseMessage = await processQuestion(webhookEvent.message.text);
+      // const responseMessage = await processQuestion(webhookEvent.message.text);
+      const responseMessage = "test"
       try {
         const send = await callSendApi({
           message: { senderId: senderPsid, text: responseMessage },

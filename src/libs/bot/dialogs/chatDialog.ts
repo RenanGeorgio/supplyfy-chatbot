@@ -2,6 +2,8 @@ import { ComponentDialog, WaterfallDialog, WaterfallStepContext } from "botbuild
 import { CHAT_DIALOG, WATERFALL_DIALOG } from "./constants";
 
 export class ChatDialog extends ComponentDialog {
+    public doneOption: string;
+
     constructor() {
         super(CHAT_DIALOG);
 

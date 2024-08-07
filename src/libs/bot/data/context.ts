@@ -3,13 +3,17 @@ import { ActivityProps } from "../types";
 
 export class ContextKey {
   public activity: ActivityProps | Obj;
+
+  constructor(activity: ActivityProps | Obj) {
+    this.activity = activity
+  }
 }
 
 export class CurrentContext {
-  public conversationId: string | number;
-  public channel: string;
-  public app: string;
-  public from: Obj | null;
+  public conversationId!: string | number;
+  public channel!: string;
+  public app!: string;
+  public from!: Obj | null;
   public slotFill: string | boolean | undefined;
   public dialogStack: unknown[] | undefined;
   public validation: Obj | undefined;
