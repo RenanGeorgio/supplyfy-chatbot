@@ -1,6 +1,7 @@
 import { DirectLine, ConnectionStatus } from "botframework-directlinejs";
 import { ActivityTypes } from "botbuilder";
 import { randomUUID } from "crypto";
+import queue from "../../Queue";
 
 const directLine = new DirectLine({
     secret: process.env.DIRECT_LINE_SECRET,
@@ -35,8 +36,9 @@ export class DirectlineService {
         });
     }
 
-    public sendMessageToBot(text: string, id: string, currentValue: any, name?: string) {
-        // TO-DO: ID Precisa ser concizo é unico dentre os usuarios ativos
+
+    public sendMessageToBot(text: string, id: string, name?: string) {
+        // TO-DO: ID Precisa ser conciso é unico dentre os usuarios ativos
         directLine
             .postActivity({
                 from: { id, name, role: 'user' },
@@ -44,15 +46,12 @@ export class DirectlineService {
                 type: ActivityTypes.Message,
                 //eTag?: string,
                 id: randomUUID(), // TO-DO: lookup ou Hash -> datetime-zone
-                text: text,
-                value: currentValue
+                text: text
             })
             .subscribe(
-                (value: any) => { 
-                    console.log("Posted message activity")
-                    return console.log(value)
-                },
-                (error: any) => console.log('Error posting activity: ' + error?.message)
+                (value: any) => console.log("Posted message activity."),
+                (error: any) => console.log('Error posting activity: ' + error?.message),
+                () => console.log("Activity completed."),
             );
     }
 
@@ -61,6 +60,7 @@ export class DirectlineService {
             .filter(activity => activity.type === ActivityTypes.Message && activity.from.id === botName)
             .subscribe(
                 (message) => {
+                    console.log("Activity added to BotService queue.")
                     queue.add("BotService", { message });
                 }
             )

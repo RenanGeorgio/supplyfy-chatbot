@@ -4,21 +4,18 @@ import { instagramServiceController } from "./instagram";
 import { socketServiceController } from "./socket";
 import whatsappWebService from "./whatsapp-web";
 import { messengerServiceController } from "./facebook";
+import { whatsappServiceController } from "./whatsappTest";
+import "./queue";
 
 import { webhookPromiseHandler } from "../webhooks/custom/webhookHandler";
 import { listAllBots } from "../repositories/bot";
 import { findWebhook } from "../repositories/webhook";
 
 import { IWebhook } from "../types";
-
-import "./queue";
-import { whatsappServiceController } from "./whatsappTest";
-import { DirectlineService } from "../libs/bot/connector/directLine";
-
-const directLineService = DirectlineService.getInstance();
-directLineService.subscribeBot("ignai-bot");
+import { direclineSubscribe } from "./directLine";
 
 (async () => {
+  const directLine = await direclineSubscribe("ignai-bot");
   const bots = await listAllBots();
   for (const bot of bots) {
     const webhook = await findWebhook({ companyId: bot.companyId } as any);

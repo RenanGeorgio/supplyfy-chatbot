@@ -11,6 +11,7 @@ dotenv.config();
 import "./database";
 import { httpServer, botServer } from "./core/http";
 import "./websocket";
+import "./services";
 
 const BOT_PORT = process.env.BOT_PORT ? process.env.BOT_PORT.replace(/[\\"]/g, '') : 8001;
 const BOT_HOST = process.env.BOT_HOST ? process.env.BOT_HOST.replace(/[\\"]/g, '') : "http://localhost";
@@ -25,5 +26,3 @@ const HOST = process.env.HOST ? process.env.HOST.replace(/[\\"]/g, '') : "http:/
 httpServer.listen(PORT, () => {
     console.log(`Server running on ${HOST}:${PORT}`);
 });
-
-import "./services";

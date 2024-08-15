@@ -8,7 +8,7 @@ export class CurrentConversationContext extends MemoryConversationContext {
    * Constructor of the class.
    * @param {Object} settings Settings for the instance.
    */
-  constructor(settings = {}) {
+  constructor(settings: Object = {}) {
     super(settings);
     this.conversationContexts = new CurrentContext();
   }

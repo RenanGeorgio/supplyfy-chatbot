@@ -5,20 +5,20 @@ import { Ner } from "@nlpjs/ner";
 import { ContextManager } from "@nlpjs/nlp";
 import { NlpService } from "./nlp/manager";
 import { BotService } from "./init";
-import { ConversationBot } from "./conversation/bot";
+import { BotRoom } from "./conversation/room";
 import { ContainerType } from "./types";
 
-let builtin;
-let contextManager;
+let builtin: BuiltinMicrosoft;
+let contextManager: ContextManager;
 
 const loggerInstance = {
-  trace: msg => console.trace(`[TRACE] ${msg}`),
-  debug: msg => console.debug(`[DEBUG] ${msg}`),
-  info: msg => console.info(`[INFO] ${msg}`),
-  log: msg => console.log(`[LOG] ${msg}`),
-  warn: msg => console.warn(`[WARN] ${msg}`),
-  error: msg => console.error(`[ERROR] ${msg}`),
-  fatal: msg => console.error(`[FATAL] ${msg}`),
+  trace: (msg: string) => console.trace(`[TRACE] ${msg}`),
+  debug: (msg: string) => console.debug(`[DEBUG] ${msg}`),
+  info: (msg: string) => console.info(`[INFO] ${msg}`),
+  log: (msg: string) => console.log(`[LOG] ${msg}`),
+  warn: (msg: string) => console.warn(`[WARN] ${msg}`),
+  error: (msg: string) => console.error(`[ERROR] ${msg}`),
+  fatal: (msg: string) => console.error(`[FATAL] ${msg}`),
 }
 
 export class ContainerService {
@@ -37,9 +37,9 @@ export class ContainerService {
 
   private async init(): Promise<void> {
     this.container = await containerBootstrap();
-
+    
     this.container.use(LangPt);
-    this.container.use(Ner); // TODO: Verificar se a chamada deste trecho esta correta
+    this.container.use(Ner);
 
     this.container.registerConfiguration('context-manager', {
       tableName: 'context'
@@ -51,10 +51,10 @@ export class ContainerService {
 
     this.managerService = new NlpService(this.container);
 
-    this.conversationBot = new BotService(this.managerService.getNluManager()).getBot();
+    this.conversationBot = new BotService(this.managerService.getNluManager());
   }
 
-  public getConversationBot(): ConversationBot {
+  public getConversationBot(): BotRoom {
     return this.conversationBot;
   }
 

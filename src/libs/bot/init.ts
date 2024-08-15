@@ -1,34 +1,35 @@
-import { BotRecognizer } from "./reconizer/botRecognizer";
-import { ConversationDialog } from "./dialogs/conversationDialog";
-import { MainDialog } from "./dialogs/mainDialog";
+// import { ConversationDialog } from "./dialogs/conversationDialog";
+// import { MainDialog } from "./dialogs/mainDialog";
 import { conversationReferences, conversationState, userState } from "./adapter";
 import { BotRoom } from "./conversation/room";
-import { CONVERSATION_DIALOG } from "./dialogs/constants";
-import { ConversationBot } from "./conversation/bot";
+// import { CONVERSATION_DIALOG } from "./dialogs/constants";
+// import { ConversationBot } from "./conversation/bot";
+import { BotRecognizer } from "./reconizer/botRecognizer";
+import { ManagerType } from "./types";
 
 export class BotService {
-  private conversationBot: ConversationBot
+  private conversationBot: BotRoom
   private currentManagerService: any
 
   /**
    *
-   * @param {any} manager
+   * @param {ManagerType} manager
    */
-  constructor(manager: any) {
+  constructor(manager: ManagerType) {
     if (!manager) throw new Error('[BotService]: Missing parameter. manager is required');
     
     this.currentManagerService = manager;
-    let dialog: any = undefined;
 
     const nluManager = this.currentManagerService.getNluManager
     const botRecognizer = new BotRecognizer(nluManager);
     
     //const conversationDialog = new ConversationDialog(CONVERSATION_DIALOG);
     //dialog = new MainDialog(userState, botRecognizer, conversationDialog);
-    this.conversationBot = new BotRoom(conversationState, userState, conversationReferences, this.currentManagerService, dialog); 
+    this.conversationBot = new BotRoom(conversationState, userState, conversationReferences, this.currentManagerService); 
   }
 
-  public getBot(): ConversationBot {
+  public getBot(): BotRoom {
     return this.conversationBot;
   }
 }
+
