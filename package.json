@@ -4,6 +4,7 @@
   "description": "",
   "main": "src/index.js",
   "scripts": {
+    "dev:debug": "ts-node-dev --transpile-only --respawn --inspect=4321 --project tsconfig.json ./src/index.ts",
     "dev": "ts-node-dev --transpile-only --ignore-watch node_modules ./src/index.ts",
     "build": "tsc -p .",
     "prod": "node -r ts-node/register/transpile-only build/index.js"

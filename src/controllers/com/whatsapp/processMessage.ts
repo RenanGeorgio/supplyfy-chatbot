@@ -65,7 +65,7 @@ export async function processWaMessage(message: MsgTypes, wb: any, companyId: st
       
       const msgToSend = removeEmojis(textMessage);
       // TO-DO: UUID = ID; Precisa ser concizo é unico dentre os usuarios ativos
-      directLineService.sendMessageToBot(msgToSend, "uuid", wb.recipientName, "value");
+      directLineService.sendMessageToBot(msgToSend, "uuid", wb.recipientName);
       
       /*let replyButtonMessage = interactiveReplyButton;
       replyButtonMessage.to = process.env.RECIPIENT_PHONE_NUMBER;

@@ -7,7 +7,7 @@ import RedisStore from "connect-redis";
 import { redisClient } from "./core/redis";
 import { CustomRequest } from "./types/types";
 import { adapter } from "./libs/bot/adapter";
-import { ContainerService } from "./libs/bot/container";
+import { botService } from "./libs/bot";
 
 const store = new RedisStore({ client: redisClient, prefix: "bot:" });
 
@@ -41,7 +41,7 @@ bot.use(cookieParser());
 
 bot.use(customSession);
 
-const conversationBot = ContainerService.getInstance().getConversationBot();
+const conversationBot = botService;
 
 bot.post('/api/messages', async (req: Request, res: Response) => {
   return await adapter.process(req, res, (context: any) => conversationBot.run(context));

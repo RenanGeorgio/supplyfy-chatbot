@@ -12,10 +12,12 @@ import { listAllBots } from "../repositories/bot";
 import { findWebhook } from "../repositories/webhook";
 
 import { IWebhook } from "../types";
-import { direclineSubscribe } from "./directLine";
+import { DirectlineService } from "../libs/bot/connector/directLine";
+
+const directLine = DirectlineService.getInstance();
+directLine.subscribeBot("ignai-bot");
 
 (async () => {
-  const directLine = await direclineSubscribe("ignai-bot");
   const bots = await listAllBots();
   for (const bot of bots) {
     const webhook = await findWebhook({ companyId: bot.companyId } as any);

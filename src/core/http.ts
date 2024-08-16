@@ -3,7 +3,7 @@ import { INodeSocket } from "botframework-streaming";
 import { Server } from "socket.io";
 import { CloudAdapter } from "botbuilder";
 import { botFrameworkAuthentication } from "../libs/bot/auth";
-import { onTurnErrorHandler } from "../libs/bot/adapter";
+import { adapter, onTurnErrorHandler } from "../libs/bot/adapter";
 import { bot, conversationBot } from "../botServer";
 import app from "../server";
 

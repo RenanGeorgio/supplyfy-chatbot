@@ -4,9 +4,7 @@ import { BuiltinMicrosoft } from "@nlpjs/builtin-microsoft";
 import { Ner } from "@nlpjs/ner";
 import { ContextManager } from "@nlpjs/nlp";
 import { NlpService } from "./nlp/manager";
-import { BotService } from "./init";
-import { BotRoom } from "./conversation/room";
-import { ContainerType } from "./types";
+import { ContainerType, ManagerType } from "./types";
 
 let builtin: BuiltinMicrosoft;
 let contextManager: ContextManager;
@@ -23,39 +21,34 @@ const loggerInstance = {
 
 export class ContainerService {
   private container: ContainerType
-  private managerService: any
-  private conversationBot: any
-  
+  private managerService: ManagerType
   static _instance: ContainerService;
 
   constructor() {
     builtin = new BuiltinMicrosoft();
     contextManager = new ContextManager();
-
     this.init();
   }
 
   private async init(): Promise<void> {
     this.container = await containerBootstrap();
-    
     this.container.use(LangPt);
     this.container.use(Ner);
-
     this.container.registerConfiguration('context-manager', {
       tableName: 'context'
     });
-
     this.container.register('logger', loggerInstance);
     this.container.register('extract-builtin-??', builtin, true);
     this.container.register('context-manager', contextManager, true);
-
     this.managerService = new NlpService(this.container);
-
-    this.conversationBot = new BotService(this.managerService.getNluManager());
   }
 
-  public getConversationBot(): BotRoom {
-    return this.conversationBot;
+  public getManager(): ManagerType {
+    return this.managerService
+  }
+
+  public getContainer(): ContainerType {
+    return this.container
   }
 
   static getInstance(): ContainerService {
