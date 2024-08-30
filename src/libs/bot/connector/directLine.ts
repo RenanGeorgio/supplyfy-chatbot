@@ -1,6 +1,6 @@
-import { DirectLine, ConnectionStatus } from "botframework-directlinejs";
+import { DirectLine, ConnectionStatus, Activity } from "botframework-directlinejs";
 import { ActivityTypes } from "botbuilder";
-import { randomUUID } from "crypto";
+import { randomBytes, createCipheriv, createDecipheriv, randomUUID } from "crypto";
 import queue from "../../Queue";
 
 const directLine = new DirectLine({
@@ -36,31 +36,30 @@ export class DirectlineService {
         });
     }
 
-
-    public sendMessageToBot(text: string, id: string, name: string = "Anonymous", value?: object) {
-        // TO-DO: ID Precisa ser conciso é unico dentre os usuarios ativos
+    public sendMessageToBot(text: string, id: string, name: string = "Anonymous", conversation?: string, value?: object) {
+        const activity: Activity = {
+            from: { id, name, role: "user" },
+            type: ActivityTypes.Message,
+            // eTag?: string,
+            text: text,
+            ...(conversation ? { conversation: { id: conversation } } : {} ),
+            ...(value ? { value } : { }),
+        }
         directLine
-            .postActivity({
-                from: { id, name },
-                // conversation?: { id: string },
-                type: ActivityTypes.Message,
-                // eTag?: string,
-                // id: "ignai-bot", // TO-DO: lookup ou Hash -> datetime-zone
-                text: text,
-                // ...(value ? { value } : {}),
-            }).subscribe(
+            .postActivity(activity).subscribe(
                 (value: any) => console.log("Posted message activity. " + value),
                 (error: any) => console.log('Error posting activity: ' + error?.message),
                 () => console.log("Activity completed."),
             );
     }
 
-    public subscribeBot(botName: string = "ignai-bot"): void {
+    public subscribeBot(botName: string = "ignaibot"): void {
         directLine.activity$
             .filter(activity => activity.type === ActivityTypes.Message && activity.from.id === botName)
             .subscribe(
                 (message) => {
                     console.log("Activity added to BotService queue.")
+                    console.log(message)
                     queue.add("BotService", { message });
                 }
             )

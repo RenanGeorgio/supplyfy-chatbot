@@ -1,36 +1,38 @@
-// // import { ConversationDialog } from "./dialogs/conversationDialog";
-// // import { MainDialog } from "./dialogs/mainDialog";
-// import { conversationReferences, conversationState, userState } from "./adapter";
-// import { BotService } from "./conversation/service";
-// // import { CONVERSATION_DIALOG } from "./dialogs/constants";
-// // import { ConversationBot } from "./conversation/bot";
-// // import { BotRecognizer } from "./reconizer/botRecognizer";
-// import { ContainerType, ManagerType } from "./types";
+// import { BotRecognizer } from "./reconizer/botRecognizer";
+// import { ConversationDialog } from "./dialogs/conversationDialog";
+// import { MainDialog } from "./dialogs/mainDialog";
+import { conversationReferences, conversationState, userState } from "./adapter";
+import { ConversationBot } from "./conversation/bot";
+import { ConversationDialog } from "./dialogs/conversationDialog";
+import { MainDialog } from "./dialogs/mainDialog";
+import { NlpService } from "./nlp/manager";
+import { BotRecognizer } from "./reconizer/botRecognizer";
+import { CONVERSATION_DIALOG } from "./dialogs/constants";
+// import { Dialog } from "botbuilder-dialogs";
 
-// export class BotService {
-//   private conversationBot: BotService
-//   private manager: ManagerType
-//   private container: ContainerType
+export class BotService {
+    private conversationBot: ConversationBot
+    private currentManagerService: NlpService
 
-//   /**
-//    *
-//    * @param {ManagerType} manager
-//    * @param {ContainerType} container
-//    */
-//   constructor(manager: ManagerType, container: ContainerType) {
-//     if (!manager) throw new Error('[BotService]: Missing parameter. manager is required');
-//     if (!container) throw new Error('[BotService]: Missing parameter. container is required');
-//     this.manager = manager;
-//     this.container = container;
-//     // const nluManager = this.manager.getNluManager
-//     // const botRecognizer = new BotRecognizer(nluManager);
-//     //const conversationDialog = new ConversationDialog(CONVERSATION_DIALOG);
-//     //dialog = new MainDialog(userState, botRecognizer, conversationDialog);
-//     this.conversationBot = new BotRoom(conversationState, userState, conversationReferences, this.container); 
-//   }
+    /**
+     *
+     * @param {NlpService} manager
+     */
+    constructor(manager: NlpService) {
+        if (!manager) throw new Error('[BotService]: Missing parameter. manager is required');
 
-//   public getBot(): BotRoom {
-//     return this.conversationBot;
-//   }
-// }
+        this.currentManagerService = manager;
+        let dialog: MainDialog | undefined = undefined;
 
+        const nluManager = this.currentManagerService.getNluManager()
+        const botRecognizer = new BotRecognizer(nluManager);
+
+        const conversationDialog = new ConversationDialog(CONVERSATION_DIALOG);
+        // dialog = new MainDialog(userState, botRecognizer, conversationDialog);
+        this.conversationBot = new ConversationBot(conversationState, userState, conversationReferences, this.currentManagerService, dialog);
+    }
+
+    public getBot(): ConversationBot {
+        return this.conversationBot;
+    }
+}

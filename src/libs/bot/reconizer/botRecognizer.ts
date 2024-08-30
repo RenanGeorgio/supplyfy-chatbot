@@ -1,10 +1,10 @@
 import { RecognizerResult, TurnContext } from "botbuilder";
-import { NluManagerType } from "../types";
+import { ManagerType } from "../types";
 
 export class BotRecognizer {
-  private recognizer: NluManagerType
+  private recognizer: ManagerType
 
-  constructor(manager: NluManagerType) {  
+  constructor(manager: ManagerType) {  
     this.recognizer = manager;
   }
 
@@ -16,6 +16,9 @@ export class BotRecognizer {
    * @param {TurnContext} context
    */
   public async executeLuisQuery(context: TurnContext): Promise<RecognizerResult> {
-    return this.recognizer.getClassifications(context.activity.text.trim().toLocaleLowerCase());
+    // trocar para nlubrain dentro do nlpmanager
+    const classifications = await this.recognizer.process('pt', context.activity.text);
+    console.log(classifications)
+    return classifications
   }
 }

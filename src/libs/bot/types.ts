@@ -4,6 +4,8 @@ import { NluManager } from "@nlpjs/nlu";
 import { ContextManager } from "@nlpjs/nlp";
 import { ContextKey, CurrentContext } from "./data";
 import { Obj } from "../../types";
+import { BotState, ConversationReference, UserState } from "botbuilder";
+import { Dialog } from "botbuilder-dialogs";
 
 export type ContainerType = typeof containerBootstrap;
 
@@ -64,4 +66,12 @@ export interface User {
   name?: string,
   iconUrl?: string,
   role?: UserRole
+}
+
+export interface BotProperties {
+  conversationState: BotState, 
+  userState: UserState, 
+  conversationReferences: ConversationReference[], 
+  manager: ManagerType, 
+  dialog?: Dialog
 }
