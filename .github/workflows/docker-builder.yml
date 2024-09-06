@@ -67,3 +67,15 @@ jobs:
           app-name: 'supplyfy-chatbot'
           images: ${{ secrets.REGISTRY_LOGIN_SERVER }}/supplyfy-chatbot:latest
           restart: true
+
+      - name: 'Exporting secrets'
+        uses: oNaiPs/secrets-to-env-action@v1
+        with:
+          secrets: ${{ toJSON(secrets) }}
+        run: |
+          echo "AZURE_CREDENTIALS: $AZURE_CREDENTIALS"
+          echo "REGISTRY_LOGIN_SERVER: $REGISTRY_LOGIN_SERVER"
+          echo "REGISTRY_USERNAME: $REGISTRY_USERNAME"
+          echo "REGISTRY_PASSWORD: $REGISTRY_PASSWORD"
+          echo "RESOURCE_GROUP: $RESOURCE_GROUP"
+        
