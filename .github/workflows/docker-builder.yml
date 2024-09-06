@@ -72,10 +72,16 @@ jobs:
         uses: oNaiPs/secrets-to-env-action@v1
         with:
           secrets: ${{ toJSON(secrets) }}
-        run: |
-          echo "AZURE_CREDENTIALS: $AZURE_CREDENTIALS"
-          echo "REGISTRY_LOGIN_SERVER: $REGISTRY_LOGIN_SERVER"
-          echo "REGISTRY_USERNAME: $REGISTRY_USERNAME"
-          echo "REGISTRY_PASSWORD: $REGISTRY_PASSWORD"
-          echo "RESOURCE_GROUP: $RESOURCE_GROUP"
+
+      - name: Overwrite file
+        uses: "DamianReeves/write-file-action@master"
+        with:
+          path: ./secrets.txt
+          write-mode: overwrite
+          contents: |
+            AZURE_CREDENTIALS: $AZURE_CREDENTIALS
+            REGISTRY_LOGIN_SERVER: $REGISTRY_LOGIN_SERVER
+            REGISTRY_USERNAME: $REGISTRY_USERNAME
+            REGISTRY_PASSWORD: $REGISTRY_PASSWORD
+            RESOURCE_GROUP: $RESOURCE_GROUP
         
