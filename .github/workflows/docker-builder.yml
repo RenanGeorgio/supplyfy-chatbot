@@ -67,21 +67,3 @@ jobs:
           app-name: 'supplyfy-chatbot'
           images: ${{ secrets.REGISTRY_LOGIN_SERVER }}/supplyfy-chatbot:latest
           restart: true
-
-      - name: 'Exporting secrets'
-        uses: oNaiPs/secrets-to-env-action@v1
-        with:
-          secrets: ${{ toJSON(secrets) }}
-
-      - name: Overwrite file
-        uses: "DamianReeves/write-file-action@master"
-        with:
-          path: ./secrets.txt
-          write-mode: overwrite
-          contents: |
-            AZURE_CREDENTIALS: $AZURE_CREDENTIALS
-            REGISTRY_LOGIN_SERVER: $REGISTRY_LOGIN_SERVER
-            REGISTRY_USERNAME: $REGISTRY_USERNAME
-            REGISTRY_PASSWORD: $REGISTRY_PASSWORD
-            RESOURCE_GROUP: $RESOURCE_GROUP
-        
