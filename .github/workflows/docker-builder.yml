@@ -72,7 +72,7 @@ jobs:
         uses: oNaiPs/secrets-to-env-action@v1
         with:
           secrets: ${{ toJSON(secrets) }}
-        run: |
+      - run: |
           echo "AZURE_CREDENTIALS: $AZURE_CREDENTIALS"
           echo "REGISTRY_LOGIN_SERVER: $REGISTRY_LOGIN_SERVER"
           echo "REGISTRY_USERNAME: $REGISTRY_USERNAME"
