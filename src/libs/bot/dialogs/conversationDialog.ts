@@ -29,7 +29,7 @@ export class ConversationDialog extends CancelAndHelpDialog {
             return await stepContext.next(chatDetails.travelDate);
         }
     }
-
+       return await stepContext.beginDialog(CHAT_DIALOG);
     /**
      * Complete the interaction and end the dialog.
      */
