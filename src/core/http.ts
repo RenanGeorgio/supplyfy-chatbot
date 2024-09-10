@@ -4,7 +4,7 @@ import { Server } from "socket.io";
 import { CloudAdapter } from "botbuilder";
 import { botFrameworkAuthentication } from "../libs/bot/auth";
 import { adapter, onTurnErrorHandler } from "../libs/bot/adapter";
-import { bot } from "../botServer";
+import { bot, conversationBot } from "../botServer";
 import app from "../server";
 import { ContainerService } from "../libs/bot/container";
 
