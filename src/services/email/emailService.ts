@@ -135,10 +135,10 @@ const emailService = async (
         ...kafkaMessage,
       });
 
-      // const responseMessage = await processQuestion(
-      //   sanitizedEmailText as string
-      // );
-      const responseMessage = "test"
+      const responseMessage = await processQuestion(
+        sanitizedEmailText as string
+      );
+     
       if (!responseMessage) return;
 
       Queue.add("EmailService", {
