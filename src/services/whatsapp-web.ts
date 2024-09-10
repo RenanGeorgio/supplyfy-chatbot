@@ -74,7 +74,6 @@ const whatsappWebService = (id: string) => {
       if (msg.body === "!ping reply") {
         // Envia nova mensagem como resposta a mensagem atual
         const response = await processQuestion(msg.body);
-
         msg.reply(response);
       } else if (msg.body === "!ping") {
         // Envia nova mensagem no msm chat
@@ -196,7 +195,6 @@ const whatsappWebService = (id: string) => {
       } else {
         if (msg.body) {
           const response = await processQuestion(msg.body);
-
           msg.reply(response);
         } else {
           /**

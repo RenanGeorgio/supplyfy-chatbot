@@ -3,7 +3,7 @@ import { INodeSocket } from "botframework-streaming";
 import { Server } from "socket.io";
 import { CloudAdapter } from "botbuilder";
 import { botFrameworkAuthentication } from "../libs/bot/auth";
-import { onTurnErrorHandler } from "../libs/bot/adapter";
+import { adapter, onTurnErrorHandler } from "../libs/bot/adapter";
 import { bot, conversationBot } from "../botServer";
 import app from "../server";
 
@@ -22,7 +22,7 @@ botServer.on('upgrade', async (req, socket, head) => {
 
   // Set onTurnError for the CloudAdapter created for each connection.
   streamingAdapter.onTurnError = onTurnErrorHandler;
-
+  
   await streamingAdapter.process(req, socket as unknown as INodeSocket, head, (context) => conversationBot.run(context));
 });
 

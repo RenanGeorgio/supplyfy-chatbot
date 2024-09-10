@@ -5,37 +5,35 @@ import { Ner } from "@nlpjs/ner";
 import { ContextManager } from "@nlpjs/nlp";
 import { NlpService } from "./nlp/manager";
 import { BotService } from "./init";
-import { ConversationBot } from "./conversation/bot";
 import { ContainerType } from "./types";
+import { ConversationBot } from "./conversation/bot";
 
-let builtin;
-let contextManager;
+let builtin: BuiltinMicrosoft;
+let contextManager: ContextManager;
 
 const loggerInstance = {
-  trace: msg => console.trace(`[TRACE] ${msg}`),
-  debug: msg => console.debug(`[DEBUG] ${msg}`),
-  info: msg => console.info(`[INFO] ${msg}`),
-  log: msg => console.log(`[LOG] ${msg}`),
-  warn: msg => console.warn(`[WARN] ${msg}`),
-  error: msg => console.error(`[ERROR] ${msg}`),
-  fatal: msg => console.error(`[FATAL] ${msg}`),
+  trace: (msg: string) => console.trace(`[TRACE] ${msg}`),
+  debug: (msg: string) => console.debug(`[DEBUG] ${msg}`),
+  info: (msg: string) => console.info(`[INFO] ${msg}`),
+  log: (msg: string) => console.log(`[LOG] ${msg}`),
+  warn: (msg: string) => console.warn(`[WARN] ${msg}`),
+  error: (msg: string) => console.error(`[ERROR] ${msg}`),
+  fatal: (msg: string) => console.error(`[FATAL] ${msg}`),
 }
 
 export class ContainerService {
-  private container: ContainerType
-  private managerService: any
-  private conversationBot: any
-  
-  static _instance: ContainerService;
+  private container: ContainerType;
+  private managerService: NlpService | undefined;
+  private conversationBot: ConversationBot | undefined;
 
-  constructor() {
+  private static _instance: ContainerService;
+
+  private constructor() {
     builtin = new BuiltinMicrosoft();
     contextManager = new ContextManager();
-
-    this.init();
   }
 
-  private async init(): Promise<void> {
+  private async build(): Promise<void> {
     this.container = await containerBootstrap();
 
     this.container.use(LangPt);
@@ -49,21 +47,22 @@ export class ContainerService {
     this.container.register('extract-builtin-??', builtin, true);
     this.container.register('context-manager', contextManager, true);
 
-    this.managerService = new NlpService(this.container);
-
-    this.conversationBot = new BotService(this.managerService.getNluManager()).getBot();
+    this.managerService = new NlpService(this.container, 'model_1.nlp');
+    this.conversationBot = new BotService(this.managerService).getBot()  
   }
 
-  public getConversationBot(): ConversationBot {
+  public getConversationBot(): ConversationBot{
+    if (!this.conversationBot) throw new Error('[ContainerService]: Bot didn\'t initialize.');
     return this.conversationBot;
   }
 
-  static getInstance(): ContainerService {
+  public static async getInstance(): Promise<ContainerService> {
     if (this._instance) {
       return this._instance;
     }
-
-    this._instance = new ContainerService();
+ 
+    this._instance = new ContainerService()
+    await this._instance.build();
     return this._instance;
   }
 }

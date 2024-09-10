@@ -61,7 +61,6 @@ const Receive = class<ReceiveProps> {
         }
       } else {
         const answer = await processQuestion(msgData);
-
         response = { message: answer };
       }
 

@@ -1,12 +1,14 @@
-import { CloudAdapter, ConversationState, MemoryStorage, UserState, InputHints } from "botbuilder";
+import {
+  CloudAdapter, ConversationState, MemoryStorage, UserState, InputHints
+} from "botbuilder";
 import { ConversationReference, ActivityTypes, TurnContext } from "botbuilder-core";
-import * as HandleActivityType from "@botbuildercommunity/middleware-activity-type";
+// import * as HandleActivityType from "@botbuildercommunity/middleware-activity-type"; 
 import { botFrameworkAuthentication } from "./auth";
 
 const adapter = new CloudAdapter(botFrameworkAuthentication);
 
-let conversationReferences: ConversationReference[] = [];	
-let conversationState: ConversationState;	
+let conversationReferences: ConversationReference[] = [];
+let conversationState: ConversationState;
 let userState: UserState;
 
 const memoryStorage = new MemoryStorage();
@@ -15,10 +17,10 @@ userState = new UserState(memoryStorage);
 
 const onTurnErrorHandler = async (context: TurnContext, error: any) => {
   await context.sendTraceActivity(
-    'OnTurnError Trace',	
-    `${ error }`,	
-    'https://www.botframework.com/schemas/error',	
-    'TurnError'	
+    'OnTurnError Trace',
+    `${error}`,
+    'https://www.botframework.com/schemas/error',
+    'TurnError'
   );
 
   console.log(`\n [onTurnError] unhandled error: ${error}`);
@@ -32,13 +34,13 @@ const onTurnErrorHandler = async (context: TurnContext, error: any) => {
     valueType: 'https://www.botframework.com/schemas/error'
   };
   await context.sendActivity(traceActivity);
-  
-  // Send a message to the user
+
+  // Send error message to the user
   let onTurnErrorMessage = 'The bot encountered an error or bug.';
   await context.sendActivity(onTurnErrorMessage, onTurnErrorMessage, InputHints.ExpectingInput);
   onTurnErrorMessage = 'To continue to run this bot, please fix the bot source code.';
   await context.sendActivity(onTurnErrorMessage, onTurnErrorMessage, InputHints.ExpectingInput);
-  
+
   // Clear out state
   await conversationState.delete(context);
 };

@@ -1,5 +1,5 @@
 import TelegramBot from "node-telegram-bot-api";
-import { processQuestion } from "../../libs/bot/nlp/manager";
+// import { processQuestion } from "../../libs/bot/nlp/manager";
 import { askEmail } from "./helpers/askEmail";
 import { botExist } from "../../repositories/bot";
 import {
@@ -189,6 +189,7 @@ const telegramService = async (
       !ignoredMessages(msg.text as string)
     ) {
       const responseMessage = await processQuestion(msg.text as string);
+      
       if (responseMessage === "Desculpe, não tenho uma resposta para isso.") {
         await sendMessage(telegram, chatId, responseMessage, undefined, {
           ...kafkaMessage,
@@ -210,6 +211,7 @@ const telegramService = async (
           }
         );
       }
+      
       await sendMessage(telegram, chatId, responseMessage, undefined, {
         ...kafkaMessage,
         from: botId.toString(),

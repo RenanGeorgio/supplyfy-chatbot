@@ -8,7 +8,7 @@ export const handlePrivateReply = (type: string, object_id: string, commentId: s
 
     if (response) {
       const answer = await processQuestion(response);
-  
+      
       const requestBody = {
         recipient: {
           [type]: object_id,

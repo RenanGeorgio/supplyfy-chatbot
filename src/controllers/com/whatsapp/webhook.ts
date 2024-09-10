@@ -47,7 +47,7 @@ export const messageHandler = async (
                 senderPhoneNumber: data.metadata.display_phone_number,
                 recipientName: data.contacts[0].profile.name,
                 recipientPhoneNumberId: data.messages[0].from,
-                accessToken: bots.services?.whatsapp?.accessToken
+                accessToken: bots.services?.whatsapp?.accessToken || ""
             }
 
             try { // Marca msg como lida

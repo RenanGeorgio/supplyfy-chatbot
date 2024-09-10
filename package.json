@@ -4,6 +4,7 @@
   "description": "",
   "main": "src/index.js",
   "scripts": {
+    "dev:debug": "ts-node-dev --transpile-only --respawn --inspect=4321 --project tsconfig.json ./src/index.ts",
     "dev": "ts-node-dev --transpile-only --ignore-watch node_modules ./src/index.ts",
     "build": "tsc -p .",
     "prod": "node -r ts-node/register/transpile-only build/index.js"
@@ -30,8 +31,10 @@
     "@graphql-tools/load-files": "^7.0.0",
     "@graphql-tools/merge": "^9.0.3",
     "@graphql-tools/schema": "^10.0.3",
+    "@nlpjs/nlp": "^4.27.0",
     "axios": "^1.6.7",
     "botbuilder": "^4.22.3",
+    "botbuilder-dialogs": "^4.22.3",
     "botframework-directlinejs": "^0.15.5",
     "bull": "^4.12.2",
     "connect-redis": "^7.1.1",

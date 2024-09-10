@@ -1,5 +1,7 @@
-import { DirectLine, ConnectionStatus } from "botframework-directlinejs";
+import { DirectLine, ConnectionStatus, Activity } from "botframework-directlinejs";
 import { ActivityTypes } from "botbuilder";
+import { randomBytes, createCipheriv, createDecipheriv, randomUUID } from "crypto";
+import queue from "../../Queue";
 
 const directLine = new DirectLine({
     secret: process.env.DIRECT_LINE_SECRET,
@@ -13,59 +15,57 @@ export class DirectlineService {
         directLine.connectionStatus$.subscribe(connectionStatus => {
             switch (connectionStatus) {
                 case ConnectionStatus.Uninitialized: 
-                    console.log("the status when the DirectLine object is first created/constructed")
+                    console.log("The status when the DirectLine object is first created/constructed.")
                     return;
                 case ConnectionStatus.Connecting: 
-                    console.log("currently trying to connect to the conversation")
+                    console.log("Currently trying to connect to the conversation.")
                     return;
                 case ConnectionStatus.Online: 
-                    console.log("successfully connected to the converstaion. Connection is healthy so far as we know.")
+                    console.log("Successfully connected to the conversation. Connection is healthy so far as we know.")
                     return;
                 case ConnectionStatus.ExpiredToken: 
-                    console.log("last operation errored out with an expired token. Your app should supply a new one.")
+                    console.log("Last operation errored out with an expired token. Your app should supply a new one.")
                     return;
                 case ConnectionStatus.FailedToConnect: 
-                    console.log("the initial attempt to connect to the conversation failed. No recovery possible.")
+                    console.log("The initial attempt to connect to the conversation failed. No recovery possible.")
                     return;
                 case ConnectionStatus.Ended: 
-                    console.log("the bot ended the conversation")
+                    console.log("The bot ended the conversation.")
                     return;
             }
         });
     }
 
-    public sendMessageToBot(text: string, id: string, currentValue: any, name?: string) {
-        // TO-DO: ID Precisa ser concizo é unico dentre os usuarios ativos
+    public sendMessageToBot(text: string, id: string, name: string = "Anonymous", conversation?: string, value?: object) {
+        const activity: Activity = {
+            from: { id, name, role: "user" },
+            type: ActivityTypes.Message,
+            // eTag?: string,
+            text: text,
+            ...(conversation ? { conversation: { id: conversation } } : {} ),
+            ...(value ? { value } : { }),
+        }
         directLine
-            .postActivity({
-                from: { id, name, role: 'user' },
-                //conversation?: { id: string },
-                type: ActivityTypes.Message,
-                //eTag?: string,
-                id: uuid(), // TO-DO: lookup ou Hash -> datetime-zone
-                text: text,
-                value: currentValue
-            })
-            .subscribe(
-                (value: any) => { 
-                    console.log("Posted message activity")
-                    return console.log(value)
-                },
-                (error: any) => console.log('Error posting activity: ' + error?.message)
+            .postActivity(activity).subscribe(
+                (value: any) => console.log("Posted message activity. " + value),
+                (error: any) => console.log('Error posting activity: ' + error?.message),
+                () => console.log("Activity completed."),
             );
     }
 
-    public subscribeBot(botName: string = "ignai-bot"): void {
+    public subscribeBot(botName: string = "ignaibot"): void {
         directLine.activity$
             .filter(activity => activity.type === ActivityTypes.Message && activity.from.id === botName)
             .subscribe(
                 (message) => {
+                    console.log("Activity added to BotService queue.")
+                    console.log(message)
                     queue.add("BotService", { message });
                 }
             )
     }
 
-    static getInstance() {
+    static getInstance(): DirectlineService {
         if (this._instance) {
             return this._instance;
         }

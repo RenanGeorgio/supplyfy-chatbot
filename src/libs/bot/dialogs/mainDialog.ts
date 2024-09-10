@@ -9,17 +9,16 @@ import {
   WaterfallStepContext
 } from "botbuilder-dialogs";
 import { ConversationDialog } from "./conversationDialog";
-import { NluManagerType } from "../types";
 import { ChatDetails } from "../data";
 import { CONVERSATION_DIALOG, MAIN_DIALOG, MAIN_WATERFALL_DIALOG, USER_PROFILE_PROPERTY } from "./constants";
 
 
 export class MainDialog extends ComponentDialog {
-  private recognizer: NluManagerType
+  private recognizer: any
   private userState: UserState;
   private userProfileAccessor: StatePropertyAccessor<BotState>;
 
-  constructor(userState: BotState, manager: NluManagerType, conversationDialog: ConversationDialog) {
+  constructor(userState: UserState, manager: any, conversationDialog: ConversationDialog) {
       super(MAIN_DIALOG);
 
       if (!manager) throw new Error('[MainDialog]: Missing parameter \'manager\' is required');
@@ -84,11 +83,11 @@ export class MainDialog extends ComponentDialog {
    */
   private async actStep(stepContext: WaterfallStepContext): Promise<DialogTurnResult> {
     const chatDetails = new ChatDetails();
-
+    
     if (!this.recognizer.isConfigured) {
       return await stepContext.beginDialog(CONVERSATION_DIALOG, chatDetails);
     }
-
+    
     const result = await this.recognizer.executeLuisQuery(stepContext.context);
     const intent = result.intent;
     

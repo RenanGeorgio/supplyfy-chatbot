@@ -104,7 +104,7 @@ export class NlpService {
         return answer;
     }
 
-    public async createConversation(id: string): Promise<void> {
+    public async createConversation(id: string, userId: string): Promise<void> {
         const currentConversation = new ConversationService(this.manager, id, this.getOptionsSettings());
         const currentContextMap: ContextMap = currentConversation?.getCurrentConversation();
         
@@ -123,16 +123,16 @@ export class NlpService {
 
         const conversation: ConversationDict = {
             conversation: currentConversation,
-            userId: id,
+            userId: userId,
         }
 
         this.conversations.push(conversation);
     }
 
-    public async deleteConversation(id: string): Promise<void> {
+    public async deleteConversation(id: string, userId: string): Promise<void> {
         await this.contextManager.resetConversation(id);
 
-        const index = this.conversations.findIndex(convo => convo.userId === id);
+        const index = this.conversations.findIndex(convo => convo.userId === userId);
         if (index !== -1) {
             const conversation = this.conversations[index].conversation;
             if (conversation) {

@@ -24,7 +24,7 @@ export class ConversationService {
 
         const contextKey = new ContextKey();
         contextKey.activity = {
-            conversation: { 
+            conversation: {
                 id: conversationId
             }
         }

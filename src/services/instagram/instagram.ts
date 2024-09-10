@@ -1,6 +1,6 @@
 // Comentado por Thomás para rodar primeira versão sem instagram-private-api
 import { GraphQLSubscriptions, IgApiClientRealtime } from "instagram_mqtt";
-import { processQuestion } from "../../libs/bot/nlp/manager";
+// import { processQuestion } from "../../libs/bot/nlp/manager";
 import { Events } from "../../types/enums";
 import { webhookTrigger } from "../../webhooks/custom/webhookTrigger";
 
