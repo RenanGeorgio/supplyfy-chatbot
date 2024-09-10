@@ -42,11 +42,39 @@ bot.use(cookieParser());
 
 bot.use(customSession);
 
+const container = await ContainerService.getInstance();
+const conversationBot = container.getConversationBot();
 
 bot.post('/api/messages', async (req: Request, res: Response) => {
-  const container = await ContainerService.getInstance()
-  const conversationBot = container.getConversationBot()
   return await adapter.process(req, res, (context: any) => conversationBot.run(context));
 });
 
-export { bot };
+// Listen for incoming notifications and send proactive messages to users.
+/*bot.get('/api/notify', async (req: Request, res: Response) => {
+  for (const conversationReference of Object.values(userState)) {
+    await adapter.continueConversationAsync(process.env.MicrosoftAppId, conversationReference, async (context) => {
+      await context.sendActivity('proactive hello');
+    });
+  }
+  res.setHeader('Content-Type', 'text/html');
+  res.writeHead(200);
+  res.write('<html><body><h1>Proactive messages have been sent.</h1></body></html>');
+  res.end();
+});*/
+
+// Listen for incoming custom notifications and send proactive messages to users.
+/*bot.post('/api/notify', async (req: Request, res: Response) => {
+  for (const msg of req.body) {
+    for (const conversationReference of Object.values(userState)) {
+      await adapter.continueConversationAsync(process.env.MicrosoftAppId, conversationReference, async (turnContext) => {
+        await turnContext.sendActivity(msg);
+      });
+    }
+  }
+  res.setHeader('Content-Type', 'text/html');
+  res.writeHead(200);
+  res.write('Proactive messages have been sent.');
+  res.end();
+});*/
+
+export { bot, conversationBot };
