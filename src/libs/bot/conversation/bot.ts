@@ -104,8 +104,8 @@ export class ConversationBot extends ActivityHandler {
         await context.sendActivity(activity);
       }*/
 
-      // const text = context.activity.text.trim().toLocaleLowerCase();
-      const text = context.activity.text
+      const text = context.activity.text.trim().toLocaleLowerCase();
+      
       if (text) {
         const id = context.activity.from.id;
         const conversationId = context.activity.conversation.id;
