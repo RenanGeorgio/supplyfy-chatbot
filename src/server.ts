@@ -68,6 +68,7 @@ app.use(sessionMiddleware);
 app.use('/whatsapp-incoming', waWebhookRouter);
 app.use('/instagram-incoming', igWebhookRouter);
 app.use('/facebook-incoming', fbWebhookRouter);
+// app.use('/incoming', webhookRouter);
 
 app.use('/api/v1', apiRoutes);
 app.use('/v1', routes);
