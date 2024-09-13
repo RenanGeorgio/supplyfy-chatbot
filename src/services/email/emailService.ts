@@ -135,31 +135,31 @@ const emailService = async (
         ...kafkaMessage,
       });
 
-      const responseMessage = await processQuestion(
-        sanitizedEmailText as string
-      );
+      // const responseMessage = await processQuestion(
+      //   sanitizedEmailText as string
+      // );
      
-      if (!responseMessage) return;
+      // if (!responseMessage) return;
 
-      Queue.add("EmailService", {
-        from: emailUsername,
-        to: mail.from.value[0].address,
-        subject: mail.subject || attributes.uid,
-        text: responseMessage,
-        inReplyTo: mail.messageId,
-        references: mail.messageId,
-        service: {
-          type: "email",
-          id: credentials._id?.toString(),
-        },
-      });
+      // Queue.add("EmailService", {
+      //   from: emailUsername,
+      //   to: mail.from.value[0].address,
+      //   subject: mail.subject || attributes.uid,
+      //   text: responseMessage,
+      //   inReplyTo: mail.messageId,
+      //   references: mail.messageId,
+      //   service: {
+      //     type: "email",
+      //     id: credentials._id?.toString(),
+      //   },
+      // });
 
-      await produceMessage({
-        text: responseMessage,
-        from: emailUsername,
-        to: mail.from.value[0].address,
-        ...kafkaMessage,
-      });
+      // await produceMessage({
+      //   text: responseMessage,
+      //   from: emailUsername,
+      //   to: mail.from.value[0].address,
+      //   ...kafkaMessage,
+      // });
     })();
   });
 

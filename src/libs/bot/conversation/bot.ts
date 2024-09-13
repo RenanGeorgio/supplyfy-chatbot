@@ -81,8 +81,8 @@ export class ConversationBot extends ActivityHandler {
       this.addConversationReference(context.activity);
 
       const didBotWelcomedUser = await this.welcomedUserProperty.get(context, false);
-      const userProfile = await this.userProfileAccessor.get(context, {});
-      const conversationData = await this.conversationDataAccessor.get(context, {});
+      const userProfile = await this.userProfileAccessor.get(context);
+      const conversationData = await this.conversationDataAccessor.get(context);
 
       // COMO PODEMOS MANDAR A MENSAGEM QUANDO O USUARIO ENTRA NO CHAT, ESTA MENSAGEM PODE NAO SER NECESSARIA
       /*if (didBotWelcomedUser === false) {

@@ -1,4 +1,4 @@
-import { processQuestion } from "../../../libs/bot/nlp/manager";
+// import { processQuestion } from "../../../libs/bot/nlp/manager";
 import Response, { processMessage } from "./processMessage";
 import { 
   Consumer, 
@@ -60,8 +60,10 @@ const Receive = class<ReceiveProps> {
           response = Response.genNuxMessage(this.user);
         }
       } else {
-        const answer = await processQuestion(msgData);
-        response = { message: answer };
+        // const answer = await processQuestion(msgData);
+        response = { 
+          // message: answer 
+        };
       }
 
       return response;

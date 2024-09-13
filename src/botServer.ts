@@ -42,8 +42,8 @@ bot.use(cookieParser());
 
 bot.use(customSession);
 
-const container = await ContainerService.getInstance();
-const conversationBot = container.getConversationBot();
+const containerPromise = ContainerService.getInstance();
+const conversationBot = containerPromise.then((container) => { return container.getConversationBot()})
 
 bot.post('/api/messages', async (req: Request, res: Response) => {
   return await adapter.process(req, res, (context: any) => conversationBot.run(context));

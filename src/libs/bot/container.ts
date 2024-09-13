@@ -61,7 +61,7 @@ export class ContainerService {
       return this._instance;
     }
  
-    this._instance = new ContainerService()
+    this._instance = new ContainerService();
     await this._instance.build();
     return this._instance;
   }

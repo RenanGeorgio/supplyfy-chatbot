@@ -22,12 +22,11 @@ export class ConversationService {
         this.settings = options || undefined;
         this.contextMap = {};
 
-        const contextKey = new ContextKey();
-        contextKey.activity = {
+        const contextKey = new ContextKey({
             conversation: {
                 id: conversationId
             }
-        }
+        });
         
         this.optimazeSettings(contextKey);
         this.init(contextKey);

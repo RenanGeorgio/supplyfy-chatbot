@@ -1,10 +1,10 @@
-import { BotState } from "botbuilder";
+import { BotState, UserState } from "botbuilder";
 import { Dialog, DialogState } from "botbuilder-dialogs";
 import { MainDialog } from "../dialogs/mainDialog";
 import { ConversationBot } from "./bot";
 
 export class BotRoom extends ConversationBot {
-  constructor(conversationState: BotState, userState: BotState, conversationReferences: any, currentManager: any, dialog?: Dialog) {
+  constructor(conversationState: BotState, userState: UserState, conversationReferences: any, currentManager: any, dialog?: Dialog) {
     super(conversationState, userState, conversationReferences, currentManager, dialog);
 
     this.onMembersAdded(async (context, next) => {
