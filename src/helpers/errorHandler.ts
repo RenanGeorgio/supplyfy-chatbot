@@ -7,8 +7,7 @@ export function mongoErrorHandler(error: any): IMongoErrorHandler {
 
     return {
       success: false,
-      message:
-        "Não foi possível processar a requisição devido a erros de validação",
+      message: "Não foi possível processar a requisição devido a erros de validação",
       error: messages,
     };
   }
@@ -16,8 +15,7 @@ export function mongoErrorHandler(error: any): IMongoErrorHandler {
   if (error instanceof Error.CastError) {
     return {
       success: false,
-      message:
-        "Não foi possível processar a requisição devido a um erro de cast",
+      message: "Não foi possível processar a requisição devido a um erro de cast",
       error: error.message,
     };
   }
@@ -25,8 +23,7 @@ export function mongoErrorHandler(error: any): IMongoErrorHandler {
   if (error.code && error.code === 11000) {
     return {
       success: false,
-      message:
-        "Não foi possível processar a requisição devido a uma chave duplicada",
+      message: "Não foi possível processar a requisição devido a uma chave duplicada",
       error: error.message,
     };
   }
