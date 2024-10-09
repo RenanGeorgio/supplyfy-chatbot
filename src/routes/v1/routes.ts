@@ -20,6 +20,8 @@ import * as apiTokenController from "../../controllers/api/apiTokenController";
 import * as auth0Controller from "../../controllers/user/auth0Controller";
 import * as whatsappController from "../../controllers/com/whatsapp/whatsappController";
 import * as whatsappTemplateController from "../../controllers/com/whatsapp/templateController";
+import * as templatesController from "../../controllers/templates/templatesController";
+import * as typebotController from "../../controllers/typebot/typebotController";
 
 const routes = Router();
 
@@ -46,8 +48,16 @@ routes
   .post("/whatsapp/upload", whatsappController.uploadMedia)
   .post("/whatsapp/send-doc", whatsappController.sendDocumentMessage)
   // template whatsapp
-  .post("/whatsapp/template", authMiddleware.JWT, whatsappTemplateController.create)
-  .delete("/whatsapp/template", authMiddleware.JWT, whatsappTemplateController.remove)
+  .post(
+    "/whatsapp/template",
+    authMiddleware.JWT,
+    whatsappTemplateController.create
+  )
+  .delete(
+    "/whatsapp/template",
+    authMiddleware.JWT,
+    whatsappTemplateController.remove
+  )
   // user
   .get("/user", authMiddleware.JWT, userController.info)
   .get("/user/:email", userController.findByEmail)
@@ -74,13 +84,29 @@ routes
   .post("/chat/client", authMiddleware.JWT, chatClientController.createClient)
   // lista todos os clientes
   .get("/chat/clients", authMiddleware.JWT, chatClientController.listClients)
-  .get("/chat/client/:_id", authMiddleware.JWT, chatClientController.findClientById)
-    // busca um cliente
-    .get("/chat/client/email/:email", authMiddleware.JWT, chatClientController.findClientByEmail)
+  .get(
+    "/chat/client/:_id",
+    authMiddleware.JWT,
+    chatClientController.findClientById
+  )
+  // busca um cliente
+  .get(
+    "/chat/client/email/:email",
+    authMiddleware.JWT,
+    chatClientController.findClientByEmail
+  )
   // atualiza um cliente do chat
-  .put("/chat/client/:_id", authMiddleware.JWT, chatClientController.updateClient)
+  .put(
+    "/chat/client/:_id",
+    authMiddleware.JWT,
+    chatClientController.updateClient
+  )
   // // Busca um chat
-  .get("/chat/find/:firstId/:secondId", authMiddleware.JWT, chatController.findChat)
+  .get(
+    "/chat/find/:firstId/:secondId",
+    authMiddleware.JWT,
+    chatController.findChat
+  )
   // Cria um chat
   .post("/chat", authMiddleware.JWT, chatController.createChat)
   // ----- Mensagens -----
@@ -105,5 +131,11 @@ routes
   .post("/auth0/auth", auth0Controller.token)
   .post("/auth0/register", authMiddleware.auth0, auth0Controller.register)
   .post("/auth0/login", authMiddleware.auth0, auth0Controller.login)
+
+  // templates
+  .post("/templates/email", authMiddleware.JWT, templatesController.create)
+
+  .post("/typebot", authMiddleware.JWT, typebotController.create)
+  .delete("/typebot/:typebotId", authMiddleware.JWT, typebotController.remove)
 
 export default routes;
