@@ -1,7 +1,7 @@
 import { Response, NextFunction } from "express";
-import { CustomRequest } from "../../types";
-import { createOrUpdateAuthData } from "../../repositories/meta";
 import mongoose from "mongoose";
+import { createOrUpdateAuthData } from "../../repositories/meta";
+import { CustomRequest } from "../../types";
 
 export const save = async (req: CustomRequest, res: Response, next: NextFunction) => {
   try {
