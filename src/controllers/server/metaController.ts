@@ -1,17 +1,21 @@
 import { Response, NextFunction } from "express";
 import { CustomRequest } from "../../types";
 import { createOrUpdateAuthData } from "../../repositories/meta";
-
-const companyId = "1"; // mock
+import mongoose from "mongoose";
 
 export const save = async (req: CustomRequest, res: Response, next: NextFunction) => {
   try {
-    const { accessToken, expiresIn, reauthorize_required_in, signedRequest, userID} = req.body;
+    const { companyId } = req.query as { companyId: string };
+    const { accessToken, expiresIn, reauthorize_required_in, signedRequest, userID } = req.body;
+    
+    if(!companyId){
+      return res.status(400).send({ message: "companyId is required" });
+    }
 
-    // alguma forma de associar ao companyId
-    //
-    // RESPONDENDO
-    // companyId tem relação dcom userID, que é o usuario de sistema associado ao Meta
+    if(mongoose.Types.ObjectId.isValid(companyId)){
+      return res.status(400).send({ message: "companyId is invalid" });
+    }
+
     const create = await createOrUpdateAuthData({
       companyId,
       accessToken,
