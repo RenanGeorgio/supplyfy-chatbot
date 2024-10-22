@@ -1,7 +1,7 @@
 import { Response, NextFunction } from "express";
 import mongoose from "mongoose";
 import { createOrUpdateAuthData } from "../../repositories/meta";
-import { CustomRequest } from "../../types";
+import { CustomRequest, Obj } from "../../types";
 
 export const save = async (req: CustomRequest, res: Response, next: NextFunction) => {
   try {
@@ -47,7 +47,7 @@ export const chageCode = async (req: CustomRequest, res: Response, next: NextFun
             &code=${code}`);
 
     if (changeResponse) {
-      const changResData = await changeResponse.json(); // SALVAR
+      const changResData: Obj = await changeResponse.json(); // SALVAR
       const response =
         await fetch(`https://graph.facebook.com/v20.0/oauth/access_token?
                 grant_type=fb_exchange_token
@@ -55,7 +55,7 @@ export const chageCode = async (req: CustomRequest, res: Response, next: NextFun
                 &client_secret=${process.env.APP_SECRET}
                 &fb_exchange_token=${changResData.access_token}`);
 
-      const { access_token, token_type, expires_in } = await response.json(); // SALVAR
+      const { access_token, token_type, expires_in }: any = await response.json(); // SALVAR
 
       if(access_token){
         await createOrUpdateAuthData({ 
@@ -70,7 +70,7 @@ export const chageCode = async (req: CustomRequest, res: Response, next: NextFun
         `https://graph.facebook.com/v20.0/${appId}/accounts?access_token=${access_token}`
       );
 
-      const { data, paging } = await pageResponse.json(); // SALVAR
+      const { data, paging }: any = await pageResponse.json(); // SALVAR
 
       return res.status(200).send({ access_token: changResData.access_token });
     }

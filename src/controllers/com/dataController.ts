@@ -32,6 +32,7 @@ function parseSignedRequest(signedRequest) {
     throw Error("Unknown algorithm: " + data.algorithm + ". Expected HMAC-SHA256");
   }
 
+  // @ts-ignore
   const expected_sig = crypto.createHmac("sha256", process.env.APP_SECRET).update(payload).digest();
 
   if (!crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expected_sig))) {
