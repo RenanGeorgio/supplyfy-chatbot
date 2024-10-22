@@ -2,6 +2,7 @@ import Chat from "../../models/chat/chatModel";
 import { Response, NextFunction } from "express";
 import { CustomRequest } from "../../types";
 import { userExist } from "../../repositories/user";
+import { updateChatAgent, updateChatStatus } from "../../repositories/chat";
 
 export const createChat = async (
   req: CustomRequest,
@@ -11,7 +12,7 @@ export const createChat = async (
   const user = await userExist(req.user?.sub as string);
   const { clientId, origin } = req.body;
 
-  if ( !clientId || !origin || !user) {
+  if (!clientId || !origin || !user) {
     return res.status(400).send("Missing required fields");
   }
 
@@ -73,6 +74,53 @@ export const findChat = async (
     }
 
     return res.status(404).send("Chat not found");
+  } catch (error: any) {
+    next(error);
+  }
+};
+
+export const updateStatus = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const chat = await Chat.findById(req.params.chatId);
+
+    if (!chat) {
+      return res.status(404).send("Chat not found");
+    }
+
+    const { status, inProgress } = req.body;
+
+    const updatedChat = await updateChatStatus(req.params.chatId, {
+      status,
+      inProgress,
+    });
+
+    return res.status(200).send(updatedChat);
+  } catch (error: any) {
+    next(error);
+  }
+};
+
+export const updateAgent = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const chat = await Chat.findById(req.params.chatId);
+
+    if (!chat) {
+      return res.status(404).send("Chat not found");
+    }
+
+    const { assignedAgent } = req.body;
+
+    const updatedChat = await updateChatAgent(req.params.chatId, assignedAgent);
+
+    return res.status(200).send(updatedChat);
   } catch (error: any) {
     next(error);
   }

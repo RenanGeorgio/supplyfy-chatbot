@@ -24,6 +24,15 @@ const chatSchema = new Schema(
       enum: ChatStatus,
       default: "active",
     },
+    inProgress: {
+      type: Boolean,
+      default: false,
+    },
+    assignedAgent: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: false,
+    },
   },
   {
     timestamps: true,
