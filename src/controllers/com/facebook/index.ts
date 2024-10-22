@@ -46,7 +46,7 @@ export const eventsHandler = async (
                 }
             });
             // return res.status(200).send("EVENT_RECEIVED");
-            return null;
+            return;
         }
     } catch (error: any) {
         next(error)
