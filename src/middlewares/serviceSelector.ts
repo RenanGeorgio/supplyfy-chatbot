@@ -2,12 +2,6 @@ import { NextFunction, Response } from "express";
 import { CustomRequest } from "../types";
 
 const serviceSelectorMiddleware = async (req: CustomRequest, res: Response, next: NextFunction) => {
-    const path = req.originalUrl;
-
-    if (path === '/incoming') {
-        next();
-    }
-
     try {
         if (req.session) {
             const service = req.session.service || null;

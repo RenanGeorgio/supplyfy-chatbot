@@ -1,6 +1,7 @@
+import { io } from "../../core/http";
 import { findBot } from "../../helpers/findBot";
 import { ISocketServiceController } from "../../types";
-import { Events } from "../../types/types";
+import { Events } from "../../types/enums";
 import { webhookTrigger } from "../../webhooks/custom/webhookTrigger";
 import { socketService } from "./socketService";
 
@@ -12,7 +13,7 @@ export const socketServiceController: ISocketServiceController = {
     const socketInstance = findBot(id, this.sockets);
 
     if (socketInstance) {
-      return null;
+      return socketInstance.socket;
     }
 
     const socket = socketService(credentials);
@@ -22,7 +23,8 @@ export const socketServiceController: ISocketServiceController = {
         id: id,
         socket: socket,
       });
-      console.log(`Socket conectado: ${socket.id}`);
+      
+      console.log(`📗 Socket conectado: ${credentials.url}`);
       if (webhook) {
         webhookTrigger({
           url: webhook.url,
@@ -44,7 +46,7 @@ export const socketServiceController: ISocketServiceController = {
         });
       }
     });
-
+    
     return socket;
   },
 };

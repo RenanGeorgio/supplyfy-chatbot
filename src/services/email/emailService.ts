@@ -3,11 +3,13 @@ import { produceMessage } from "../../core/kafka/producer";
 import { processQuestion } from "../../libs/trainModel";
 import { botExist } from "../../repositories/bot";
 import { IEmailCredentials, IWebhook } from "../../types";
-import { Events } from "../../types/types";
+import { Events } from "../../types/enums";
 import { webhookTrigger } from "../../webhooks/custom/webhookTrigger";
 import emailListener from "./lib/listener";
 import emailTransporter from "./lib/transporter";
 import EventEmitter from "node:events";
+import { filter } from "./helpers/extractMessage";
+import { ignoredSenders } from "./helpers/ignoredSenders";
 
 const errorMessages = {
   authentication: "erro de autenticação imap",
@@ -27,6 +29,7 @@ const emailService = async (
     smtpSecure,
     emailUsername,
     emailPassword,
+    service,
   } = credentials;
   const mailListenerEventEmitter = new EventEmitter();
 
@@ -36,13 +39,13 @@ const emailService = async (
     emailUsername,
     emailPassword,
     smtpSecure,
+    service,
   });
 
   mailTransporter.verify((error, success) => {
     if (error) {
-      console.log(webhook)
-      if(webhook){
-
+      console.log(webhook);
+      if (webhook) {
         webhookTrigger({
           url: webhook.url,
           event: Events.SERVICE_ERROR,
@@ -52,7 +55,8 @@ const emailService = async (
       }
       console.log("Server is not ready to take our messages: ", error);
     } else {
-      console.log(`SMPT conectado: ${smtpHost}`);
+      console.log(`SMTP conectado: ${smtpHost}`);
+      mailListenerEventEmitter.emit("mailTransporter:connected");
     }
   });
 
@@ -68,16 +72,16 @@ const emailService = async (
 
   const kafkaMessage = {
     topic: botInfo?.companyId + ".messages",
-    service: "email"
-  }
+    service: "email",
+  };
 
   mailListener.on("server:connected", function () {
-    mailListenerEventEmitter.emit("email:connected");
     console.log(`IMAP conectado: ${imapHost}`);
+    mailListenerEventEmitter.emit("mailListener:connected");
   });
 
   mailListener.on("server:disconnected", function (e) {
-    console.log(e)
+    console.log(e);
     console.log("imapDisconnected");
     if (webhook) {
       webhookTrigger({
@@ -98,8 +102,11 @@ const emailService = async (
           message: errorMessages[err.source],
           service: "email",
         });
-        if(err.code === "ECONNRESET"){
-          mailListener.start();
+        if (err.code === "ECONNRESET") {
+          mailListener.imap.connect();
+          console.log(mailListener.imap.state)
+          console.log("reconectando")
+          // mailListener.start();
         }
       } else {
         console.error(err);
@@ -112,13 +119,26 @@ const emailService = async (
       }
     }
   });
-
+  
   mailListener.on("mail", (mail: any, seqno: any, attributes: any) => {
-    const emailText = mail.text.split(/\r?\n/).join(" "); // adicionar algum tratamento para a mensagem
-
+    const emailText: string = mail.text?.split(/\r?\n/).join(" "); // adicionar algum tratamento para a mensagem
+    // const ignoredEmails = ["no-reply", "noreply", "donotreply"];
+    if(ignoredSenders.includes(mail.from.value[0].address)) return console.log("Email ignorado");
     (async () => {
-      await produceMessage({ text: emailText, from: mail.from.value[0].address, to: emailUsername, ...kafkaMessage })
-      const responseMessage = await processQuestion(emailText);
+      console.log("emailText", emailText);
+      const sanitizedEmailText = filter(emailText); // filtragem básica da mensagem, melhorar depois
+
+      await produceMessage({
+        text: sanitizedEmailText as string,
+        from: mail.from.value[0].address,
+        to: emailUsername,
+        ...kafkaMessage,
+      });
+
+      const responseMessage = await processQuestion(
+        sanitizedEmailText as string
+      );
+
       if (!responseMessage) return;
 
       Queue.add("EmailService", {
@@ -133,7 +153,13 @@ const emailService = async (
           id: credentials._id?.toString(),
         },
       });
-      await produceMessage({ text: responseMessage, from: emailUsername, to: mail.from.value[0].address, ...kafkaMessage })
+
+      await produceMessage({
+        text: responseMessage,
+        from: emailUsername,
+        to: mail.from.value[0].address,
+        ...kafkaMessage,
+      });
     })();
   });
 

@@ -1,6 +1,7 @@
+import TelegramBot from "node-telegram-bot-api";
 import { findBot, removeBot } from "../../helpers/findBot";
 import { ITelegramServiceController } from "../../types";
-import { Events } from "../../types/types";
+import { Events } from "../../types/enums";
 import telegramService from "./telegramService";
 
 export const telegramServiceController: ITelegramServiceController = {

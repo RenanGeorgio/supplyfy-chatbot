@@ -7,16 +7,17 @@ import { messengerServiceController } from "./facebook";
 
 import { webhookPromiseHandler } from "../webhooks/custom/webhookHandler";
 import { listAllBots } from "../repositories/bot";
-import { getWebhook } from "../repositories/webhook";
+import { findWebhook } from "../repositories/webhook";
 
 import { IWebhook } from "../types";
 
 import "./queue";
+import { whatsappServiceController } from "./whatsappTest";
 
 (async () => {
   const bots = await listAllBots();
   for (const bot of bots) {
-    const webhook = await getWebhook({ companyId: bot.companyId } as any);
+    const webhook = await findWebhook({ companyId: bot.companyId } as any);
     
     if (bot.socket) {
       socketServiceController.start(bot.socket as any, webhook as IWebhook);
@@ -27,7 +28,7 @@ import "./queue";
     }
 
     if (bot?.services?.email) {
-      emailServiceController.start(bot.services.email as any,webhook as IWebhook);
+      emailServiceController.start(bot.services.email as any, webhook as IWebhook);
     }
 
     // if(bot.services?.instagram) {
@@ -36,6 +37,9 @@ import "./queue";
 
     if (bot?.services?.facebook) {
       messengerServiceController.start(bot.services.facebook, webhook as IWebhook);
+    }
+    if(bot?.services?.whatsapp) {
+      whatsappServiceController.start(bot.services.whatsapp, webhook as IWebhook);
     }
   }
 })();
@@ -48,6 +52,7 @@ const servicesActions = {
   instagramWeb: instagramServiceController,
   socket: socketServiceController,
   facebookWeb: messengerServiceController,
+  whatsapp: whatsappServiceController,
 };
 
 export { whatsappWebService, servicesActions, webhookPromiseHandler };

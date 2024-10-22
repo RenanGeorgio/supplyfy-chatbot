@@ -14,6 +14,10 @@ const instagramSchema = new Schema({
 });
 
 const telegramSchema = new Schema({
+  username: {
+    type: String,
+    required: true,
+  },
   token: {
     type: String,
     required: true,
@@ -53,6 +57,10 @@ const emailSchema = new Schema({
     type: String,
     required: true,
   },
+  service: {
+    type: String,
+    // required: true,
+  },
 });
 
 const socketSchema = new Schema({
@@ -83,41 +91,59 @@ const messengerSchema = new Schema({
   },
 });
 
-const botSchema = new Schema({
-  companyId: {
+const whatsappSchema = new Schema({
+  accessToken: {
     type: String,
     required: true,
   },
-  services: {
-    telegram: {
-      _id: { auto: false },
-      type: telegramSchema,
-    },
-    instagram: {
-      _id: { auto: false },
-      type: instagramSchema,
-    },
-    email: {
-      _id: { auto: false },
-      type: emailSchema,
-    },
-    facebook: {
-      _id: { auto: false },
-      type: messengerSchema,
-    },
+  number: {
+    type: String,
+    required: true
   },
-  socket: {
-    type: socketSchema,
+  numberId: {
+    type: String,
+    required: true,
   },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-  updatedAt: {
-    type: Date,
-    default: Date.now,
-  },
+  businessId: {
+    type: String,
+    required: true,
+  }
 });
+
+const botSchema = new Schema(
+  {
+    companyId: {
+      type: String,
+      required: true,
+    },
+    services: {
+      telegram: {
+        _id: { auto: false },
+        type: telegramSchema,
+      },
+      instagram: {
+        _id: { auto: false },
+        type: instagramSchema,
+      },
+      facebook: {
+        _id: { auto: false },
+        type: messengerSchema,
+      },
+      whatsapp: {
+        _id: { auto: false },
+        type: whatsappSchema,
+      },
+      email: {
+        _id: { auto: false },
+        type: emailSchema,
+      },
+    },
+    socket: {
+      type: socketSchema,
+    },
+  },
+  { timestamps: true }
+);
 
 const BotModel = mongoose.model("Bot", botSchema);
 

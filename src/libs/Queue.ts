@@ -7,6 +7,7 @@ const redisOpts: RedisOptions = {
   host: redisConfig.host.replace(/[\\"]/g, ''),
   port: parseInt(redisConfig.port.replace(/[\\"]/g, '')),
   password: redisConfig.password.replace(/[\\"]/g, ''),
+  // descomentar antes de mandar para main
   tls: {
     host: redisConfig.host.replace(/[\\"]/g, ''),
     port: parseInt(redisConfig.port.replace(/[\\"]/g, ''))
@@ -39,11 +40,15 @@ export default {
       queue.bull.process(queue.handle).catch((err) => console.log(err));
 
       queue.bull.on("failed", (job, err) => {
-        console.log("job failed", err);
+        console.log("📙job failed", err);
       });
 
       queue.bull.on("completed", (job, result) => {
-        console.log("job completed", result);
+        console.log(`📗 job ${job.id} completed ${JSON.stringify(job.data)}`);
+      });
+
+      queue.bull.on("error", (err) => {
+        console.log("📕bull error ", err);
       });
     });
   },

@@ -10,6 +10,7 @@ const redisClient = redis.createClient({
   password: redisConfig.password.replace(/[\\"]/g, ''),
   disableOfflineQueue: true,
   pingInterval: 60000,
+  // descomentar antes de mandar para main
   socket:{
     host: redisConfig.host.replace(/[\\"]/g, ''),
     port: parseInt(redisConfig.port.replace(/[\\"]/g, '')),

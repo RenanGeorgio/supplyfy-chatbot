@@ -1,38 +1,38 @@
 import { Response } from "express";
-import { facebookApi, instagramApi } from "../../../api";
+import { facebookApi, instagramApi, whatsappCloudApi } from "../../../api";
 import { FaceMsgData, MsgProps, Obj } from "../../../types";
 
-export const sendMsg = async (data: MsgProps, useWhatsappApi: any) => {
+export const sendMsg = async (data: MsgProps, wb: any) => {
   try {
+    console.log("send message called")
+    const useWhatsappApi = whatsappCloudApi("v20.0", wb.senderPhoneNumberId);
     const response = await useWhatsappApi("/messages", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.ACCESS_TOKEN}`,
+        Authorization: `Bearer ${wb.accessToken}`,
       },
       data: data,
     });
-
     if (response) {
       return response;
     }
-
-    return null;
-  } catch (error) {
-    console.log(error);
+    else {
+      return null;
+    }
+  } catch (error: any) {
     return null;
   }
 };
 
-export const msgStatusChange = async (messageId: string | number, wbApi: any) => {
+export const msgStatusChange = async (messageId: string | number, wb: any) => {
   const data = {
     messaging_product: "whatsapp",
     status: 'read',
-    //to: this.recipientPhoneNumber,
     message_id: messageId
   }
 
-  const response = await sendMsg(data, wbApi);
+  const response = await sendMsg(data, wb);
 
   return response;
 }
@@ -164,3 +164,36 @@ export const repplyFaceAction = (comment_id: string, message: Obj) => {
   
   return;
 }
+
+export const whatsappMsgTemplateApi = async ({
+  data,
+  wb,
+  method,
+  query,
+}: { 
+  data?: any,
+  wb: any,
+  method: string,
+  query?: string
+}) => {
+  try {
+    const useWhatsappApi = whatsappCloudApi("v20.0", wb.wabaId);
+    const response = await useWhatsappApi(`/message_templates/${query || ''}`, {
+      method: method,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${wb.accessToken}`,
+      },
+      data: data,
+    })
+
+    if (response) {
+      return response;
+    }
+    else {
+      return null;
+    }
+  } catch (error: any) {
+    return error;
+  }
+};

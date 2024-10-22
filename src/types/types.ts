@@ -7,6 +7,9 @@ import { Transporter } from "nodemailer";
 import { IMailListener } from "../services/email/lib/types";
 import { IgApiClientRealtime } from "instagram_mqtt";
 import { Socket } from "socket.io-client";
+import { Server } from "socket.io";
+import { Events } from "./enums";
+
 
 export interface User {
   sub: Types.ObjectId | string;
@@ -147,7 +150,7 @@ export interface  IMessengerServiceController { // alterar os tipos
 
 export interface  ISocketServiceController {
   sockets: ISocketService[];
-  start: (credentials: ISocketCredentials, webhook?: IWebhook) => Socket | null;
+  start: (credentials: ISocketCredentials, webhook?: IWebhook) => Socket;
   // stop: (credentials: ISocketCredentials) => void;
 }
 
@@ -166,6 +169,7 @@ export interface IEmailCredentials {
   smtpSecure?: boolean;
   emailUsername: string;
   emailPassword: string;
+  service?: string;
   _id: string;
 }
 
@@ -176,11 +180,7 @@ export interface IInstagramCredentials {
 }
 
 export interface ITelegramCredentials {
-  token: string;
-  _id: string;
-}
-
-export interface ITelegramCredentials {
+  username: string;
   token: string;
   _id: string;
 }
@@ -201,6 +201,7 @@ export interface IBotData {
     telegram?: ITelegramCredentials;
     email?: IEmailCredentials;
     facebook?: any;
+    whatsapp?: any; // alterar depois
   };
   socket: ISocketCredentials;
 }
@@ -223,12 +224,41 @@ export interface IWebhook {
   companyId: string;
 };
 
-export enum Events {
-  SERVICE_STARTED = "service_started",
-  SERVICE_STOPPED = "service_stopped",
-  SERVICE_CONNECTED = "service_connected",
-  SERVICE_DISCONNECTED = "service_disconnected",
-  SERVICE_ERROR = "service_error",
-  SERVICE_ALREADY_RUNNING = "service_already_running",
-  SERVICE_NOT_RUNNING = "service_not_running",
-} 
+export interface UserInfo {
+  userId: Types.ObjectId;
+  name: string;
+};
+
+export interface OnlineUser {
+  userId: string;
+  socketId: string;
+  platform?: string;
+};
+
+export interface IChat {
+  members: string[];
+  origin: {
+    platform: string;
+    chatId?: string;
+  };
+  status: string;
+  createdAt?: string | Date;
+  updatedAt?: string | Date;
+}
+
+export interface IMessage {
+  senderId: string;
+  recipientId: string | string[];
+  text: string;
+  chatId: string;
+  service: string;
+  subject?: string;
+  createdAt?: string | Date;
+  updatedAt?: string | Date;
+}
+
+export interface IClientInfo {
+  username: string; // email, numero de telefone etc...
+  name: string;
+  lastName?: string;
+}

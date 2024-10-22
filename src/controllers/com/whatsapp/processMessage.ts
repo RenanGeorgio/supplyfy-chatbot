@@ -1,6 +1,10 @@
 import { processQuestion } from "../../../libs/trainModel";
 import { sendTextMessage } from "./whatsappController";
 import { SendContacts, SendDoc, SendImg, SendInterativeButton, SendInterativeList, SendText } from "../../../types";
+import { webhookTrigger } from "../../../webhooks/custom/webhookTrigger";
+import { Events } from "../../../types/enums";
+import { findWebhook } from "../../../repositories/webhook";
+import { botExist } from "../../../repositories/bot";
 
 type MsgTypes = SendDoc | SendImg | SendContacts | SendInterativeList | SendInterativeButton | SendText;
 
@@ -37,39 +41,63 @@ function interactiveMessage(message: SendInterativeList | SendInterativeButton) 
 }
 
 export async function processMessage(message: MsgTypes, wb: any) {
-  const customerPhoneNumber = message.from;
-
   try {
+    const companyPhoneNumber = wb.senderPhoneNumberId;
+
+    const bots = await botExist("services.whatsapp.numberId", companyPhoneNumber)
+    if (!bots){
+      return null;
+    }
+
+    const companyId = bots.companyId
+
+    const webhook = await findWebhook({ companyId })
+
     if ("text" in message) {
       const textMessage = message.text.body;
 
-      try {
-        const answer = await processQuestion(textMessage);
-
-        const response = await sendTextMessage(answer, wb);
-
-        /*let replyButtonMessage = interactiveReplyButton;
-        replyButtonMessage.to = process.env.RECIPIENT_PHONE_NUMBER;
-
-        const replyButtonSent = await sendWhatsAppMessage(replyButtonMessage);
-        console.log(replyButtonSent);*/
-      } catch (error) {
-        console.log(error);
+      if (webhook) {
+        webhookTrigger({
+          url: webhook?.url,
+          event: Events.MESSAGE_RECEIVED,
+          message: textMessage,
+          service: "whatsapp",
+          metadata: {
+            senderPhoneNumber: wb.senderPhoneNumber,
+            recipientName: wb.recipientName,
+            recipientphoneNumber: wb.recipientPhoneNumberId,
+          }
+        });
       }
+
+      const answer = await processQuestion(textMessage);
+
+      await sendTextMessage(answer, wb);
+
+      /*let replyButtonMessage = interactiveReplyButton;
+      replyButtonMessage.to = process.env.RECIPIENT_PHONE_NUMBER;
+
+      const replyButtonSent = await sendWhatsAppMessage(replyButtonMessage);
+      console.log(replyButtonSent);*/
+      return null;
+      
     } else if ("interactive" in message) {
-      interactiveMessage(message as SendInterativeButton | SendInterativeList);
+      // interactiveMessage(message as SendInterativeButton | SendInterativeList);
+      return null;
     } else if ("contacts" in message) {
-      // TODO
+      // TODO      
+      return null;
     } else if ("image" in message) {
-      // TODO
+      // TODO      
+      return null;
     } else if ("document" in message) {
-      // TODO
+      // TODO      
+      return null;
     } else {
       // TODO
+      return null;
     }
-  } catch (error) {
-    console.log(error);
-
+  } catch (error: any) {
     return null;
   }
 }

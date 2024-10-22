@@ -1,5 +1,5 @@
 import { findBot, removeBot } from "../../helpers/findBot";
-import { Events } from "../../types/types";
+import { Events } from "../../types/enums";
 
 export const messengerServiceController: any = {
   mensengerServices: [],
@@ -19,7 +19,7 @@ export const messengerServiceController: any = {
     }
 
     this.mensengerServices.push(credentials);
-
+    
     return {
       success: true,
       event: Events.SERVICE_STARTED,

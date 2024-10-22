@@ -6,7 +6,6 @@ export default async function messengerService(data) {
   for (const entry of messages) {
     const webhookEvent = entry.messaging[0];
     const senderPsid = webhookEvent.sender.id;
-    console.log("Sender PSID: " + senderPsid);
 
     if (webhookEvent.message) {
       const responseMessage = await processQuestion(webhookEvent.message.text);

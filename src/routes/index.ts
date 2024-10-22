@@ -1,5 +1,5 @@
-import { Router } from "express";
-import { authMiddleware } from "../middlewares";
+import apiRoutes from "./v1/api/apiRoutes";
+import routes from "./v1/routes";
 
 // server controller
 import * as serverController from "../controllers/server/serverController";
@@ -47,4 +47,4 @@ routes
   .get("/facebook/:userId", facebookController.verifyWebhook)
   .post("/facebook/:useId", facebookController.eventsHandler)
 
-export default routes;
+export { apiRoutes, routes };

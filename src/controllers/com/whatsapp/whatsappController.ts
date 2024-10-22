@@ -20,7 +20,7 @@ export const markMessageAsRead = async (
     try {
         const { messageId } = req.body;
         
-        const useWhatsappApi = whatsappCloudApi("v19.0", req.body.entry[0].changes[0].value.metadata.phone_number_id);
+        const useWhatsappApi = whatsappCloudApi("v20.0", req.body.entry[0].changes[0].value.metadata.phone_number_id);
 
         const response = await msgStatusChange(messageId, useWhatsappApi);
 
@@ -29,8 +29,8 @@ export const markMessageAsRead = async (
         }
 
         return res.status(501).send({ message: "Server problem" });
-    } catch (error) {
-        next(error);
+    } catch (error: any) {
+        next(error)
     }           
 };
 
@@ -39,7 +39,7 @@ export const sendTextMessage = async (messageText: string, wb: any) => {
         const data: SendText = {
             messaging_product: "whatsapp",
             recipient_type: "individual",
-            to: wb.getRecipientPhoneNumber(),
+            to: wb.recipientPhoneNumberId,
             type: "text",
             text: {
                 preview_url: false,
@@ -47,11 +47,12 @@ export const sendTextMessage = async (messageText: string, wb: any) => {
             }
         };
 
-        const response = await sendMsg(data, wb.getApi());
+        console.log("send text message called: " + messageText)
+        const response = await sendMsg(data, wb);
 
         return response;
-    } catch (error) {
-        console.log(error);
+    } catch (error: any) {
+        return null;
     }
 };
 
@@ -63,7 +64,7 @@ export const sendButtonsMessage = async (
     try {
         const { messageText, buttonsList } = req.body;
 
-        const useWhatsappApi = whatsappCloudApi("v19.0", req.body.entry[0].changes[0].value.metadata.phone_number_id);
+        const useWhatsappApi = whatsappCloudApi("v20.0", req.body.entry[0].changes[0].value.metadata.phone_number_id);
 
         const data: SendInterativeButton = {
           messaging_product: "whatsapp",
@@ -107,7 +108,7 @@ export const sendContacts = async (
     try {
         const { contactsList } = req.body;
 
-        const useWhatsappApi = whatsappCloudApi("v19.0", req.body.entry[0].changes[0].value.metadata.phone_number_id);
+        const useWhatsappApi = whatsappCloudApi("v20.0", req.body.entry[0].changes[0].value.metadata.phone_number_id);
 
         const data: SendContacts = {
           messaging_product: "whatsapp",
@@ -136,7 +137,7 @@ export const sendRadioButtons = async (
     try {
         const { headerText, bodyText, footerText, sectionsList } = req.body;
 
-        const useWhatsappApi = whatsappCloudApi("v19.0", req.body.entry[0].changes[0].value.metadata.phone_number_id);
+        const useWhatsappApi = whatsappCloudApi("v20.0", req.body.entry[0].changes[0].value.metadata.phone_number_id);
 
         const data: SendInterativeList = {
           messaging_product: "whatsapp",
@@ -182,7 +183,7 @@ export const sendImageByLink = async (
     try {
         const { imageLink, caption } = req.body;
 
-        const useWhatsappApi = whatsappCloudApi("v19.0", req.body.entry[0].changes[0].value.metadata.phone_number_id);
+        const useWhatsappApi = whatsappCloudApi("v20.0", req.body.entry[0].changes[0].value.metadata.phone_number_id);
 
         const data: SendImg = {
           messaging_product: "whatsapp",
@@ -241,7 +242,7 @@ export const sendDocumentMessage = async (
     try {
         const { documentPath, caption } = req.body;
 
-        const useWhatsappApi = whatsappCloudApi("v19.0", req.body.entry[0].changes[0].value.metadata.phone_number_id);
+        const useWhatsappApi = whatsappCloudApi("v20.0", req.body.entry[0].changes[0].value.metadata.phone_number_id);
 
         const docId: any = await uploadMedia(documentPath, useWhatsappApi);
 
@@ -268,3 +269,38 @@ export const sendDocumentMessage = async (
         next(error);
     }           
 };
+
+/*
+async function listTemplates() {
+    return await axios({
+      method: 'get',
+      url: `https://graph.facebook.com/${apiVersion}/${myBizAcctId}/message_templates`
+        + '?limit=1000',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json'
+      }
+    })
+  }
+  
+async function createMessageTemplate(template) {
+    console.log('name:'  +  process.env.TEMPLATE_NAME_PREFIX + '_' + template.name);
+
+    const config = {
+        method: 'post',
+        url: `https://graph.facebook.com/${apiVersion}/${myBizAcctId}/message_templates`,
+        headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json'
+        },
+        data: {
+        name:  process.env.TEMPLATE_NAME_PREFIX + '_' + template.name,
+        category: template.category,
+        components: template.components,
+        language: template.language
+        }
+    };
+
+    return await axios(config)
+}
+*/

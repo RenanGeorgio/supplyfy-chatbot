@@ -1,5 +1,7 @@
 import { emailServiceController } from ".";
 import { findBot } from "../../helpers/findBot";
+import { Events } from "../../types/enums";
+import { webhookTrigger } from "../../webhooks/custom/webhookTrigger";
 
 export default {
   key: "EmailService",
@@ -23,7 +25,19 @@ export default {
       references,
     });
 
-    console.info("E-mail enviado para: ", to);
+    if (data?.webhookUrl) {
+      webhookTrigger({
+        url: data.webhookUrl,
+        event: Events.MESSAGE_SENT,
+        message: {
+          recipientId: to,
+          subject,
+          text,
+        },
+        service: "email",
+      });
+    }
+
     return send;
   },
   options: {
