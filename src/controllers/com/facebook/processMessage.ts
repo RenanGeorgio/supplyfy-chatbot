@@ -1,9 +1,11 @@
-import { repplyFaceAction, sendFaceAction } from "../service";
+import { repplyFaceAction, sendFaceAction, sendFacebookMessage } from "../service";
 import { FaceMsgData } from "../../../types";
 import { processQuestion } from "../../../libs/trainModel";
 
-export function sendFacebookText(recipientId: string, messageText: string) {
-  const data = processQuestion(messageText);
+//export function sendFacebookText(recipientId: string, messageText: string) {
+export async function sendFacebookText(recipientId: string, messageText: string) {
+  //const data = processQuestion(messageText);
+  const responseText = await processQuestion(messageText);
   
   const messageData: FaceMsgData = {
     recipient: {
@@ -11,12 +13,13 @@ export function sendFacebookText(recipientId: string, messageText: string) {
     },
     messaging_type: 'RESPONSE',
     message: {
-      text: data,
+      text: responseText,
       metadata: process.env.FACEBOOK_METADATA
     }
   };
 
-  sendFaceAction(messageData);
+  // sendFaceAction(messageData);
+  sendFacebookMessage(messageData);
 }
 
 export function processComments(comment) { // Processes incoming posts to page to get ID of the poster

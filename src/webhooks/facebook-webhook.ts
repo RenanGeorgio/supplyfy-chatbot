@@ -15,12 +15,12 @@ router.get('/', function (req: CustomRequest, res: Response, next: NextFunction)
         }
         
         if (req.query['hub.mode'] == 'subscribe' && req.query['hub.verify_token'] == verificationToken) {
-            res.status(200).send(req.query['hub.challenge']);
+            return res.status(200).send(req.query['hub.challenge']);
         } else {
-            res.sendStatus(400);
+            return res.sendStatus(400);
         }
     } catch (error) {
-        next(error);
+        return res.sendStatus(500);
     }
 });
 
@@ -28,19 +28,19 @@ router.post('/', async function (req: CustomRequest, res: Response, next: NextFu
     const data = req.body;
     
     try {
-        if (data != undefined) {
-            next();
-        }
+        // if (data != undefined) {
+        //     next();
+        // }
 
         if (data.object === "page") {
-            eventsHandler(req, res, next);
+            await eventsHandler(req, res, next);
+            return res.sendStatus(200);
         } else {
-            res.status(404).json({ error: 'Service not defined' });
+            return res.status(404).json({ error: 'Service not defined' });
         }
 
-        res.sendStatus(200);
     } catch (error) {
-        next(error);
+        return res.sendStatus(500);
     }
 });
 
