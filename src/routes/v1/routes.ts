@@ -102,7 +102,12 @@ routes
   
   // Lista todos os chats de um usuário
   .get("/chat/:userId", authMiddleware.JWT, chatController.findUserChats)
-  
+
+  // Atualiza o status de um chat
+  .put("/chat/:chatId/status", authMiddleware.JWT, chatController.updateStatus)
+  // Atualiza o agente de um chat
+  .put("/chat/:chatId/agent", authMiddleware.JWT, chatController.updateAgent)
+
   // gerar api token
   .post("/api-token", authMiddleware.JWT, apiTokenController.create)
   

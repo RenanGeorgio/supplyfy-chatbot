@@ -14,7 +14,7 @@ import {
 import { ignoredMessages } from "./helpers/ignoredMessages";
 import { createMessage } from "../../repositories/message";
 import { webhookTrigger } from "../../webhooks/custom/webhookTrigger";
-import { IMessage, ITelegramCredentials, IWebhook } from "../../types/types";
+import { IChat, IMessage, ITelegramCredentials, IWebhook } from "../../types/types";
 import Queue from "../../libs/Queue";
 import { produceMessage } from "../../core/kafka/producer";
 import { socketServiceController } from "../socket";
@@ -216,7 +216,7 @@ const telegramService = async (
       });
     } else if (client && client.flow === ClientFlow.HUMAN) {
       const recipientId = bot?.companyId;
-
+    
       if (msg.text === "/sair") {
         await sendMessage(telegram, chatId, "Suporte finalizado", undefined, {
           ...kafkaMessage,
@@ -232,16 +232,24 @@ const telegramService = async (
         socket.emit("sendMessage", { ...message, recipientId });
         socket.emit("disconnectClient", client.clientId);
         clients.get(chatId).flow = ClientFlow.CHABOT;
-        const chat = await updateChatStatus(client.chatId, "finished");
-        if (webhook) {
+        
+        const chat = await updateChatStatus(client.chatId, {
+          status: "finished",
+        });
+
+        if('success' in chat && !chat.success) {
+          return;
+        }
+        
+        if (webhook && 'members' in chat) {
           webhookTrigger({
             url: webhook.url,
             event: Events.CHAT_ENDED,
             message: {
               chatId: client.chatId,
-              members: chat?.members,
-              createdAt: chat?.createdAt,
-              updatedAt: chat?.updatedAt,
+              members: chat.members,
+              createdAt: chat.createdAt,
+              updatedAt: chat.updatedAt,
             },
             service: "telegram",
           });
