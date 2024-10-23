@@ -8,21 +8,19 @@ export const create = async (
   next: NextFunction
 ) => {
   try {
-    const { companyId, typebotId, workspaceId } = req.body;
+    const { typebotId, workspaceId, companyId } = req.body;
 
-    if (!companyId || !typebotId || !workspaceId) {
-      return res.status(400).send({ message: "Campos obrigatórios ausentes" });
+    if (!typebotId || !workspaceId) {
+      return res.status(400).json({ message: "Campos obrigatórios ausentes" });
     }
 
-    const create = await createTypebot(req.body);
+    const typebot = await createTypebot(typebotId, workspaceId, companyId);
 
-    if ("success" in create && !create.success) {
-      console.log(create);
-      return res.status(400).send({
-        message: create.message,
-      });
+    if (!typebot) {
+      return res.status(400).json({ message: "Erro ao criar Ignai bot" });
     }
-    return res.status(201).send(create);
+
+    return res.status(201).json({ message: "Ignai bot criado" });
   } catch (error) {
     next(error);
   }
