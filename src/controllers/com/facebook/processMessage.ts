@@ -2,7 +2,9 @@ import { repplyFaceAction, sendFaceAction, sendFacebookMessage } from "../servic
 import { FaceMsgData } from "../../../types";
 import { processQuestion } from "../../../libs/trainModel";
 
+//export function sendFacebookText(recipientId: string, messageText: string) {
 export async function sendFacebookText(recipientId: string, messageText: string) {
+  //const data = processQuestion(messageText);
   const responseText = await processQuestion(messageText);
   
   const messageData: FaceMsgData = {
