@@ -19,6 +19,7 @@ import Queue from "../../libs/Queue";
 import { produceMessage } from "../../core/kafka/producer";
 import { socketServiceController } from "../socket";
 import { ClientFlow, Events } from "../../types/enums";
+import { enqueue } from "../enqueue";
 
 const sendMessage = async (
   bot: TelegramBot,
@@ -113,6 +114,29 @@ const telegramService = async (
       msg.text === "/suporte" &&
       clients.get(chatId).flow === ClientFlow.CHABOT
     ) {
+      // adiciona chat na fila de atendimento
+      enqueue({
+        params: {
+          id: chatId.toString(),
+          message: { text: msg.text },
+        },
+        data: {
+          eventData: { 
+            CallSid: chatId.toString(),
+            Caller: msg.chat.first_name,
+            From: chatId.toString(),
+            To: botId.toString(),
+            queuePosition: '1', // posição na fila
+            QueueSid: '1', // ida na fila
+            queueTime: new Date().toString(),
+            avgQueueTime: '0', // tempo medio na fila
+            currentQueueSize: '1', // tamanho atual da fila
+            maxQueueSize: '100'
+           },
+          filterCompanyId: bot!.companyId,
+        },
+      });
+
       const { first_name, last_name } = msg.chat;
       clients.get(chatId).flow = ClientFlow.EMAIL;
       const { clientEmailEventEmitter } = await askEmail(telegram, msg);
