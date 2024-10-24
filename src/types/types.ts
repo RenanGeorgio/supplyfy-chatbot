@@ -14,11 +14,11 @@ export interface User {
 }
 
 export interface CustomMessageKafka {
-  topic: string, 
-  text: string, 
-  from: string, 
-  to: string, 
-  service: string
+  topic: string;
+  text: string;
+  from: string;
+  to: string;
+  service: string;
 }
 
 export interface CustomSession extends Session {
@@ -139,14 +139,15 @@ export interface IInstagramServiceController {
   // resume: (id: string) => void;
 }
 
-export interface  IMessengerServiceController { // alterar os tipos
+export interface IMessengerServiceController {
+  // alterar os tipos
   mensengerServices: any[];
   start: (credentials: any) => any;
   stop: (credentials: any) => any;
   sendMessage: (id: string, messages: string[]) => any;
 }
 
-export interface  ISocketServiceController {
+export interface ISocketServiceController {
   sockets: ISocketService[];
   start: (credentials: ISocketCredentials, webhook?: IWebhook) => Socket;
   // stop: (credentials: ISocketCredentials) => void;
@@ -220,18 +221,18 @@ export interface IEvents {
 export interface IWebhook {
   url: string;
   companyId: string;
-};
+}
 
 export interface UserInfo {
   userId: Types.ObjectId;
   name: string;
-};
+}
 
 export interface OnlineUser {
   userId: string;
   socketId: string;
   platform?: string;
-};
+}
 
 export interface IChat {
   members: string[];
@@ -259,4 +260,23 @@ export interface IClientInfo {
   username: string; // email, numero de telefone etc...
   name: string;
   lastName?: string;
+}
+
+export interface EmailTemplate {
+  name: string;
+  category: string;
+  properties: {
+    backgroundColor: string;
+    textColor: string;
+    borderColor: string;
+    fontSize: string;
+    title: string;
+    content: string;
+    textAlign: string;
+    fontFamily: string;
+    padding: string;
+    margin: string;
+    imageUrl: string;
+  };
+  companyId: string;
 }

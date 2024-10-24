@@ -9,7 +9,7 @@ export async function chatExist(
   const chatExist = await ChatModel.findOne({
     members,
     origin,
-    status
+    status,
   }).exec();
 
   return chatExist;
@@ -53,11 +53,42 @@ export async function createChat({
   return createChat;
 }
 
-export async function updateChatStatus(chatId: string, status: string) {
+export async function updateChatStatus(
+  chatId: string,
+  status: { status?: string; inProgress?: boolean }
+) {
   try {
-    const chat = await ChatModel.findByIdAndUpdate({ _id: chatId }, { status });
+    const chat = await ChatModel.findByIdAndUpdate({ _id: chatId }, status, {
+      new: true,
+    });
+    if (!chat) {
+      return {
+        error: "Chat not found",
+        success: false,
+      };
+    }
     return chat;
   } catch (error: any) {
-    mongoErrorHandler(error);
+    return mongoErrorHandler(error);
+  }
+}
+
+export async function updateChatAgent(chatId: string, assignedAgent: string) {
+  try {
+    const chat = await ChatModel.findByIdAndUpdate(
+      { _id: chatId },
+      { assignedAgent },
+      { new: true }
+    );
+
+    if (!chat) {
+      return {
+        error: "Chat not found",
+        success: false,
+      };
+    }
+    return chat;
+  } catch (error: any) {
+    return mongoErrorHandler(error);
   }
 }

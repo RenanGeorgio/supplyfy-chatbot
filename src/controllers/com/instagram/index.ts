@@ -28,19 +28,19 @@ export const messageHandler = async (
   next: NextFunction
 ) => {
   // Calcula o valor da assinatura x-hub para comparar com o valor no request header
-  const calcXHubSignature = xhub.sign(req?.rawBody).toLowerCase();
+  // const calcXHubSignature = xhub.sign(req?.rawBody).toLowerCase();
 
-  if (req?.headers["x-hub-signature-256"] != calcXHubSignature) {
-    res.status(401).send({ message: "Warning - request header X-Hub-Signature not present or invalid" });
-  }
+  // if (req?.headers["x-hub-signature-256"] != calcXHubSignature) {
+  //   return res.status(401).send({ message: "Warning - request header X-Hub-Signature not present or invalid" });
+  // }
 
   try {
     const body: WebhookEventType = req.body;
 
     if (body?.object === "instagram") {
-      res.status(200).send("EVENT_RECEIVED");
-
+      // res.status(200).send("EVENT_RECEIVED");
       body.entry.forEach(async function (entry: EntryProps) {
+
         if ("changes" in entry) { // Evento de mudança em pagina
           // @ts-ignore
           if (entry?.changes[0]?.field === "comments") {
@@ -67,7 +67,7 @@ export const messageHandler = async (
         if (entry?.messaging != undefined) {
           entry?.messaging?.forEach(async function (webhookEvent: WebhookEventBase | any) {
             if (("message" in webhookEvent) && (webhookEvent?.message?.is_echo === true)) { // Discarta eventos que nao sao do interesse para a aplicacao
-              res.status(400).send({ message: "Got an echo" });
+              return res.status(400).send({ message: "Got an echo" });
             } else {
               if (webhookEvent?.option) {
                 receivedAuthentication(webhookEvent as WebhookMsgOptions);
@@ -109,7 +109,7 @@ export const messageHandler = async (
         }
       });
     } else {
-      res.status(404).send({ message: "Unrecognized POST to webhook" });
+      return res.status(404).send({ message: "Unrecognized POST to webhook" });
     }
   } catch (error: any) {
     next(error);

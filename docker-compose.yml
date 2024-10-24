@@ -38,5 +38,6 @@ services:
       SFDC_CONSUMER_SECRET: ${{ secrets.SFDC_CONSUMER_SECRET }}
       SFDC_USERNAME: ${{ secrets.SFDC_USERNAME }}
       SFDC_PASSWORD: ${{ secrets.SFDC_PASSWORD }}
+      IGNAI_BOT: ${{ secrets.IGNAI_BOT }}
     ports:
      - "80:8000"

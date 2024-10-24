@@ -19,6 +19,9 @@ import * as messageController from "../../controllers/chat/messageController";
 import * as apiTokenController from "../../controllers/api/apiTokenController";
 import * as auth0Controller from "../../controllers/user/auth0Controller";
 import * as whatsappController from "../../controllers/com/whatsapp/whatsappController";
+import * as whatsappTemplateController from "../../controllers/com/whatsapp/templateController";
+import * as templatesController from "../../controllers/templates/templatesController";
+import * as typebotController from "../../controllers/typebot/typebotController";
 
 const routes = Router();
 
@@ -35,7 +38,7 @@ routes
   // .post("/chat", chatController.create)
   // .get("/chat/:id", authMiddleware.JWT, chatController.list)
 
-  // // whatsapp plugin
+  // whatsapp plugin
   .post("/whatsapp/set-status", whatsappController.markMessageAsRead)
   .post("/whatsapp/send-msg", whatsappController.sendTextMessage)
   .post("/whatsapp/inte-btn", whatsappController.sendButtonsMessage)
@@ -45,19 +48,19 @@ routes
   .post("/whatsapp/upload", whatsappController.uploadMedia)
   .post("/whatsapp/send-doc", whatsappController.sendDocumentMessage)
   
+  // template whatsapp
+  .post("/whatsapp/template", authMiddleware.JWT, whatsappTemplateController.create)
+  .delete("/whatsapp/template", authMiddleware.JWT, whatsappTemplateController.remove)
+  
   // user
   .get("/user", authMiddleware.JWT, userController.info)
   .get("/user/:email", userController.findByEmail)
 
   .post("/bot", authMiddleware.JWT, botController.create)
   .get("/bot/services/?:email", botController.listServices)
+  
   // controle do serviço dos bots
-  .post(
-    "/bot/:serviceId/:action",
-    authMiddleware.JWT,
-    botStatusController.action
-  )
-
+  .post("/bot/:serviceId/:action", authMiddleware.JWT, botStatusController.action)
   .get("/facebook/:userId", facebookController.verifyWebhook)
   .post("/facebook/:useId", facebookController.eventsHandler)
 
@@ -67,34 +70,47 @@ routes
   // ----- Chat -----
   // Copiado do ignai-server
   // to-do: add middleware de auth novamente
+  
   // cria um cliente do chat
   .post("/chat/client", authMiddleware.JWT, chatClientController.createClient)
+  
   // lista todos os clientes
   .get("/chat/clients", authMiddleware.JWT, chatClientController.listClients)
   .get("/chat/client/:_id", authMiddleware.JWT, chatClientController.findClientById)
-    // busca um cliente
-    .get("/chat/client/email/:email", authMiddleware.JWT, chatClientController.findClientByEmail)
+  
+  // busca um cliente
+  .get("/chat/client/email/:email", authMiddleware.JWT, chatClientController.findClientByEmail)
+  
   // atualiza um cliente do chat
   .put("/chat/client/:_id", authMiddleware.JWT, chatClientController.updateClient)
-  // // Busca um chat
+  
+  // Busca um chat
   .get("/chat/find/:firstId/:secondId", authMiddleware.JWT, chatController.findChat)
+  
   // Cria um chat
   .post("/chat", authMiddleware.JWT, chatController.createChat)
+  
   // ----- Mensagens -----
-  // // Lista todas as mensagens de um chat
+  // Lista todas as mensagens de um chat
   .get("/chat/message/:chatId", authMiddleware.JWT, messageController.list)
+  
   // envia message via requisição http
-  .post(
-    "/chat/message/send-message",
-    authMiddleware.JWT,
-    messageController.sendMessage
-  )
+  .post("/chat/message/send-message", authMiddleware.JWT, messageController.sendMessage)
+  
   // Cria uma mensagem (sumente armazena)
   .post("/chat/message", authMiddleware.JWT, messageController.create)
-  // // Lista todos os chats de um usuário
+  
+  // Lista todos os chats de um usuário
   .get("/chat/:userId", authMiddleware.JWT, chatController.findUserChats)
+
+  // Atualiza o status de um chat
+  .put("/chat/:chatId/status", authMiddleware.JWT, chatController.updateStatus)
+  // Atualiza o agente de um chat
+  .put("/chat/:chatId/agent", authMiddleware.JWT, chatController.updateAgent)
+
   // gerar api token
   .post("/api-token", authMiddleware.JWT, apiTokenController.create)
+  
   // webhook
   .post("/webhook", authMiddleware.JWT, webhookController.create)
 
@@ -102,5 +118,10 @@ routes
   .post("/auth0/auth", auth0Controller.token)
   .post("/auth0/register", authMiddleware.auth0, auth0Controller.register)
   .post("/auth0/login", authMiddleware.auth0, auth0Controller.login)
+
+  // templates
+  .post("/templates/email", authMiddleware.JWT, templatesController.create)
+  .post("/typebot", authMiddleware.JWT, typebotController.create)
+  .delete("/typebot/:typebotId", authMiddleware.JWT, typebotController.remove)
 
 export default routes;

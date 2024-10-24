@@ -15,6 +15,15 @@ export async function userExist(userId?: string) {
   }
 }
 
+export async function removeUser(userId: string) {
+  try {
+    const user = await User.findOneAndDelete({ _id: userId });
+    return { success: true, message: "Usuário removido com sucesso" };
+  } catch (error) {
+    mongoErrorHandler(error);
+  }
+}
+
 /**
  * verifica se o usuário existe
  * @param {string} path campo a ser pesquisado

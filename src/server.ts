@@ -66,7 +66,7 @@ const schema = makeExecutableSchema({
 app.use(sessionMiddleware);
 
 app.use('/whatsapp-incoming', waWebhookRouter);
-app.use('/instagram-incoming', igWebhookRouter);
+app.use('/ig-incoming', igWebhookRouter);
 app.use('/facebook-incoming', fbWebhookRouter);
 // app.use('/incoming', webhookRouter);
 
