@@ -1,5 +1,7 @@
-// import { processQuestion } from "../../../libs/bot/nlp/manager";
+import { removeEmojis } from "@nlpjs/emoji";
 import Response, { processMessage } from "./processMessage";
+import { sendMessage } from "./instagramController";
+import { DirectlineService } from "../../../libs/bot/connector/directLine";
 import { 
   Consumer, 
   WebhookEventBase, 
@@ -9,7 +11,6 @@ import {
   WebhookMsgPostbacks, 
   WebhookMsgReferral, 
   WebhookMsgs } from "../../../types";
-import { sendMessage } from "./instagramController";
 
 const Receive = class<ReceiveProps> {
   user: Consumer;
@@ -24,7 +25,7 @@ const Receive = class<ReceiveProps> {
     const event: WebhookMsgPostbacks | WebhookMsgReferral | WebhookMsgs = this.webhookEvent;
 
     let responses: Obj = {};
-
+ 
     try {
       responses = processMessage(event, this);
     } catch (error) {
@@ -54,12 +55,20 @@ const Receive = class<ReceiveProps> {
       const message = msgData.trim().toLowerCase();
 
       let response;
-
+      // AQUI
       if (message.includes("start over") || message.includes("get started") || message.includes("hi")) {
         if (this.user != undefined) {
           response = Response.genNuxMessage(this.user);
         }
       } else {
+        const directLineService = DirectlineService.getInstance();
+
+        const msgToSend = removeEmojis(message);
+        
+        directLineService.sendMessageToBot(msgToSend, userId, name, conversationId);
+        directLineService.sendMessageToBot(msgToSend, "uuid", wb.recipientName); 
+
+        // TO-DO: a resposta nao vai mais vir daqui 
         // const answer = await processQuestion(msgData);
         response = { 
           // message: answer 

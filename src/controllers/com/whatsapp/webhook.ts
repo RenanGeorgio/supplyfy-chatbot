@@ -12,7 +12,7 @@ const xhub = new XHubSignature("SHA256", appSecret);
 
 export const messageHandler = async (
     req: CustomRequest,
-) => {
+) => { 
     try {
         // Calcula o valor da assinatura x-hub para comparar com o valor no request header
         // const calcXHubSignature = xhub.sign(req.rawBody).toLowerCase();
@@ -25,11 +25,11 @@ export const messageHandler = async (
         const body = req.body.entry?.[0]?.changes?.[0];
 
         if (!body) {
-            throw new Error("Body indefinido");
+            throw new Error("Body not defined");
         }
 
         if (body.field !== "messages") {
-            throw new Error("Menssagens indefinidas");
+            throw new Error("Messagens not defined");
         }
 
         const data = body.value;

@@ -1,11 +1,16 @@
+import { removeEmojis } from "@nlpjs/emoji";
 import { repplyFaceAction, sendFaceAction, sendFacebookMessage } from "../service";
 import { FaceMsgData } from "../../../types";
-// import { processQuestion } from "../../../libs/bot/nlp/manager";
+import { DirectlineService } from "../../../libs/bot/connector/directLine";
 
-//export function sendFacebookText(recipientId: string, messageText: string) {
-export async function sendFacebookText(recipientId: string, messageText: string) {
-  //const data = processQuestion(messageText);
-  const responseText = await processQuestion(messageText);
+
+export function sendFacebookText(recipientId: string, messageText: string) {
+  const directLineService = DirectlineService.getInstance();
+
+  const msgToSend = removeEmojis(messageText);
+  
+  directLineService.sendMessageToBot(msgToSend, userId, name, conversationId);
+  directLineService.sendMessageToBot(msgToSend, "uuid", wb.recipientName); 
   
   const messageData: FaceMsgData = {
     recipient: {

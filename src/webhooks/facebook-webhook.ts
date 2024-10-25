@@ -25,20 +25,15 @@ router.get('/', function (req: CustomRequest, res: Response, next: NextFunction)
 });
 
 router.post('/', async function (req: CustomRequest, res: Response, next: NextFunction) {
-    const data = req.body;
-    
     try {
-        // if (data != undefined) {
-        //     next();
-        // }
+        const data = req?.body;
 
         if (data.object === "page") {
             await eventsHandler(req, res, next);
             return res.sendStatus(200);
         } else {
-            return res.status(404).json({ error: 'Service not defined' });
+            return res.sendStatus(400);
         }
-
     } catch (error) {
         return res.sendStatus(500);
     }

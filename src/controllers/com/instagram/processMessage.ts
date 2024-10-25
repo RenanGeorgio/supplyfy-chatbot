@@ -1,5 +1,20 @@
+import { 
+  sendAccountLinking, 
+  sendAudioMessage, 
+  sendButtonMessage, 
+  sendFileMessage, 
+  sendGenericMessage, 
+  sendGifMessage, 
+  sendImageMessage, 
+  sendQuickReply, 
+  sendReadReceipt, 
+  sendReceiptMessage, 
+  sendTextMessage, 
+  sendTypingOff, 
+  sendTypingOn, 
+  sendVideoMessage 
+} from "./instagramController/data";
 import { Consumer, MsgEventProp, Obj, WebhookEventBase } from "../../../types";
-import { sendAccountLinking, sendAudioMessage, sendButtonMessage, sendFileMessage, sendGenericMessage, sendGifMessage, sendImageMessage, sendQuickReply, sendReadReceipt, sendReceiptMessage, sendTextMessage, sendTypingOff, sendTypingOn, sendVideoMessage } from "./instagramController/data";
 
 export default class Response {
   static genQuickReply(text, quickReplies) {
