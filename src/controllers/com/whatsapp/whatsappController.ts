@@ -35,25 +35,24 @@ export const markMessageAsRead = async (
 };
 
 export const sendTextMessage = async (messageText: string, wb: any) => {
-    try {
-        const data: SendText = {
-            messaging_product: "whatsapp",
-            recipient_type: "individual",
-            to: wb.recipientPhoneNumberId,
-            type: "text",
-            text: {
-                preview_url: false,
-                body: messageText,
-            }
-        };
-
-        console.log("send text message called: " + messageText)
-        const response = await sendMsg(data, wb);
-
-        return response;
-    } catch (error: any) {
-        return null;
+  const data: SendText = {
+    messaging_product: 'whatsapp',
+    recipient_type: 'individual',
+    to: wb.recipientPhoneNumberId,
+    type: 'text',
+    text: {
+      preview_url: false,
+      body: messageText
     }
+  }
+
+  console.log("send text message called: " + messageText);
+  try {
+    const response = await sendMsg(data, wb);
+    return response;
+  } catch (error: any) {
+    return null;
+  }
 };
 
 export const sendButtonsMessage = async (

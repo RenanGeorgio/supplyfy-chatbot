@@ -1,7 +1,7 @@
 import { Client, RemoteAuth } from "whatsapp-web.js";
 import { MongoStore } from "wwebjs-mongo";
 import mongoose from "mongoose";
-import { processQuestion } from "../libs/trainModel";
+// import { processQuestion } from "../libs/bot/nlp/manager";
 import qrcode from "qrcode-terminal";
 
 const whatsappWebService = (id: string) => {
@@ -73,14 +73,13 @@ const whatsappWebService = (id: string) => {
 
       if (msg.body === "!ping reply") {
         // Envia nova mensagem como resposta a mensagem atual
-        const response = await processQuestion(msg.body);
-
-        msg.reply(response);
+        // const response = await processQuestion(msg.body);
+        // msg.reply(response);
       } else if (msg.body === "!ping") {
         // Envia nova mensagem no msm chat
-        const response = await processQuestion(msg.body);
+        // const response = await processQuestion(msg.body);
 
-        client.sendMessage(msg.from, response);
+        // client.sendMessage(msg.from, response);
       } else if (msg.body.startsWith("!sendto ")) {
         // Envia msg direta para um id especifico
         let number = msg.body.split(" ")[1];
@@ -195,9 +194,8 @@ const whatsappWebService = (id: string) => {
         }
       } else {
         if (msg.body) {
-          const response = await processQuestion(msg.body);
-
-          msg.reply(response);
+          // const response = await processQuestion(msg.body);
+          // msg.reply(response);
         } else {
           /**
            * Pins a message in a chat, a method takes a number in seconds for the message to be pinned.

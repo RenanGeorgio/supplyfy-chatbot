@@ -20,7 +20,8 @@ import {
   SendContacts,
   SendImg,
   SendDoc,
-  MsgStatus
+  MsgStatus,
+  WaMsgMetaData
 } from "./whatsapp";
 import { 
   FaceMsgData, 
@@ -59,5 +60,6 @@ export {
   PageEntry, 
   FaceMsgSender, 
   FaceMsgRecipient, 
-  FaceMessage
+  FaceMessage,
+  WaMsgMetaData
 }

@@ -1,6 +1,6 @@
 import Queue from "../../libs/Queue";
 import { produceMessage } from "../../core/kafka/producer";
-import { processQuestion } from "../../libs/trainModel";
+// import { processQuestion } from "../../libs/bot/nlp/manager";
 import { botExist } from "../../repositories/bot";
 import { IEmailCredentials, IWebhook } from "../../types";
 import { Events } from "../../types/enums";
@@ -138,7 +138,7 @@ const emailService = async (
       const responseMessage = await processQuestion(
         sanitizedEmailText as string
       );
-
+     
       if (!responseMessage) return;
 
       Queue.add("EmailService", {
@@ -164,6 +164,6 @@ const emailService = async (
   });
 
   return { mailListener, mailTransporter, mailListenerEventEmitter };
-};
+}
 
 export default emailService;

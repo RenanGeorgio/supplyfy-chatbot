@@ -1,4 +1,4 @@
-import { processQuestion } from "../../libs/trainModel";
+// import { processQuestion } from "../../libs/bot/nlp/manager";
 import callSendApi from "./api/callSendApi";
 
 export default async function messengerService(data) {
@@ -20,7 +20,7 @@ export default async function messengerService(data) {
         throw new Error("Error sending message");
       }
     } else if (webhookEvent.postback) {
-      // handlePostback(senderPsid, webhookEvent.postback);
+      handlePostback(senderPsid, webhookEvent.postback);
     }
   }
 }

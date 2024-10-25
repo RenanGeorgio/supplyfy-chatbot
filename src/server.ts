@@ -1,9 +1,9 @@
+import express, { ErrorRequestHandler, Response, NextFunction } from "express";
+import session from "express-session";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import bodyParser from "body-parser";
-import express, { ErrorRequestHandler, Response, NextFunction } from "express";
 import createError from "http-errors";
-import session from "express-session";
 import RedisStore from "connect-redis";
 // import { graphqlHTTP } from "express-graphql";
 import { makeExecutableSchema } from "@graphql-tools/schema";
@@ -11,10 +11,10 @@ import { redisClient } from "./core/redis";
 import { apiRoutes, routes } from "./routes";
 import resolvers from "./core/resolvers";
 import typeDefs from "./core/schemas";
-import { fbWebhookRouter, igWebhookRouter, waWebhookRouter, webhookRouter } from "./webhooks";
-import { sessionMiddleware, serviceSelectorMiddleware } from "./middlewares";
-import { CustomRequest } from "./types/types";
+import { fbWebhookRouter, igWebhookRouter, waWebhookRouter } from "./webhooks";
+import { sessionMiddleware } from "./middlewares";
 import BullBoard from "./libs/BullBoard";
+import { CustomRequest } from "./types/types";
 
 const store = new RedisStore({ client: redisClient, prefix: "chatbot:" });
 
@@ -90,4 +90,4 @@ app.use(((error: any, req: CustomRequest, res: Response, next: NextFunction) => 
   res.status(error.status || 500).send({ message: error.message });
 }) as ErrorRequestHandler);
 
-export { app };
+export default app;

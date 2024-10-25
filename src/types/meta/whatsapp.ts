@@ -91,4 +91,12 @@ export interface MsgStatus {
     message_id: number | string;
 };
 
+export type WaMsgMetaData = {
+    senderPhoneNumberId: string | number;
+    senderPhoneNumber?: string | number | undefined;
+    recipientName?: string;
+    recipientPhoneNumberId: string | number;
+    accessToken: string;
+}
+
 export type MsgProps = MsgStatus | SendDoc | SendImg | SendContacts | SendInterativeList | SendInterativeButton | SendText | SendTemplate;

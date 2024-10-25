@@ -1,6 +1,7 @@
 import { Response, NextFunction } from "express";
 import { CustomRequest } from "../../types";
-import { processQuestion } from "../../libs/trainModel";
+import { DirectlineService } from "../../libs/bot/connector/directLine";
+import Queue from "../../libs/Queue";
 
 export const create = async (
     req: CustomRequest,
@@ -8,10 +9,12 @@ export const create = async (
     next: NextFunction
 ) => {
     try {
-        const { message } = req.body;
-        const response = await processQuestion(message);
+        const { message, conversationId, userId, name } = req.body;
 
-        return res.status(200).send({ message: response });
+        const directLineService = DirectlineService.getInstance();
+        directLineService.sendMessageToBot(message, userId, name, conversationId);
+
+        return res.status(200).send("Message created!");
     } catch (error) {
         next(error);
     }

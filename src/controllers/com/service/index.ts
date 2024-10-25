@@ -1,11 +1,13 @@
 import { Response } from "express";
 import { facebookApi, instagramApi, whatsappCloudApi } from "../../../api";
-import { FaceMsgData, MsgProps, Obj } from "../../../types";
+import { FaceMsgData, MsgProps, MsgStatus, Obj } from "../../../types";
 
 export const sendMsg = async (data: MsgProps, wb: any) => {
+  console.log("send message called");
+
   try {
-    console.log("send message called");
     const useWhatsappApi = whatsappCloudApi("v20.0", wb.senderPhoneNumberId);
+
     const response = await useWhatsappApi("/messages", {
       method: "POST",
       headers: {
@@ -14,6 +16,7 @@ export const sendMsg = async (data: MsgProps, wb: any) => {
       },
       data: data,
     });
+
     if (response) {
       return response;
     } else {
@@ -25,11 +28,11 @@ export const sendMsg = async (data: MsgProps, wb: any) => {
 };
 
 export const msgStatusChange = async (messageId: string | number, wb: any) => {
-  const data = {
-    messaging_product: "whatsapp",
-    status: "read",
-    message_id: messageId,
-  };
+  const data: MsgStatus = {
+    messaging_product: 'whatsapp',
+    status: 'read',
+    message_id: messageId
+  }
 
   const response = await sendMsg(data, wb);
 

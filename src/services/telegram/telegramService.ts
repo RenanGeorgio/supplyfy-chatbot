@@ -1,5 +1,5 @@
 import TelegramBot from "node-telegram-bot-api";
-import { processQuestion } from "../../libs/trainModel";
+// import { processQuestion } from "../../libs/bot/nlp/manager";
 import { askEmail } from "./helpers/askEmail";
 import { botExist } from "../../repositories/bot";
 import {
@@ -19,6 +19,7 @@ import Queue from "../../libs/Queue";
 import { produceMessage } from "../../core/kafka/producer";
 import { socketServiceController } from "../socket";
 import { ClientFlow, Events } from "../../types/enums";
+import { enqueue } from "../enqueue";
 
 const sendMessage = async (
   bot: TelegramBot,
@@ -113,6 +114,29 @@ const telegramService = async (
       msg.text === "/suporte" &&
       clients.get(chatId).flow === ClientFlow.CHABOT
     ) {
+      // adiciona chat na fila de atendimento
+      enqueue({
+        params: {
+          id: chatId.toString(),
+          message: { text: msg.text },
+        },
+        data: {
+          eventData: { 
+            CallSid: chatId.toString(),
+            Caller: msg.chat.first_name,
+            From: chatId.toString(),
+            To: botId.toString(),
+            queuePosition: '1', // posição na fila
+            QueueSid: '1', // ida na fila
+            queueTime: new Date().toString(),
+            avgQueueTime: '0', // tempo medio na fila
+            currentQueueSize: '1', // tamanho atual da fila
+            maxQueueSize: '100'
+           },
+          filterCompanyId: bot!.companyId,
+        },
+      });
+
       const { first_name, last_name } = msg.chat;
       clients.get(chatId).flow = ClientFlow.EMAIL;
       const { clientEmailEventEmitter } = await askEmail(telegram, msg);
@@ -189,6 +213,7 @@ const telegramService = async (
       !ignoredMessages(msg.text as string)
     ) {
       const responseMessage = await processQuestion(msg.text as string);
+      
       if (responseMessage === "Desculpe, não tenho uma resposta para isso.") {
         await sendMessage(telegram, chatId, responseMessage, undefined, {
           ...kafkaMessage,
@@ -210,6 +235,7 @@ const telegramService = async (
           }
         );
       }
+      
       await sendMessage(telegram, chatId, responseMessage, undefined, {
         ...kafkaMessage,
         from: botId.toString(),
@@ -302,7 +328,7 @@ const telegramService = async (
           "TelegramService",
           { id: chat.origin?.chatId, message: { text: message.text } },
           credentials._id
-        );
+        ); 
       }
       console.log(
         `📗 Telegram: \x1b[4m${botName}\x1b[0m received message from socket`
@@ -312,6 +338,6 @@ const telegramService = async (
 
   console.log(`📘 Telegram: serviço iniciado \x1b[4m${botName}\x1b[0m`);
   return telegram;
-};
+}
 
 export default telegramService;

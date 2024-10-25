@@ -1,0 +1,266 @@
+{
+  "settings": {
+    "tag": "nlp",
+    "forceNER": true,
+    "languages": [
+      "pt"
+    ],
+    "calculateSentiment": true,
+    "executeActionsBeforeAnswers": false
+  },
+  "nluManager": {
+    "settings": {
+      "tag": "nlu-manager"
+    },
+    "locales": [
+      "pt"
+    ],
+    "languageNames": {},
+    "domainManagers": {
+      "pt": {
+        "settings": {
+          "locale": "pt",
+          "trainByDomain": false,
+          "tag": "domain-manager-pt",
+          "nluByDomain": {
+            "default": {
+              "className": "NeuralNlu",
+              "settings": {}
+            }
+          },
+          "useStemDict": true
+        },
+        "stemDict": {
+          "ola": {
+            "intent": "greetings.hello",
+            "domain": "default"
+          },
+          "@nam,e,meu,nom": {
+            "intent": "greetings.name",
+            "domain": "default"
+          },
+          "tchau": {
+            "intent": "greetings.bye",
+            "domain": "default"
+          }
+        },
+        "intentDict": {
+          "greetings.hello": "default",
+          "greetings.name": "default",
+          "greetings.bye": "default"
+        },
+        "sentences": [
+          {
+            "domain": "default",
+            "utterance": "olá",
+            "intent": "greetings.hello"
+          },
+          {
+            "domain": "default",
+            "utterance": "meu nome é @name",
+            "intent": "greetings.name"
+          },
+          {
+            "domain": "default",
+            "utterance": "tchau",
+            "intent": "greetings.bye"
+          }
+        ],
+        "domains": {
+          "master_domain": {
+            "settings": {
+              "locale": "pt",
+              "tag": "nlu-pt",
+              "keepStopwords": true,
+              "nonefeatureValue": 1,
+              "nonedeltaMultiplier": 1.2,
+              "spellCheck": false,
+              "spellCheckDistance": 1,
+              "filterZeros": true,
+              "log": true
+            },
+            "features": {
+              "ola": 1,
+              "meu": 1,
+              "nom": 1,
+              "e": 1,
+              "@nam": 1,
+              "tchau": 1
+            },
+            "intents": {
+              "greetings.hello": 1,
+              "greetings.name": 1,
+              "greetings.bye": 1
+            },
+            "intentFeatures": {
+              "greetings.hello": {
+                "ola": 1
+              },
+              "greetings.name": {
+                "meu": 1,
+                "nom": 1,
+                "e": 1,
+                "@nam": 1
+              },
+              "greetings.bye": {
+                "tchau": 1
+              }
+            },
+            "featuresToIntent": {
+              "ola": [
+                "greetings.hello"
+              ],
+              "meu": [
+                "greetings.name"
+              ],
+              "nom": [
+                "greetings.name"
+              ],
+              "e": [
+                "greetings.name"
+              ],
+              "@nam": [
+                "greetings.name"
+              ],
+              "tchau": [
+                "greetings.bye"
+              ]
+            },
+            "neuralNetwork": {
+              "settings": {
+                "locale": "pt",
+                "tag": "nlu-pt",
+                "keepStopwords": true,
+                "nonefeatureValue": 1,
+                "nonedeltaMultiplier": 1.2,
+                "spellCheck": false,
+                "spellCheckDistance": 1,
+                "filterZeros": true,
+                "log": true
+              },
+              "features": [
+                "ola",
+                "meu",
+                "nom",
+                "e",
+                "@nam",
+                "tchau"
+              ],
+              "intents": [
+                "greetings.hello",
+                "greetings.name",
+                "greetings.bye"
+              ],
+              "perceptrons": [
+                [
+                  10.791885375976562,
+                  -0.8407403826713562,
+                  -0.8407403826713562,
+                  -0.8407403826713562,
+                  -0.8407403826713562,
+                  -3.237661600112915,
+                  3.3573569252389053
+                ],
+                [
+                  -0.8388839960098267,
+                  3.3612258434295654,
+                  3.3612258434295654,
+                  3.3612258434295654,
+                  3.3612258434295654,
+                  -0.8407991528511047,
+                  0.8406755428636687
+                ],
+                [
+                  -3.226917028427124,
+                  -0.83892822265625,
+                  -0.83892822265625,
+                  -0.83892822265625,
+                  -0.83892822265625,
+                  10.79175090789795,
+                  3.3629520998085156
+                ]
+              ]
+            }
+          }
+        }
+      }
+    },
+    "intentDomains": {},
+    "extraSentences": [
+      [
+        "pt",
+        "olá"
+      ],
+      [
+        "pt",
+        "meu nome é @name"
+      ],
+      [
+        "pt",
+        "tchau"
+      ]
+    ]
+  },
+  "ner": {
+    "settings": {
+      "tag": "ner"
+    },
+    "rules": {
+      "pt": {
+        "name": {
+          "name": "name",
+          "type": "trim",
+          "rules": [
+            {
+              "type": "afterLast",
+              "words": [
+                "meu nome é"
+              ],
+              "options": {}
+            }
+          ]
+        }
+      }
+    }
+  },
+  "nlgManager": {
+    "settings": {
+      "tag": "nlg-manager"
+    },
+    "responses": {
+      "pt": {
+        "greetings.hello": [
+          {
+            "answer": "Olá"
+          }
+        ],
+        "greetings.name": [
+          {
+            "answer": "Bem vindo {{ name }}"
+          }
+        ],
+        "greetings.bye": [
+          {
+            "answer": "Até a próxima! {{ name }}"
+          }
+        ]
+      }
+    }
+  },
+  "actionManager": {
+    "settings": {
+      "tag": "action-manager"
+    },
+    "actions": {}
+  },
+  "slotManager": {
+    "greetings.name": {
+      "name": {
+        "intent": "greetings.name",
+        "entity": "name",
+        "mandatory": false,
+        "locales": {}
+      }
+    }
+  }
+}
