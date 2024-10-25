@@ -1,7 +1,7 @@
 import Queue from "bull";
+import { RedisOptions } from "ioredis";
 import * as jobs from "../jobs";
 import { redisConfig } from "../core/redis";
-import { RedisOptions } from "ioredis";
 
 const redisOpts: RedisOptions = {
   host: redisConfig.host.replace(/[\\"]/g, ''),
@@ -22,7 +22,7 @@ const queues = Object.values(jobs).map((job) => ({
   handle: job.handle,
   options: job.options,
 }));
-
+ 
 export default {
   queues,
   add(name: string, data: any, serviceId?: string) {

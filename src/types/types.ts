@@ -1,13 +1,15 @@
 import { Request } from "express";
 import { Types } from "mongoose";
-// import { WebhookEventBase } from "./meta";
 import { Session } from "express-session";
 import TelegramBot from "node-telegram-bot-api";
 import { Transporter } from "nodemailer";
 import { IgApiClientRealtime } from "instagram_mqtt";
 import { Socket } from "socket.io-client";
+
 import { IMailListener } from "../services/email/lib/types";
-import { Events } from "./enums";
+import { WebhookEventBase } from "./meta";
+import { Events, Platforms } from "./enums";
+
 
 export interface User {
   sub: Types.ObjectId | string;
@@ -52,7 +54,7 @@ export interface Consumer {
 
 export type ReceiveProps = {
   user: Consumer;
-  // webhookEvent: WebhookEventBase;
+  webhookEvent?: WebhookEventBase;
 };
 
 export type ContactsData = {
@@ -279,4 +281,14 @@ export interface EmailTemplate {
     imageUrl: string;
   };
   companyId: string;
+}
+
+export interface BotMsgValue {
+  service: Platforms
+  messageId: string | number
+  to: string | number
+  phoneNumber: string
+  phoneNumberId: string
+  name: string | undefined,
+  token?: string
 }

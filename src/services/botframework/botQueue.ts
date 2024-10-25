@@ -5,15 +5,14 @@ export const botServiceController: any = {
     async start() {
     },
     async stop() {
-        
     }
 };
 
 export default {
     key: "BotService",
     async handle(data: any) {
-        const message = data;
-        await botService({ message });
+        const result = data;
+        await botService({ result });
     },
     options: {
         attempts: 3,

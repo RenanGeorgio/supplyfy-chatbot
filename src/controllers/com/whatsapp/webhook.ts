@@ -6,6 +6,8 @@ import { msgStatusChange } from "../service";
 //import WhatsappService from "../../../services/whatsapp";
 import { botExist } from "../../../repositories/bot";
 import { CustomRequest, WaMsgMetaData } from "../../../types";
+import { Platforms } from "../../../types/enums";
+import { BotMsgValue } from "../../../types/types";
 
 const appSecret = process.env.APP_SECRET ? process.env.APP_SECRET.replace(/[\\"]/g, '') : "secret";
 const xhub = new XHubSignature("SHA256", appSecret);
@@ -61,9 +63,19 @@ export const messageHandler = async (
                 console.log(error?.message);
             }
 
+            const value: BotMsgValue = {
+                service: Platforms.WHATSAPP,
+                messageId: data.messages[0].id,
+                to: whatsappData.recipientPhoneNumberId,
+                phoneNumber: whatsappData.senderPhoneNumber as string,
+                phoneNumberId: whatsappData.senderPhoneNumberId as string,
+                name: whatsappData.recipientName,
+                token: whatsappData.accessToken
+            }
+
             data.messages.map((message, index) => {
                 console.log("mensagem: ", index);
-                return processWaMessage(message, whatsappData, bots.companyId);
+                return processWaMessage(message, value, bots.companyId);
             });
         }
 

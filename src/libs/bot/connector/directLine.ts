@@ -2,6 +2,15 @@ import { DirectLine, ConnectionStatus, Activity } from "botframework-directlinej
 import { ActivityTypes } from "botbuilder";
 import { randomBytes, createCipheriv, createDecipheriv, randomUUID } from "crypto";
 import queue from "../../Queue";
+import { Obj } from "../../../types";
+
+export interface MsgToBot {
+    text: string
+    id: string | number
+    name?: string
+    conversation?: string
+    value?: Obj
+}
 
 const directLine = new DirectLine({
     secret: process.env.DIRECT_LINE_SECRET,
@@ -35,8 +44,8 @@ export class DirectlineService {
             }
         });
     }
-
-    public sendMessageToBot(text: string, id: string, name: string = "Anonymous", conversation?: string, value?: object) {
+    
+    public sendMessageToBot({ text, id, name = "Anonymous", conversation, value }: MsgToBot) {
         const activity: Activity = {
             from: { id, name, role: "user" },
             type: ActivityTypes.Message,
@@ -45,6 +54,7 @@ export class DirectlineService {
             ...(conversation ? { conversation: { id: conversation } } : {} ),
             ...(value ? { value } : { }),
         }
+
         directLine
             .postActivity(activity).subscribe(
                 (value: any) => console.log("Posted message activity. " + value),
@@ -57,10 +67,10 @@ export class DirectlineService {
         directLine.activity$
             .filter(activity => activity.type === ActivityTypes.Message && activity.from.id === botName)
             .subscribe(
-                (message) => {
+                (result) => {
                     console.log("Activity added to BotService queue.")
-                    console.log(message)
-                    queue.add("BotService", { message });
+                    console.log(result)
+                    queue.add("BotService", { result });
                 }
             )
     }

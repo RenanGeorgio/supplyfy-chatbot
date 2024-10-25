@@ -92,41 +92,39 @@ export class ConversationBot extends ActivityHandler {
 
         await this.welcomedUserProperty.set(context, true);
       } else {
-        conversationData.timestamp = context.activity.timestamp.toLocaleString();
-        conversationData.channelId = context.activity.channelId;
-
-        const text = context.activity.text.trim().toLocaleLowerCase();
-        // TO-DO: verificar quem é o usuario, puxar modelo e carregar por msg por conta de custo computacional e overflow do servidor
-        this.manager.setModel('./model.nlp'); // trocar forma de carregamento, arquivo para json e etc.
-        const answer = await this.manager.conversation.processQuestion(text);
-
-        const activity = { type: ActivityTypes.Message, text: answer }
-        await context.sendActivity(activity);
+        
       }*/
+
+      conversationData.timestamp = context.activity.timestamp.toLocaleString();
+      conversationData.locale = context.activity.locale;
+      conversationData.channelId = context.activity.channelId;
 
       const text = context.activity.text.trim().toLocaleLowerCase();
       
       if (text) {
         const id = context.activity.from.id;
         const conversationId = context.activity.conversation.id;
-        // console.log(conversationId)
-        if(userProfile){
-          // userProfile.userId = id;
-          // userProfile.userName = context.activity.from.name;
-          // userProfile.info = context.activity?.value;
-        }
-        if (conversationData){
-          // conversationData.timestamp = context.activity.timestamp.toLocaleString();
-          // conversationData.locale = context.activity.locale;
-          // conversationData.channelId = context.activity.channelId;
+        
+        const useData = context.activity?.value;
+
+        if (userProfile) {
+          userProfile.userId = id;
+          userProfile.userName = context.activity.from.name;
+          userProfile.info = useData;
         }
 
-        // TO-DO: verificar quem é o usuario, puxar modelo e carregar por msg por conta de custo computacional e overflow do servidor
-        // this.currentManager.setModel('./model_1.nlp'); // trocar forma de carregamento, arquivo para json e etc.
         const answer = await this.currentManager.executeConversation(id, text);
 
-        const activity = { type: ActivityTypes.Message, text: answer }
-        // console.log("Resposta: " + answer)
+        const activity = { 
+          type: ActivityTypes.Message, 
+          text: answer,
+          value: {
+            ...useData,
+            channel: useData.service
+          }
+        }
+        
+        //Promise<ResourceResponse | undefined>
         await context.sendActivity(activity);
       }
 

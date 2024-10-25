@@ -26,8 +26,8 @@ export type UserRole = "bot" | "channel" | "user";
 export type ActivityProps = {
   address?: {
     conversation: { id: string | number }
-  };
-  conversation?: { id: string | number };
+  }
+  conversation?: { id: string | number }
 }
 
 export type ContextMap = {
@@ -35,43 +35,43 @@ export type ContextMap = {
   contextValue?: CurrentContext | null
   contextKey?: ContextKey | null
 }
-
+ 
 export interface IActivity {
-  type: string,
-  channelData?: any,
-  channelId?: string,
-  conversation?: { id: string },
-  eTag?: string,
-  from: User,
-  id?: string,
+  type: string
+  channelData?: any
+  channelId?: string
+  conversation?: { id: string }
+  eTag?: string
+  from: User
+  id?: string
   timestamp?: string
 }
 
 export interface Message extends IActivity {
-  type: "message",
-  text?: string,
-  locale?: string,
-  textFormat?: "plain" | "markdown" | "xml",
-  attachmentLayout?: AttachmentLayout,
-  attachments?: any[],
-  entities?: any[],
-  suggestedActions?: { actions: any[], to?: string[] },
-  speak?: string,
-  inputHint?: string,
+  type: "message"
+  text?: string
+  locale?: string
+  textFormat?: "plain" | "markdown" | "xml"
+  attachmentLayout?: AttachmentLayout
+  attachments?: any[]
+  entities?: any[]
+  suggestedActions?: { actions: any[], to?: string[] }
+  speak?: string
+  inputHint?: string
   value?: object
 }
 
 export interface User {
-  id: string,
-  name?: string,
-  iconUrl?: string,
+  id: string
+  name?: string
+  iconUrl?: string
   role?: UserRole
 }
 
 export interface BotProperties {
-  conversationState: BotState, 
-  userState: UserState, 
-  conversationReferences: ConversationReference[], 
-  manager: ManagerType, 
+  conversationState: BotState
+  userState: UserState
+  conversationReferences: ConversationReference[]
+  manager: ManagerType
   dialog?: Dialog
 }

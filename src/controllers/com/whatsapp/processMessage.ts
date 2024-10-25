@@ -1,10 +1,13 @@
 import { removeEmojis } from "@nlpjs/emoji";
 import { sendTextMessage } from "./whatsappController";
 import { webhookTrigger } from "../../../webhooks/custom/webhookTrigger";
+import { DirectlineService, MsgToBot } from "../../../libs/bot/connector/directLine";
 import { findWebhook } from "../../../repositories/webhook";
+import { omitKeys } from "../../../helpers/modifyObj";
 import { SendContacts, SendDoc, SendImg, SendInterativeButton, SendInterativeList, SendText } from "../../../types";
-import { Events } from "../../../types/enums";
-import { DirectlineService } from "../../../libs/bot/connector/directLine";
+import { Events, Platforms } from "../../../types/enums";
+import { BotMsgValue } from "../../../types/types";
+
 
 type MsgTypes = SendDoc | SendImg | SendContacts | SendInterativeList | SendInterativeButton | SendText;
 
@@ -40,7 +43,7 @@ function interactiveMessage(message: SendInterativeList | SendInterativeButton) 
   return;
 }
 
-export async function processWaMessage(message: MsgTypes, wb: any, companyId: string) {
+export async function processWaMessage(message: MsgTypes, wb: BotMsgValue, companyId: string) {
   const webhook = await findWebhook({ companyId });
 
   try {
@@ -52,11 +55,11 @@ export async function processWaMessage(message: MsgTypes, wb: any, companyId: st
           url: webhook?.url,
           event: Events.MESSAGE_RECEIVED,
           message: textMessage,
-          service: "whatsapp",
+          service: Platforms.WHATSAPP,
           metadata: {
-            senderPhoneNumber: wb.senderPhoneNumber,
-            recipientName: wb.recipientName,
-            recipientphoneNumber: wb.recipientPhoneNumberId,
+            senderPhoneNumber: wb.phoneNumber,
+            recipientName: wb.name,
+            recipientphoneNumber: wb.to,
           }
         });
       }
@@ -64,8 +67,20 @@ export async function processWaMessage(message: MsgTypes, wb: any, companyId: st
       const directLineService = DirectlineService.getInstance();
       
       const msgToSend = removeEmojis(textMessage);
-      // TO-DO: UUID = ID; Precisa ser concizo é unico dentre os usuarios ativos
-      directLineService.sendMessageToBot(msgToSend, "uuid", wb.recipientName);
+
+      const conversationId = "conversationId";
+      const userId = "uuid";
+
+      const data: MsgToBot = {
+        text: msgToSend,
+        id: userId,
+        name: wb.name,
+        conversation: conversationId,
+        value: omitKeys(wb, ["name"])
+      };
+
+      //directLineService.sendMessageToBot(message, userId, name, conversationId);
+      directLineService.sendMessageToBot(data);
       
       /*let replyButtonMessage = interactiveReplyButton;
       replyButtonMessage.to = process.env.RECIPIENT_PHONE_NUMBER;
