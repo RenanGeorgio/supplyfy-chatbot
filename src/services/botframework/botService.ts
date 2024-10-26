@@ -22,6 +22,13 @@ export default async function botService(data: any) {
                 sendWaTextMessage(result.text, whatsappData);
                 break;
             case Platforms.INSTAGRAM:
+                // TO-DO: a resposta nao vai mais vir daqui 
+                // const answer = await processQuestion(msgData);
+                const response = { 
+                    message: answer 
+                };
+
+                return response;
                 console.log(`Cliente ${chatId} está sendo atendido por um humano.`);
                 break;
             case Platforms.FACEBOOK:

@@ -2,7 +2,14 @@ import { NextFunction, Response } from "express";
 import XHubSignature from "x-hub-signature";
 import Receive from "./receive";
 import { getUserProfile } from "../service";
-import { receivedAuthentication, receivedDeliveryConfirmation, receivedMessageRead, receivedAccountLink } from "./instagramController/received";
+import { 
+  receivedAuthentication, 
+  receivedDeliveryConfirmation, 
+  receivedMessageRead, 
+  receivedAccountLink 
+} from "./instagramController/received";
+import { handlePrivateReply } from "./instagramController";
+import { ConsumerData } from "./consumer";
 import { 
   Consumer, 
   WebhookEventType, 
@@ -13,9 +20,9 @@ import {
   WebhookMsgDeliveries, 
   WebhookMsgSee, 
   WebhookMsgAccLink,
-  WebhookMsgOptions } from "../../../types";
-import { handlePrivateReply } from "./instagramController";
-import { ConsumerData } from "./consumer";
+  WebhookMsgOptions 
+} from "../../../types";
+
 
 const appSecret = process.env.APP_SECRET ? process.env.APP_SECRET.replace(/[\\"]/g, '') : "secret";
 const xhub = new XHubSignature("SHA256", appSecret);

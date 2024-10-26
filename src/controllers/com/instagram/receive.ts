@@ -1,7 +1,7 @@
 import { removeEmojis } from "@nlpjs/emoji";
 import Response, { processMessage } from "./processMessage";
 import { sendMessage } from "./instagramController";
-import { DirectlineService } from "../../../libs/bot/connector/directLine";
+import { DirectlineService, MsgToBot } from "../../../libs/bot/connector/directLine";
 import { 
   Consumer, 
   WebhookEventBase, 
@@ -27,7 +27,7 @@ const Receive = class<ReceiveProps> {
     let responses: Obj = {};
  
     try {
-      responses = processMessage(event, this);
+      responses = processMessage(event, this); 
     } catch (error) {
       responses = {
         text: `An error has occured: '${error}'. We have been notified and \
@@ -51,29 +51,40 @@ const Receive = class<ReceiveProps> {
   }
 
   async handleTextMessage(msgData: string) {
+    const senderID = event.sender.id;
+    const recipientID = event.recipient.id;
     if (msgData != undefined) {
       const message = msgData.trim().toLowerCase();
+      
+      const directLineService = DirectlineService.getInstance();
 
-      let response;
-      // AQUI
-      if (message.includes("start over") || message.includes("get started") || message.includes("hi")) {
-        if (this.user != undefined) {
-          response = Response.genNuxMessage(this.user);
+      const msgToSend = removeEmojis(message);
+
+      const conversationId = "conversationId";
+
+      const data: MsgToBot = {
+        text: msgToSend,
+        id: senderID,
+        name: "",
+        conversation: conversationId,
+        value: {
+          senderID,
+          recipientID,
+          timeOfMessage,
+          messageId,
+          appId,
+          metadata,
+          service: Platforms.FACEBOOK,
         }
-      } else {
-        const directLineService = DirectlineService.getInstance();
+      };
 
-        const msgToSend = removeEmojis(message);
-        
-        directLineService.sendMessageToBot(msgToSend, userId, name, conversationId);
-        directLineService.sendMessageToBot(msgToSend, "uuid", wb.recipientName); 
+      directLineService.sendMessageToBot(data); 
 
-        // TO-DO: a resposta nao vai mais vir daqui 
-        // const answer = await processQuestion(msgData);
-        response = { 
-          // message: answer 
-        };
-      }
+      // TO-DO: a resposta nao vai mais vir daqui 
+      // const answer = await processQuestion(msgData);
+      const response = { 
+        message: answer 
+      };
 
       return response;
     }
