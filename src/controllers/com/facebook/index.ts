@@ -41,7 +41,7 @@ export const eventsHandler = async (
                     }
                 });
             }  else if (entry?.changes) {
-                processComments(entry?.changes[0].value);
+                processComments(entry?.changes[0].value); // TO-DO: Voltar aqui
             }
         });
 

@@ -1,32 +1,46 @@
 import { removeEmojis } from "@nlpjs/emoji";
-import { repplyFaceAction, sendFaceAction, sendFacebookMessage } from "../service";
-import { FaceMsgData } from "../../../types";
-import { DirectlineService } from "../../../libs/bot/connector/directLine";
+import { repplyFaceAction } from "../service";
+import { DirectlineService, MsgToBot } from "../../../libs/bot/connector/directLine";
+import { Obj } from "../../../types";
+import { Platforms } from "../../../types/enums";
 
 
-export function sendFacebookText(recipientId: string, messageText: string) {
+export function sendFacebookText(info: Obj, messageText: string) {
+  const {
+    senderID,
+    recipientID,
+    timeOfMessage,
+    messageId,
+    appId,
+    metadata
+  } =  info;
+
   const directLineService = DirectlineService.getInstance();
 
   const msgToSend = removeEmojis(messageText);
-  
-  directLineService.sendMessageToBot(msgToSend, userId, name, conversationId);
-  directLineService.sendMessageToBot(msgToSend, "uuid", wb.recipientName); 
-  
-  const messageData: FaceMsgData = {
-    recipient: {
-      id: recipientId
-    },
-    messaging_type: 'RESPONSE',
-    message: {
-      text: responseText,
-      metadata: process.env.FACEBOOK_METADATA
+
+  const conversationId = "conversationId";
+
+  const data: MsgToBot = {
+    text: msgToSend,
+    id: senderID,
+    name: "",
+    conversation: conversationId,
+    value: {
+      senderID,
+      recipientID,
+      timeOfMessage,
+      messageId,
+      appId,
+      metadata,
+      service: Platforms.FACEBOOK,
     }
   };
-
-  // sendFaceAction(messageData);
-  sendFacebookMessage(messageData);
+  
+  directLineService.sendMessageToBot(data); 
 }
 
+// TO-DO: Voltar aqui
 export function processComments(comment) { // Processes incoming posts to page to get ID of the poster
   let comment_id: any;
 

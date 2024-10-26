@@ -1,5 +1,6 @@
 import { FaceMessagingEvent } from "../../../../types";
-import { sendFacebookText } from "../processMessage";
+import { sendFacebookTextMessage } from "../facebookController";
+
 
 export default function receivedPostback(event: FaceMessagingEvent) {
   const senderID = event.sender.id;
@@ -16,5 +17,5 @@ export default function receivedPostback(event: FaceMessagingEvent) {
     timeOfPostback
   );
 
-  sendFacebookText(senderID, 'Postback called');
+  sendFacebookTextMessage(senderID, 'Postback called');
 }

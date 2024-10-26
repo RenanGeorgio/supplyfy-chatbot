@@ -1,5 +1,6 @@
-import { FaceMessagingEvent } from "../../../../types";
+import { sendFacebookTextMessage } from "../facebookController";
 import { sendFacebookText } from "../processMessage";
+import { FaceMessagingEvent } from "../../../../types";
 
 export default function receivedMessage(event: FaceMessagingEvent) {
   const senderID = event.sender.id;
@@ -26,7 +27,7 @@ export default function receivedMessage(event: FaceMessagingEvent) {
     return;
   } else if (quickReply) {
     const quickReplyPayload = quickReply.payload;
-    sendFacebookText(senderID, 'Quick reply tapped');
+    sendFacebookTextMessage(senderID, 'Quick reply tapped');
     return;
   }
 
@@ -79,8 +80,17 @@ export default function receivedMessage(event: FaceMessagingEvent) {
           break;
     }*/
 
-    sendFacebookText(senderID, messageText);
+    const info = {
+      senderID,
+      recipientID,
+      timeOfMessage,
+      messageId,
+      appId,
+      metadata
+    }
+
+    sendFacebookText(info, messageText);
   } else if (messageAttachments) {
-    sendFacebookText(senderID, 'Message with attachment received');
+    sendFacebookTextMessage(senderID, 'Message with attachment received');
   }
 }

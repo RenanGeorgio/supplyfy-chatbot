@@ -1,5 +1,6 @@
 import { FaceMessagingEvent } from "../../../../types";
 
+
 export default function receivedMessageRead(event: FaceMessagingEvent) {
   const senderID = event.sender.id;
   const recipientID = event.recipient.id;

@@ -1,5 +1,6 @@
-import { sendFacebookText } from "../processMessage";
 import { FaceMessagingEvent } from "../../../../types";
+import { sendFacebookTextMessage } from "../facebookController";
+
 
 export default function receivedAuthentication(event: FaceMessagingEvent) {
   const senderID = event.sender.id;
@@ -14,6 +15,6 @@ export default function receivedAuthentication(event: FaceMessagingEvent) {
       timeOfAuth
     );
 
-    sendFacebookText(senderID, "Authentication successful");
+    sendFacebookTextMessage(senderID, "Authentication successful");
   }
 }

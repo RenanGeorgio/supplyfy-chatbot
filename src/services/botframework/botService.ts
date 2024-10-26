@@ -1,3 +1,4 @@
+import { sendFacebookTextMessage } from "../../controllers/com/facebook/facebookController";
 import { sendWaTextMessage } from "../../controllers/com/whatsapp/whatsappController";
 import { WaMsgMetaData } from "../../types";
 import { Platforms } from "../../types/enums";
@@ -24,7 +25,7 @@ export default async function botService(data: any) {
                 console.log(`Cliente ${chatId} está sendo atendido por um humano.`);
                 break;
             case Platforms.FACEBOOK:
-                console.log(`Cliente ${chatId} está em um atendimento alternativo.`);
+                sendFacebookTextMessage(result.value.senderID, result.text)
                 break;
             default:
                 console.log('Tipo de atendimento desconhecido.');
