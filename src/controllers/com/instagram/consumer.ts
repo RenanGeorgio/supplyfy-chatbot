@@ -1,5 +1,10 @@
 import { Consumer } from "../../../types";
 
+export enum INSTAGRAM_MSG_TYPE {
+  PRIVATEREPLY = "private-reply",
+  MESSAGE = "message"
+}
+
 export const ConsumerData = class<Consumer> {
   igsid: string | number;
   name: string | undefined;

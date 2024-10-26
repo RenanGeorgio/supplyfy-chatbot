@@ -1,7 +1,5 @@
 import { NextFunction, Response } from "express";
 import XHubSignature from "x-hub-signature";
-import Receive from "./receive";
-import { getUserProfile } from "../service";
 import { 
   receivedAuthentication, 
   receivedDeliveryConfirmation, 
@@ -9,9 +7,8 @@ import {
   receivedAccountLink 
 } from "./instagramController/received";
 import { handlePrivateReply } from "./instagramController";
-import { ConsumerData } from "./consumer";
+import { processMessage } from "./processMessage";
 import { 
-  Consumer, 
   WebhookEventType, 
   WebhookEventBase, 
   CustomRequest, 
@@ -26,8 +23,6 @@ import {
 
 const appSecret = process.env.APP_SECRET ? process.env.APP_SECRET.replace(/[\\"]/g, '') : "secret";
 const xhub = new XHubSignature("SHA256", appSecret);
-
-let users: Consumer[] = []; // TO-DO: jogar isso para o Redis
 
 export const messageHandler = async (
   req: CustomRequest, 
@@ -82,31 +77,7 @@ export const messageHandler = async (
             } else if (webhookEvent?.account_linking) {
               receivedAccountLink(webhookEvent as WebhookMsgAccLink);
             } else {
-              const senderIgsid: string | number = webhookEvent.sender.id;
-
-              if (!(senderIgsid in users)) { // Primeira vez que interage com o usuario
-                const user = new ConsumerData({
-                  igsid: senderIgsid,
-                  name: undefined,
-                  profilePic: undefined,
-                });
-
-                let userProfile = await getUserProfile(senderIgsid.toString());
-
-                if (userProfile) {
-                  user.setProfile(userProfile.name, userProfile.profilePic);
-
-                  if (typeof senderIgsid == 'string') {
-                    users[parseInt(senderIgsid, 10)] = user;
-                  } else {
-                    users[senderIgsid] = user;
-                  }
-                }
-              }
-
-              const receiveMessage = new Receive(users[senderIgsid as number], webhookEvent);
-
-              return receiveMessage.handleMessage();
+              return processMessage(webhookEvent); 
             }
           }
         });

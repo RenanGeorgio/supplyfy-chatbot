@@ -53,7 +53,6 @@ export interface Consumer {
 }
 
 export type ReceiveProps = {
-  user: Consumer;
   webhookEvent?: WebhookEventBase;
 };
 

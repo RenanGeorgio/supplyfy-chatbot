@@ -1,20 +1,22 @@
 import { 
-  sendAccountLinking, 
-  sendAudioMessage, 
-  sendButtonMessage, 
-  sendFileMessage, 
-  sendGenericMessage, 
-  sendGifMessage, 
-  sendImageMessage, 
-  sendQuickReply, 
-  sendReadReceipt, 
-  sendReceiptMessage, 
-  sendTextMessage, 
-  sendTypingOff, 
-  sendTypingOn, 
-  sendVideoMessage 
+  sendInstagramAccountLinking, 
+  sendInstagramAudioMessage, 
+  sendInstagramButtonMessage, 
+  sendInstagramFileMessage, 
+  sendInstagramGenericMessage, 
+  sendInstagramGifMessage, 
+  sendInstagramImageMessage, 
+  sendInstagramQuickReply, 
+  sendInstagramReadReceipt, 
+  sendInstagramReceiptMessage, 
+  sendInstagramTextMessage, 
+  sendInstagramTypingOff, 
+  sendInstagramTypingOn, 
+  sendInstagramVideoMessage 
 } from "./instagramController/data";
+import Receive from "./receive";
 import { Consumer, MsgEventProp, Obj, WebhookEventBase } from "../../../types";
+
 
 export default class Response {
   static genQuickReply(text, quickReplies) {
@@ -89,13 +91,13 @@ export default class Response {
   }
 };
 
-export async function processMessage(event: WebhookEventBase, receive: any) {
-  let responses: any;
+export function processMessage(event: WebhookEventBase): void {
+  const receive = new Receive(event);
 
   if ("postback" in event) {
-    responses = receive.handlePostback(event?.postback);
+    receive.handlePostback();
   } else if ("referral" in event) {
-    responses = receive.handleReferral(event?.referral);
+    receive.handleReferral();
   } else {
     // @ts-ignore
     if (event?.message != undefined) {
@@ -103,67 +105,62 @@ export async function processMessage(event: WebhookEventBase, receive: any) {
       const message: MsgEventProp = event?.message;
 
       if ("is_echo" in message) {
-        return null;
+        console.log(message);
       } else if ("quick_reply" in message) {
-        responses = receive.handleQuickReply();
+        receive.handleQuickReply();
       } else if ("attachments" in message) {
-        responses = receive.handleAttachmentMessage();
+        receive.handleAttachmentMessage();
       } else if (("text" in message) && (message?.text != undefined)) {
         const messageText: string | Obj = message.text;
         
         /*switch (messageText.replace(/[^\w\s]/gi, '').trim().toLowerCase()) {
           case 'image':
-            responses = sendImageMessage(receive.user.igsid, process.env.SERVER_URL + "/assets/rift.png");
+            responses = sendInstagramImageMessage(receive.user.igsid, process.env.SERVER_URL + "/assets/rift.png");
             break;
           case 'gif':
-            responses = sendGifMessage(receive.user.igsid);
+            responses = sendInstagramGifMessage(receive.user.igsid);
             break;
           case 'audio':
-            responses = sendAudioMessage(receive.user.igsid);
+            responses = sendInstagramAudioMessage(receive.user.igsid);
             break;
           case 'video':
-            responses = sendVideoMessage(receive.user.igsid);
+            responses = sendInstagramVideoMessage(receive.user.igsid);
             break;
           case 'file':
-            responses = sendFileMessage(receive.user.igsid);
+            responses = sendInstagramFileMessage(receive.user.igsid);
             break;
           case 'button':
-            responses = sendButtonMessage(receive.user.igsid);
+            responses = sendInstagramButtonMessage(receive.user.igsid);
             break;
           case 'generic':
-            responses = sendGenericMessage(receive.user.igsid);
+            responses = sendInstagramGenericMessage(receive.user.igsid);
             break;
           case 'receipt':
-            responses = sendReceiptMessage(receive.user.igsid);
+            responses = sendInstagramReceiptMessage(receive.user.igsid);
             break;
           case 'quick reply':
-            responses = sendQuickReply(receive.user.igsid);
+            responses = sendInstagramQuickReply(receive.user.igsid);
             break;
           case 'read receipt':
-            responses = sendReadReceipt(receive.user.igsid);
+            responses = sendInstagramReadReceipt(receive.user.igsid);
             break;
           case 'typing on':
-            responses = sendTypingOn(receive.user.igsid);
+            responses = sendInstagramTypingOn(receive.user.igsid);
             break;
           case 'typing off':
-            responses = sendTypingOff(receive.user.igsid);
+            responses = sendInstagramTypingOff(receive.user.igsid);
             break;
           case 'account linking':
-            responses = sendAccountLinking(receive.user.igsid);
+            responses = sendInstagramAccountLinking(receive.user.igsid);
             break;
           default:
             const data = receive.handleTextMessage(messageText);
-            responses = sendTextMessage(receive.user.igsid, data.message);
+            responses = sendInstagramTextMessage(receive.user.igsid, data.message);
             break;
         }*/
         
-        const data = receive.handleTextMessage(messageText);
-        responses = sendTextMessage(receive.user.igsid, data.message);
-      } else {
-        responses = null
+        receive.handleTextMessage(messageText);
       }
     }
   }
-
-  return responses;
 }

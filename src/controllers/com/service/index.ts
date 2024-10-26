@@ -2,7 +2,7 @@ import { Response } from "express";
 import { facebookApi, instagramApi, whatsappCloudApi } from "../../../api";
 import { FaceMsgData, MsgProps, MsgStatus, Obj } from "../../../types";
 
-export const sendMsg = async (data: MsgProps, wb: any) => {
+export const sendWhatsappMsg = async (data: MsgProps, wb: any) => {
   console.log("send message called");
 
   try {
@@ -34,12 +34,12 @@ export const msgStatusChange = async (messageId: string | number, wb: any) => {
     message_id: messageId
   }
 
-  const response = await sendMsg(data, wb);
+  const response = await sendWhatsappMsg(data, wb);
 
   return response;
 };
 
-export const callSendApi = async (requestBody: Obj) => {
+export const sendInstagramMessage = async (requestBody: Obj) => {
   const useInstagramApi = instagramApi();
 
   const response: Response = await useInstagramApi(

@@ -1,4 +1,7 @@
 import { sendFacebookTextMessage } from "../../controllers/com/facebook/facebookController";
+import { INSTAGRAM_MSG_TYPE } from "../../controllers/com/instagram/consumer";
+import { sendInstagramTextMessage } from "../../controllers/com/instagram/instagramController/data";
+import { sendInstagramMessage } from "../../controllers/com/service";
 import { sendWaTextMessage } from "../../controllers/com/whatsapp/whatsappController";
 import { WaMsgMetaData } from "../../types";
 import { Platforms } from "../../types/enums";
@@ -22,14 +25,23 @@ export default async function botService(data: any) {
                 sendWaTextMessage(result.text, whatsappData);
                 break;
             case Platforms.INSTAGRAM:
-                // TO-DO: a resposta nao vai mais vir daqui 
-                // const answer = await processQuestion(msgData);
-                const response = { 
-                    message: answer 
-                };
+                if (result.value.type === INSTAGRAM_MSG_TYPE.PRIVATEREPLY) {
+                    const type = result.value.key;
 
-                return response;
-                console.log(`Cliente ${chatId} está sendo atendido por um humano.`);
+                    const requestBody = {
+                        recipient: {
+                          [type]: result.value.objectId,
+                        },
+                        message: result.text,
+                        tag: "HUMAN_AGENT",
+                    };
+
+                    sendInstagramMessage(requestBody);
+                } else {
+                    const responses = sendInstagramTextMessage(result.value.senderID, result.text);
+
+                    sendInstagramMessage(responses);
+                }
                 break;
             case Platforms.FACEBOOK:
                 sendFacebookTextMessage(result.value.senderID, result.text)

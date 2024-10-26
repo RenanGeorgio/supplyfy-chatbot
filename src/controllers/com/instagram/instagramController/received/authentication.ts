@@ -1,4 +1,4 @@
-import sendTextMessage from "../data/textMessage";
+import { sendInstagramTextMessage } from "../data";
 import { WebhookMsgOptions } from "../../../../../types";
 
 export default function receivedAuthentication(event: WebhookMsgOptions) {
@@ -15,6 +15,6 @@ export default function receivedAuthentication(event: WebhookMsgOptions) {
     );
 
 
-    sendTextMessage(senderID, "Authentication successful");
+    sendInstagramTextMessage(senderID, "Authentication successful");
   }
 }

@@ -13,18 +13,18 @@ import { sendTypingOff, sendTypingOn } from "./typing";
 import sendVideoMessage from "./videoMessage";
 
 export {
-  sendAccountLinking,
-  sendAudioMessage,
-  sendButtonMessage,
-  sendFileMessage,
-  sendGenericMessage,
-  sendGifMessage,
-  sendImageMessage,
-  sendQuickReply,
-  sendReadReceipt,
-  sendReceiptMessage,
-  sendTextMessage,
-  sendTypingOff, 
-  sendTypingOn,
-  sendVideoMessage
+  sendAccountLinking as sendInstagramAccountLinking,
+  sendAudioMessage as sendInstagramAudioMessage,
+  sendButtonMessage as sendInstagramButtonMessage,
+  sendFileMessage as sendInstagramFileMessage,
+  sendGenericMessage as sendInstagramGenericMessage,
+  sendGifMessage as sendInstagramGifMessage,
+  sendImageMessage as sendInstagramImageMessage,
+  sendQuickReply as sendInstagramQuickReply,
+  sendReadReceipt as sendInstagramReadReceipt,
+  sendReceiptMessage as sendInstagramReceiptMessage,
+  sendTextMessage as sendInstagramTextMessage,
+  sendTypingOff as sendInstagramTypingOff, 
+  sendTypingOn as sendInstagramTypingOn,
+  sendVideoMessage as sendInstagramVideoMessage
 }

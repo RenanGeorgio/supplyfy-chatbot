@@ -1,12 +1,11 @@
 import { removeEmojis } from "@nlpjs/emoji";
-import { sendTextMessage } from "./whatsappController";
 import { webhookTrigger } from "../../../webhooks/custom/webhookTrigger";
 import { DirectlineService, MsgToBot } from "../../../libs/bot/connector/directLine";
 import { findWebhook } from "../../../repositories/webhook";
 import { omitKeys } from "../../../helpers/modifyObj";
 import { SendContacts, SendDoc, SendImg, SendInterativeButton, SendInterativeList, SendText } from "../../../types";
-import { Events, Platforms } from "../../../types/enums";
 import { BotMsgValue } from "../../../types/types";
+import { Events, Platforms } from "../../../types/enums";
 
 
 type MsgTypes = SendDoc | SendImg | SendContacts | SendInterativeList | SendInterativeButton | SendText;

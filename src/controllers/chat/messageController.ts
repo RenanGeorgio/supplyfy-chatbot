@@ -1,32 +1,18 @@
 import { NextFunction, Response } from "express";
 import messageModel from "../../models/chat/messageModel";
-import chatSessionModel from "../../models/chat/chatSession";
-// import { createChatSession } from "../../repositories/chatSession";
-import { createChat, findChatById } from "../../repositories/chat";
+import { findChatById } from "../../repositories/chat";
 import Queue from "../../libs/Queue";
 import { botExist } from "../../repositories/bot";
-import { ITelegramCredentials, SendText } from "../../types";
+import { SendText } from "../../types";
 import { servicesActions } from "../../services";
-import {
-  clientChatExist,
-  createChatClient,
-  findChatClientById,
-} from "../../repositories/chatClient";
-import {
-  CustomRequest,
-  IChat,
-  IClientInfo,
-  IEmailCredentials,
-  IMessage,
-} from "../../types/types";
+import { findChatClientById } from "../../repositories/chatClient";
+import { CustomRequest, IChat, IMessage } from "../../types/types";
 import { createMessage, listChatMessages } from "../../repositories/message";
 import { findWebhook } from "../../repositories/webhook";
 import { userExist } from "../../repositories/user";
 import { findBot } from "../../helpers/findBot";
 import { Events, Platforms } from "../../types/enums";
-import { whatsappCloudApi } from "../../api";
-import { sendMsg } from "../com/service";
-import WhatsappService from "../../services/whatsapp";
+import { sendWhatsappMsg } from "../com/service";
 import { webhookTrigger } from "../../webhooks/custom/webhookTrigger";
 
 const ServiceList = {
@@ -227,9 +213,9 @@ export const sendMessage = async (
       };
 
       if (listMessages?.length === 0) {
-        const send = await sendMsg({...templateMessage, to: client?.username as string}, whatsappService);
+        const send = await sendWhatsappMsg({...templateMessage, to: client?.username as string}, whatsappService);
       } else {
-        const send = await sendMsg(data, whatsappService);
+        const send = await sendWhatsappMsg(data, whatsappService);
       }
 
       const webhook = await findWebhook({ companyId: user?.companyId });

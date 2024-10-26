@@ -1,9 +1,6 @@
 import { removeEmojis } from "@nlpjs/emoji";
-import Response, { processMessage } from "./processMessage";
-import { sendMessage } from "./instagramController";
 import { DirectlineService, MsgToBot } from "../../../libs/bot/connector/directLine";
 import { 
-  Consumer, 
   WebhookEventBase, 
   ReceiveProps, 
   Obj, 
@@ -11,48 +8,22 @@ import {
   WebhookMsgPostbacks, 
   WebhookMsgReferral, 
   WebhookMsgs } from "../../../types";
+import { Platforms } from "../../../types/enums";
+import { INSTAGRAM_MSG_TYPE } from "./consumer";
 
 const Receive = class<ReceiveProps> {
-  user: Consumer;
   webhookEvent: WebhookEventBase;
-  constructor(user: Consumer, webhookEvent: WebhookEventBase) {
-    this.user = user;
+  constructor(webhookEvent: WebhookEventBase) {
     this.webhookEvent = webhookEvent;
   }
 
-  handleMessage() {
-    // @ts-ignore
-    const event: WebhookMsgPostbacks | WebhookMsgReferral | WebhookMsgs = this.webhookEvent;
+  async handleTextMessage(msgData: string | Obj) {
+    const event = this.webhookEvent as WebhookMsgs;
 
-    let responses: Obj = {};
- 
-    try {
-      responses = processMessage(event, this); 
-    } catch (error) {
-      responses = {
-        text: `An error has occured: '${error}'. We have been notified and \
-        will fix the issue shortly!`,
-      };
-    }
-
-    if (!responses) {
-      return;
-    }
-
-    if (Array.isArray(responses)) {
-      let delay = 0;
-      for (let response of responses) {
-        sendMessage(response, delay * 2000);
-        delay++;
-      }
-    } else {
-      sendMessage(responses);
-    }
-  }
-
-  async handleTextMessage(msgData: string) {
     const senderID = event.sender.id;
     const recipientID = event.recipient.id;
+    const timeOfMessage = event.timestamp;
+    
     if (msgData != undefined) {
       const message = msgData.trim().toLowerCase();
       
@@ -71,25 +42,15 @@ const Receive = class<ReceiveProps> {
           senderID,
           recipientID,
           timeOfMessage,
-          messageId,
-          appId,
-          metadata,
-          service: Platforms.FACEBOOK,
+          messageId: event.message.mid,
+          metadata: event.message.metadata,
+          service: Platforms.INSTAGRAM,
+          type: INSTAGRAM_MSG_TYPE.MESSAGE
         }
       };
 
       directLineService.sendMessageToBot(data); 
-
-      // TO-DO: a resposta nao vai mais vir daqui 
-      // const answer = await processQuestion(msgData);
-      const response = { 
-        message: answer 
-      };
-
-      return response;
     }
-
-    return null;
   }
 
   handleAttachmentMessage() {
@@ -122,28 +83,28 @@ const Receive = class<ReceiveProps> {
     return this.handlePayload(payload);
   }
 
-  handlePostback(event: WebhookMsgPostbacks) {
+  handlePostback() {
     let payload: any;
+    const event = this.webhookEvent as WebhookMsgPostbacks;
 
-    if (event!= undefined) {
-      const postback = event.postback;
-      const senderID = event.sender.user_ref;
-      const recipientID = event.recipient.id;
-      const timeOfPostback = event.timestamp;
+    const postback = event.postback;
+    const senderID = event.sender.user_ref;
+    const recipientID = event.recipient.id;
+    const timeOfPostback = event.timestamp;
 
-      if (postback.referral && postback.referral.type == "OPEN_THREAD") {
-        payload = postback.referral.ref;
-      } else {
-        payload = postback.payload;
-      }
+    if (postback.referral && postback.referral.type == "OPEN_THREAD") {
+      payload = postback.referral.ref;
+    } else {
+      payload = postback.payload;
     }
 
     // sendTextMessage(senderID, 'Postback called');
     return this.handlePayload(payload.toUpperCase());
   }
 
-  handleReferral(event: WebhookMsgReferral) {
+  handleReferral() {
     let payload;
+    const event = this.webhookEvent as WebhookMsgReferral;
 
     if (event.referral.ref != undefined) {
       payload = event.referral.ref.toUpperCase();

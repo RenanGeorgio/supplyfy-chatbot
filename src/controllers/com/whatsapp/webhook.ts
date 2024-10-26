@@ -1,13 +1,12 @@
 import "express";
 import XHubSignature from "x-hub-signature";
-import { messageStatuses } from "../../../helpers/messageStatuses";
 import { processWaMessage } from "./processMessage";
 import { msgStatusChange } from "../service";
-//import WhatsappService from "../../../services/whatsapp";
 import { botExist } from "../../../repositories/bot";
+import { messageStatuses } from "../../../helpers/messageStatuses";
 import { CustomRequest, WaMsgMetaData } from "../../../types";
-import { Platforms } from "../../../types/enums";
 import { BotMsgValue } from "../../../types/types";
+import { Platforms } from "../../../types/enums";
 
 const appSecret = process.env.APP_SECRET ? process.env.APP_SECRET.replace(/[\\"]/g, '') : "secret";
 const xhub = new XHubSignature("SHA256", appSecret);
@@ -36,7 +35,7 @@ export const messageHandler = async (
 
         const data = body.value;
 
-        // TO-DO: Corrigir spam de eventos para responder apenas evento de mensagem recebida 
+        // TO-DO: Corrigir spam de eventos para responder apenas evento de mensagem recebida -> SERA QUE JA NAO FOI CORRIGIDO??
         if (data.messages?.[0]) {
             const bots = await botExist("services.whatsapp.numberId", data.metadata.phone_number_id);
 

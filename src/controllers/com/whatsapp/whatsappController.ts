@@ -1,6 +1,6 @@
 import { Response, NextFunction } from "express";
 import { createReadStream } from "fs";
-import { msgStatusChange, sendMsg } from "../service";
+import { msgStatusChange, sendWhatsappMsg } from "../service";
 import { whatsappCloudApi } from "../../../api";
 import {
   CustomRequest,
@@ -48,7 +48,7 @@ export const sendWaTextMessage = async (messageText: string, wb: any) => {
   }
 
   try {
-    const response = await sendMsg(data, wb);
+    const response = await sendWhatsappMsg(data, wb);
     return response;
   } catch (error: any) {
     return null;
@@ -87,7 +87,7 @@ export const sendButtonsMessage = async (
       },
     };
 
-    const response = await sendMsg(data, useWhatsappApi);
+    const response = await sendWhatsappMsg(data, useWhatsappApi);
 
     if (response?.status === 200) {
       return res.status(200).send(response);
@@ -116,7 +116,7 @@ export const sendContacts = async (
       contacts: contactsList,
     };
 
-    const response = await sendMsg(data, useWhatsappApi);
+    const response = await sendWhatsappMsg(data, useWhatsappApi);
 
     if (response?.status === 200) {
       return res.status(200).send(response);
@@ -162,7 +162,7 @@ export const sendRadioButtons = async (
       },
     };
 
-    const response = await sendMsg(data, useWhatsappApi);
+    const response = await sendWhatsappMsg(data, useWhatsappApi);
 
     if (response?.status === 200) {
       return res.status(200).send(response);
@@ -195,7 +195,7 @@ export const sendImageByLink = async (
       },
     };
 
-    const response = await sendMsg(data, useWhatsappApi);
+    const response = await sendWhatsappMsg(data, useWhatsappApi);
 
     if (response?.status === 200) {
       return res.status(200).send(response);
@@ -212,6 +212,7 @@ export const uploadMedia = async (
   useWhatsappApi: any
 ) => {
   try {
+    // @ts-ignore
     const data = new FormData();
     data.append("messaging_product", "whatsapp");
     data.append("file", createReadStream(filePath));
@@ -257,7 +258,7 @@ export const sendDocumentMessage = async (
       },
     };
 
-    const response = await sendMsg(data, useWhatsappApi);
+    const response = await sendWhatsappMsg(data, useWhatsappApi);
 
     if (response?.status === 200) {
       return res.status(200).send(response);
