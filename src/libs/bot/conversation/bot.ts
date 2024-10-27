@@ -1,9 +1,9 @@
-import { ActivityHandler, StatePropertyAccessor, UserState, ConversationState, BotState, MessageFactory, ActivityTypes } from "botbuilder";
+import { ActivityHandler, StatePropertyAccessor, UserState, ConversationState, BotState, ActivityTypes } from "botbuilder";
 import { TurnContext, ConversationReference } from "botbuilder-core";
 import { Dialog, DialogState } from "botbuilder-dialogs";
-import { CONVERSATION_DATA_PROPERTY, USER_PROFILE_PROPERTY, WELCOMED_USER } from "../dialogs/constants";
-import { MainDialog } from "../dialogs/mainDialog";
+import { CONVERSATION_DATA_PROPERTY, USER_PROFILE_PROPERTY } from "../dialogs/constants";
 import { NlpService } from "../nlp/manager";
+
 
 async function logMessageText(storage, context: TurnContext) { // This function stores new user messages. Creates new utterance log if none exists.
   let utterance = context.activity.text;
@@ -37,13 +37,12 @@ async function logMessageText(storage, context: TurnContext) { // This function 
       try {
         // Redirecionar mensagens de log
         await storage.write(storeItems);
-        // await context.sendActivity(`${numStored}: The list is now: ${storedString}`);
-      } catch (err) {
-        // await context.sendActivity(`Write failed: ${err}`);
+      } catch (err: any) {
+        console.log(`Write failed: ${err}`);
       }
     }
-  } catch (err) {
-    // await context.sendActivity(`Read rejected. ${err}`);
+  } catch (err: any) {
+    console.log(`Read rejected. ${err}`);
   }
 }
 
@@ -55,7 +54,6 @@ export class ConversationBot extends ActivityHandler {
   private conversationDataAccessor: StatePropertyAccessor<DialogState>;
   private userProfileAccessor: StatePropertyAccessor<UserState>;
   private currentManager: NlpService
-  private welcomedUserProperty: StatePropertyAccessor<boolean>;
   /**
    *
    * @param {ConversationState} conversationState
@@ -65,22 +63,27 @@ export class ConversationBot extends ActivityHandler {
    */
   constructor(conversationState: BotState, userState: UserState, conversationReferences: ConversationReference[], currentManager: NlpService, dialog?: Dialog) {
     super();
-    if (!conversationState) throw new Error('[ConversationBot]: Missing parameter. conversationState is required');
-    if (!userState) throw new Error('[ConversationBot]: Missing parameter. userState is required');
+
+    if (!conversationState) {
+      throw new Error('[ConversationBot]: Missing parameter. conversationState is required');
+    }
+
+    if (!userState) {
+      throw new Error('[ConversationBot]: Missing parameter. userState is required');
+    }
 
     this.conversationState = conversationState as ConversationState;
     this.userState = userState as UserState;
     this.currentConversationReferences = conversationReferences as ConversationReference[];
     this.dialog = dialog;
     this.currentManager = currentManager;
+
     this.conversationDataAccessor = conversationState.createProperty<DialogState>(CONVERSATION_DATA_PROPERTY);
     this.userProfileAccessor = userState.createProperty<UserState>(USER_PROFILE_PROPERTY);
-    this.welcomedUserProperty = this.userState.createProperty(WELCOMED_USER);
 
     this.onMessage(async (context: TurnContext, next) => {
       this.addConversationReference(context.activity);
 
-      const didBotWelcomedUser = await this.welcomedUserProperty.get(context, false);
       const userProfile = await this.userProfileAccessor.get(context);
       const conversationData = await this.conversationDataAccessor.get(context);
 

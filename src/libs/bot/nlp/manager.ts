@@ -1,8 +1,9 @@
 import { NlpManager } from "node-nlp";
 import { ConversationService } from "./conversation";
+import { ContextKey } from "../data";
 import { ContainerType, ContextManagerType, ContextMap, ExtendedConversationContextType, ManagerType, NluManagerType } from "../types";
 import { Obj } from "../../../types";
-import { ContextKey } from "../data";
+
 
 type ConversationDict = {
     conversation: ConversationService
@@ -22,7 +23,9 @@ export class NlpService {
      * @param {string} filename
      */
     constructor(containerRef: ContainerType, filename?: string) {
-        if (!containerRef) throw new Error('[NlpService]: Missing parameter. containerRef is required');
+        if (!containerRef) {
+            throw new Error('[NlpService]: Missing parameter. containerRef is required');
+        }
 
         this.contextManager = containerRef.get('context-manager');
 

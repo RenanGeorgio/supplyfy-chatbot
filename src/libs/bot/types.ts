@@ -2,10 +2,11 @@ import { containerBootstrap } from "@nlpjs/core";
 import { NlpManager, ConversationContext } from "node-nlp";
 import { NluManager } from "@nlpjs/nlu";
 import { ContextManager } from "@nlpjs/nlp";
-import { ContextKey, CurrentContext } from "./data";
-import { Obj } from "../../types";
 import { BotState, ConversationReference, UserState } from "botbuilder";
 import { Dialog } from "botbuilder-dialogs";
+import { ContextKey, CurrentContext } from "./data";
+import { Obj } from "../../types";
+
 
 export type ContainerType = typeof containerBootstrap;
 

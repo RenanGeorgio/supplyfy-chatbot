@@ -10,6 +10,7 @@ import { BotRecognizer } from "./reconizer/botRecognizer";
 import { CONVERSATION_DIALOG } from "./dialogs/constants";
 // import { Dialog } from "botbuilder-dialogs";
 
+
 export class BotService {
     private conversationBot: ConversationBot
     private currentManagerService: NlpService
@@ -19,7 +20,9 @@ export class BotService {
      * @param {NlpService} manager
      */
     constructor(manager: NlpService) {
-        if (!manager) throw new Error('[BotService]: Missing parameter. manager is required');
+        if (!manager) {
+            throw new Error('[BotService]: Missing parameter. manager is required');
+        }
 
         this.currentManagerService = manager;
         let dialog: MainDialog | undefined = undefined;

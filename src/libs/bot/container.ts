@@ -5,8 +5,9 @@ import { Ner } from "@nlpjs/ner";
 import { ContextManager } from "@nlpjs/nlp";
 import { NlpService } from "./nlp/manager";
 import { BotService } from "./init";
-import { ContainerType } from "./types";
 import { ConversationBot } from "./conversation/bot";
+import { ContainerType } from "./types";
+
 
 let builtin: BuiltinMicrosoft;
 let contextManager: ContextManager;

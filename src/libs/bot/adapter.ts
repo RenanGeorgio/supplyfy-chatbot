@@ -1,6 +1,4 @@
-import {
-  CloudAdapter, ConversationState, MemoryStorage, UserState, InputHints
-} from "botbuilder";
+import { CloudAdapter, ConversationState, MemoryStorage, UserState, InputHints } from "botbuilder";
 import { ConversationReference, ActivityTypes, TurnContext } from "botbuilder-core";
 // import * as HandleActivityType from "@botbuildercommunity/middleware-activity-type"; 
 import { botFrameworkAuthentication } from "./auth";
