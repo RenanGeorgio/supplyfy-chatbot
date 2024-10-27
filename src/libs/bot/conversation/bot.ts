@@ -128,13 +128,26 @@ export class ConversationBot extends ActivityHandler {
           const action = intent.toLowerCase();
           switch (action) {
             case 'agent':
+              const agentAnswer = await this.currentManager.executeConversation(id, text); // TO-DO: TROCAR 
+
+              const agentActivity = { 
+                type: ActivityTypes.Message, 
+                text: agentAnswer,
+                value: {
+                  ...useData,
+                  channel: useData.service
+                }
+              }
+              
+              //Promise<ResourceResponse | undefined>
+              await context.sendActivity(agentActivity);
             case 'cancel':
               const cancelMessageText = 'Cancelling...'; // TO-DO: colocar mensagem de finalização apropriada
               await context.sendActivity(cancelMessageText, cancelMessageText, InputHints.IgnoringInput);
               break;
             case 'quit':
-              const cancelMessageText = 'Cancelling...'; // TO-DO: colocar mensagem de finalização apropriada
-              await context.sendActivity(cancelMessageText, cancelMessageText, InputHints.IgnoringInput);
+              const quitMessageText = 'Cancelling...'; // TO-DO: colocar mensagem de finalização apropriada
+              await context.sendActivity(quitMessageText, quitMessageText, InputHints.IgnoringInput);
               break;
             default:
               const answer = await this.currentManager.executeConversation(id, text);
