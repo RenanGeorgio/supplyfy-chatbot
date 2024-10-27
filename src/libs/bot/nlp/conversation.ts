@@ -15,8 +15,13 @@ export class ConversationService {
      * @param {string} conversationId
      */
     constructor(managerRef: ManagerType, conversationId: string | number, options?: Obj) {
-        if (!managerRef) throw new Error('[ConversationService]: Missing parameter. managerRef is required');
-        if (!conversationId) throw new Error('[ConversationService]: Missing parameter. conversationId is required');
+        if (!managerRef) {
+            throw new Error('[ConversationService]: Missing parameter. managerRef is required');
+        }
+
+        if (!conversationId) {
+            throw new Error('[ConversationService]: Missing parameter. conversationId is required');
+        }
 
         this.manager = managerRef; 
         this.settings = options || undefined;

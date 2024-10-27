@@ -33,7 +33,7 @@ export class BotService {
         const conversationDialog = new ConversationDialog(CONVERSATION_DIALOG);
         // dialog = new MainDialog(userState, botRecognizer, conversationDialog);
         // this.conversationBot = new BotRoom(conversationState, userState, conversationReferences, this.currentManagerService, dialog);
-        this.conversationBot = new ConversationBot(conversationState, userState, conversationReferences, this.currentManagerService, dialog);
+        this.conversationBot = new ConversationBot(conversationState, userState, conversationReferences, this.currentManagerService, botRecognizer, dialog);
     }
 
     public getBot(): ConversationBot {

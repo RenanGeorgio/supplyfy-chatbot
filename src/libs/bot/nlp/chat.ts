@@ -10,7 +10,9 @@ export class ChatService {
      * @param {ManagerType} managerRef
      */
     constructor(managerRef: ManagerType) {
-        if (!managerRef) throw new Error('[ChatService]: Missing parameter. managerRef is required');
+        if (!managerRef) {
+            throw new Error('[ChatService]: Missing parameter. managerRef is required');
+        }
         
         this.manager = managerRef;
         this.conversationContext = new ConversationContext();  

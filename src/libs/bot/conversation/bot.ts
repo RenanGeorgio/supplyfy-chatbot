@@ -1,4 +1,4 @@
-import { ActivityHandler, StatePropertyAccessor, UserState, ConversationState, BotState, ActivityTypes } from "botbuilder";
+import { ActivityHandler, StatePropertyAccessor, UserState, ConversationState, BotState, ActivityTypes, InputHints } from "botbuilder";
 import { TurnContext, ConversationReference } from "botbuilder-core";
 import { Dialog, DialogState } from "botbuilder-dialogs";
 import { CONVERSATION_DATA_PROPERTY, USER_PROFILE_PROPERTY } from "../dialogs/constants";
@@ -54,14 +54,16 @@ export class ConversationBot extends ActivityHandler {
   private conversationDataAccessor: StatePropertyAccessor<DialogState>;
   private userProfileAccessor: StatePropertyAccessor<UserState>;
   private currentManager: NlpService
+  private botRecognizer: any
   /**
    *
    * @param {ConversationState} conversationState
    * @param {UserState} userState
    * @param {ConversationReference[]} conversationReferences
    * @param {NlpService} currentManager
+   * @param {BotRecognizer} botRecognizer
    */
-  constructor(conversationState: BotState, userState: UserState, conversationReferences: ConversationReference[], currentManager: NlpService, dialog?: Dialog) {
+  constructor(conversationState: BotState, userState: UserState, conversationReferences: ConversationReference[], currentManager: NlpService, botRecognizer: any, dialog?: Dialog) {
     super();
 
     if (!conversationState) {
@@ -75,8 +77,10 @@ export class ConversationBot extends ActivityHandler {
     this.conversationState = conversationState as ConversationState;
     this.userState = userState as UserState;
     this.currentConversationReferences = conversationReferences as ConversationReference[];
-    this.dialog = dialog;
+
     this.currentManager = currentManager;
+    this.botRecognizer = botRecognizer;
+    this.dialog = dialog;
 
     this.conversationDataAccessor = conversationState.createProperty<DialogState>(CONVERSATION_DATA_PROPERTY);
     this.userProfileAccessor = userState.createProperty<UserState>(USER_PROFILE_PROPERTY);
@@ -116,19 +120,51 @@ export class ConversationBot extends ActivityHandler {
           userProfile.info = useData;
         }
 
-        const answer = await this.currentManager.executeConversation(id, text);
+        // executar intend recognition
+        const result = await this.botRecognizer.executeLuisQuery(text);
+        const intent = result.intent;
 
-        const activity = { 
-          type: ActivityTypes.Message, 
-          text: answer,
-          value: {
-            ...useData,
-            channel: useData.service
+        if (intent) {
+          const action = intent.toLowerCase();
+          switch (action) {
+            case 'agent':
+            case 'cancel':
+              const cancelMessageText = 'Cancelling...'; // TO-DO: colocar mensagem de finalização apropriada
+              await context.sendActivity(cancelMessageText, cancelMessageText, InputHints.IgnoringInput);
+              break;
+            case 'quit':
+              const cancelMessageText = 'Cancelling...'; // TO-DO: colocar mensagem de finalização apropriada
+              await context.sendActivity(cancelMessageText, cancelMessageText, InputHints.IgnoringInput);
+              break;
+            default:
+              const answer = await this.currentManager.executeConversation(id, text);
+
+              const activity = { 
+                type: ActivityTypes.Message, 
+                text: answer,
+                value: {
+                  ...useData,
+                  channel: useData.service
+                }
+              }
+              
+              await context.sendActivity(activity);
           }
+        } else { // Catch all for unhandled intents
+          const answer = await this.currentManager.executeConversation(id, text);
+
+          const activity = { 
+            type: ActivityTypes.Message, 
+            text: answer,
+            value: {
+              ...useData,
+              channel: useData.service
+            }
+          }
+          
+          //Promise<ResourceResponse | undefined>
+          await context.sendActivity(activity);
         }
-        
-        //Promise<ResourceResponse | undefined>
-        await context.sendActivity(activity);
       }
 
       // Save updated utterance inputs.
