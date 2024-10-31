@@ -78,7 +78,6 @@ export async function processWaMessage(message: MsgTypes, wb: BotMsgValue, compa
         value: omitKeys(wb, ["name"])
       };
 
-      //directLineService.sendMessageToBot(message, userId, name, conversationId);
       directLineService.sendMessageToBot(data);
       
       /*let replyButtonMessage = interactiveReplyButton;

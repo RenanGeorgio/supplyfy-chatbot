@@ -6,6 +6,7 @@ import { sendWaTextMessage } from "../../controllers/com/whatsapp/whatsappContro
 import { WaMsgMetaData } from "../../types";
 import { Platforms } from "../../types/enums";
 
+
 export default async function botService(data: any) {
     try {
         const { result } = data;
@@ -44,7 +45,7 @@ export default async function botService(data: any) {
                 }
                 break;
             case Platforms.FACEBOOK:
-                sendFacebookTextMessage(result.value.senderID, result.text)
+                sendFacebookTextMessage(result.value.senderID, result.text);
                 break;
             default:
                 console.log('Tipo de atendimento desconhecido.');

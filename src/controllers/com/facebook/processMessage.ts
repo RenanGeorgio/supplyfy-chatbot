@@ -23,7 +23,7 @@ export function sendFacebookText(info: Obj, messageText: string) {
 
   const data: MsgToBot = {
     text: msgToSend,
-    id: senderID,
+    id: recipientID,
     name: "",
     conversation: conversationId,
     value: {
