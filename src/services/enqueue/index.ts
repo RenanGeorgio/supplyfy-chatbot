@@ -1,20 +1,11 @@
-import { CALL_STATUS, ENQUEUE_STATUS } from "./constants/enqueue.enums";
-import { NotifyAgentDTO, QueueAgentDTO } from "./constants/enqueue.types";
-
-export const enqueue = async ({ params, data }) => {
+export const enqueue = async (data) => {
   try {
-    const newData: QueueAgentDTO = {
-      ...data,
-      status: ENQUEUE_STATUS.QUEUED,
-      deQueuedTime: undefined,
-      queuedTime: new Date().toString(),
-    };
-    // adicionado  o endpoint do servidor
-    const result = await fetch("/send-msg", {
+    const result = await fetch(`${process.env.QUEUE_SERVER}/send-msg`, {
       method: "POST",
-      body: JSON.stringify(newData),
+      body: JSON.stringify(data),
     });
-  } catch (error) {
+  } catch (error: any) {
+    // @ts-ignore
     console.error(error);
   }
 };

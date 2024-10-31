@@ -7,14 +7,15 @@ import { enqueue } from "../enqueue";
 import { ENQUEUE_STATUS } from "../enqueue/constants/enqueue.enums";
 import { EventdataType, QueueAgentDTO } from "../enqueue/constants/enqueue.types";
 
-const CurrentEvent = class<EventdataType> {
+
+const CurrentEvent = class<Obj> {
     CallSid: string | undefined
     Caller: string | undefined 
     From: string | undefined 
     To: string | undefined 
     QueuePosition: number | string | undefined
     QueueSid: string | undefined
-    CurrentQueueSize: number | undefined
+    CurrentQueueSize: number | string | undefined
     MaxQueueSize?: number | string
     channel?: Platforms
     constructor(maxSize: number = 100) {
@@ -27,7 +28,7 @@ const CurrentEvent = class<EventdataType> {
         this.From = From;
         this.To = To;
         this.QueuePosition = QueuePosition;
-        this.QueueSid = QueueSid
+        this.QueueSid = QueueSid;
         this.CurrentQueueSize = CurrentQueueSize;
         this.channel = channel;
     }
@@ -35,7 +36,7 @@ const CurrentEvent = class<EventdataType> {
     getCurrentEvent() {
         return this;
     }
-  };
+};
 
 export default async function eventService(data: any) {
     try {
@@ -68,8 +69,9 @@ export default async function eventService(data: any) {
 
                 currentEvent.setCurrentEvent(whatsappEvent);
 
+                const whatsappText = `Você esta na posição: ${whatsappEvent.QueuePosition}! Aguarde é logo sera atendido`;
 
-                sendWaTextMessage(result.text, whatsappData);
+                sendWaTextMessage(whatsappText, whatsappData);
                 break;
             case Platforms.INSTAGRAM:
                 const instagramEvent: EventdataType = { 
@@ -85,7 +87,20 @@ export default async function eventService(data: any) {
 
                 currentEvent.setCurrentEvent(instagramEvent);
 
-                sendInstagramMessage(responses);
+                const instagramText = `Você esta na posição: ${instagramEvent.QueuePosition}! Aguarde é logo sera atendido`;
+
+                const requestBody = {
+                    recipient: {
+                      id: result.from.id
+                    },
+                    message: {
+                      text: instagramText,
+                      metadata: "DEVELOPER_DEFINED_METADATA"
+                    },
+                    tag: "HUMAN_AGENT"
+                };
+
+                sendInstagramMessage(requestBody);
                 break;
             case Platforms.FACEBOOK:
                 const facebookEvent: EventdataType = { 
@@ -101,9 +116,12 @@ export default async function eventService(data: any) {
 
                 currentEvent.setCurrentEvent(facebookEvent);
 
-                sendFacebookTextMessage(result.value.senderID, result.text);
+                const facebookText = `Você esta na posição: ${facebookEvent.QueuePosition}! Aguarde é logo sera atendido`;
+
+                sendFacebookTextMessage(result.value.senderID, facebookText);
                 break;
             default:
+                // @ts-ignore
                 console.log('Tipo de atendimento desconhecido.');
                 break;
         }
