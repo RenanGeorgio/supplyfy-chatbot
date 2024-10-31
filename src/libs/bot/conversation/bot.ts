@@ -1,4 +1,4 @@
-import { ActivityHandler, StatePropertyAccessor, UserState, ConversationState, BotState, ActivityTypes, InputHints } from "botbuilder";
+import { ActivityHandler, StatePropertyAccessor, UserState, ConversationState, BotState, ActivityTypes } from "botbuilder";
 import { TurnContext, ConversationReference } from "botbuilder-core";
 import { Dialog, DialogState } from "botbuilder-dialogs";
 import { CONVERSATION_DATA_PROPERTY, USER_PROFILE_PROPERTY } from "../dialogs/constants";

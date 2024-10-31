@@ -1,9 +1,7 @@
 import { io } from "../core/http";
-import { authMiddleware } from "../middlewares";
-import { OnlineUser } from "../types";
-import { Platforms } from "../types/enums";
 import socketUsers from "./socketUsers";
-// let onlineUsers: OnlineUser[] = [];
+import { Platforms } from "../types/enums";
+
 
 io.on("connection", (socket) => {
   socket.on(
