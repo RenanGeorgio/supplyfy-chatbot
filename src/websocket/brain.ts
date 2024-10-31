@@ -1,4 +1,4 @@
-import { io } from "../core/http";
+import { bot_io } from "../core/http";
 import socketUsers from "./socketUsers";
 import { Platforms } from "../types/enums";
 
@@ -7,7 +7,7 @@ const { io: Client } = require('socket.io-client');
 const clientSockets = new Map(); // Store FastAPI connections by client ID
 
 // Handle client connections to the Node.js server
-io.on('connection', (socket) => {
+bot_io.on('connection', (socket) => {
     console.log('Client connected to Node.js server');
 
     // Generate a unique client ID based on socket ID
