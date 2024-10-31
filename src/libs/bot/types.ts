@@ -62,6 +62,12 @@ export interface Message extends IActivity {
   value?: object
 }
 
+export interface EventActivity extends IActivity {
+  type: "event"
+  name: string
+  value: any
+}
+
 export interface User {
   id: string
   name?: string

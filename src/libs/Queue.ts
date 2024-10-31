@@ -3,6 +3,7 @@ import { RedisOptions } from "ioredis";
 import * as jobs from "../jobs";
 import { redisConfig } from "../core/redis";
 
+
 const redisOpts: RedisOptions = {
   host: redisConfig.host.replace(/[\\"]/g, ''),
   port: parseInt(redisConfig.port.replace(/[\\"]/g, '')),

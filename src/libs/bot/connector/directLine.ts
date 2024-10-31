@@ -72,7 +72,16 @@ export class DirectlineService {
                     console.log(result)
                     queue.add("BotService", { result });
                 }
-            )
+            );
+
+        directLine.activity$
+            .filter(activity => activity.type === ActivityTypes.Event && activity.from.id === botName) // Adjust type as per your needs
+            .subscribe(
+                (eventActivity) => {
+                    console.log("Received event activity: ", eventActivity);
+                    queue.add("EventService", { eventActivity });
+                }
+            );
     }
 
     static getInstance(): DirectlineService {
