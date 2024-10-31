@@ -75,7 +75,7 @@ export class DirectlineService {
             );
 
         directLine.activity$
-            .filter(activity => activity.type === ActivityTypes.Event && activity.from.id === botName) // Adjust type as per your needs
+            .filter(activity => activity.type === 'transfer' && activity.from.id === botName)
             .subscribe(
                 (eventActivity) => {
                     console.log("Received event activity: ", eventActivity);

@@ -128,17 +128,33 @@ export class ConversationBot extends ActivityHandler {
 
         // enviar 'answer' para o LLM
         // TO-DO: recever valor
-        const activity = { 
-          type: ActivityTypes.Message, 
-          text: answer,
-          value: {
-            ...useData,
-            channel: useData.service
+        const llm =""
+        if (llm) {
+          const activity = { 
+            type: ActivityTypes.Message, 
+            text: answer,
+            value: {
+              ...useData,
+              company: useData.company,
+              channel: useData.service
+            }
           }
+          
+          //Promise<ResourceResponse | undefined>
+          await context.sendActivity(activity);
+        } else {
+          const activity = { 
+            type: 'transfer',
+            value: {
+              ...useData,
+              company: useData.company,
+              channel: useData.service
+            }
+          }
+          
+          //Promise<ResourceResponse | undefined>
+          await context.sendActivity(activity);
         }
-        
-        //Promise<ResourceResponse | undefined>
-        await context.sendActivity(activity);
       }
 
       // Save updated utterance inputs.
