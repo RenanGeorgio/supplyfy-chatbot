@@ -8,50 +8,49 @@ import { Platforms } from "../../types/enums";
 
 export default async function botService(data: any) {
     try {
-        const { result } = data;
+        const channel = data.value.channel;
+        console.log("CHANNEL:  ", channel)
         
-        const channel = result.value.channel;
-
         switch (channel) {
             case Platforms.WHATSAPP:
                 const whatsappData: WaMsgMetaData = {
-                    senderPhoneNumberId: result.value.phoneNumberId,
-                    senderPhoneNumber: result.value.phoneNumber,
-                    recipientName: result.value.name,
-                    recipientPhoneNumberId: result.value.to,
-                    accessToken: result.value.token,
+                    senderPhoneNumberId: data.value.phoneNumberId,
+                    senderPhoneNumber: data.value.phoneNumber,
+                    recipientName: data.value.name,
+                    recipientPhoneNumberId: data.value.to,
+                    accessToken: data.value.token,
                 }
 
-                sendWaTextMessage(result.text, whatsappData);
+                sendWaTextMessage(data.text, whatsappData);
                 break;
             case Platforms.INSTAGRAM:
-                if (result.value.type === INSTAGRAM_MSG_TYPE.PRIVATEREPLY) {
-                    const type = result.value.key;
+                if (data.value.type === INSTAGRAM_MSG_TYPE.PRIVATEREPLY) {
+                    const type = data.value.key;
 
                     const requestBody = {
                         recipient: {
-                          [type]: result.value.objectId,
+                            [type]: data.value.objectId,
                         },
-                        message: result.text,
+                        message: data.text,
                         tag: "HUMAN_AGENT",
                     };
 
                     sendInstagramMessage(requestBody);
                 } else {
-                    const responses = sendInstagramTextMessage(result.value.senderID, result.text);
+                    const responses = sendInstagramTextMessage(data.value.senderID, data.text);
 
                     sendInstagramMessage(responses);
                 }
                 break;
             case Platforms.FACEBOOK:
-                sendFacebookTextMessage(result.value.senderID, result.text)
+                sendFacebookTextMessage(data.value.senderID, data.text)
                 break;
             default:
                 console.log('Tipo de atendimento desconhecido.');
                 break;
         }
 
-        return result
+        return data
     } catch (error: any) {
         throw new Error("Error sending message");
     }

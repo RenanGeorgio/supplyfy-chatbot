@@ -23,7 +23,7 @@ botServer.on('upgrade', async (req, socket, head) => {
   // Set onTurnError for the CloudAdapter created for each connection.
   streamingAdapter.onTurnError = onTurnErrorHandler;
   
-  await streamingAdapter.process(req, socket as unknown as INodeSocket, head, (context) => conversationBot.run(context));
+  await streamingAdapter.process(req, socket as unknown as INodeSocket, head, async (context) => (await conversationBot).run(context));
 });
 
 export { httpServer, botServer, io };

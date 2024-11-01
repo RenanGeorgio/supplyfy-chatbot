@@ -4,13 +4,15 @@ import * as jobs from "../jobs";
 import { redisConfig } from "../core/redis";
 
 const redisOpts: RedisOptions = {
-  host: redisConfig.host.replace(/[\\"]/g, ''),
-  port: parseInt(redisConfig.port.replace(/[\\"]/g, '')),
-  password: redisConfig.password.replace(/[\\"]/g, ''),
-  tls: {
-    host: redisConfig.host.replace(/[\\"]/g, ''),
-    port: parseInt(redisConfig.port.replace(/[\\"]/g, ''))
-  }
+  host: redisConfig.host,
+  port: redisConfig.port,
+  ...(redisConfig.password ? { password: redisConfig.password } : {}),
+  ...(redisConfig.tls ? {
+    tls: {
+      host: redisConfig.host,
+      port: redisConfig.port
+    }
+  } : {})
 }
 
 const queues = Object.values(jobs).map((job) => ({
@@ -22,14 +24,14 @@ const queues = Object.values(jobs).map((job) => ({
   handle: job.handle,
   options: job.options,
 }));
- 
+
 export default {
   queues,
   add(name: string, data: any, serviceId?: string) {
     const queue = this.queues.find((queue) => queue.name === name);
     // console.log(queue?.options);
     if (queue) {
-      return queue.bull.add({...data, serviceId}, queue.options);
+      return queue.bull.add({ ...data, serviceId }, queue.options);
       // estou adicionando o serviceId para poder identificar qual bot está enviando a mensagem
       // para funções mais simples, não é necessário passar o serviceId
     }
@@ -40,6 +42,7 @@ export default {
 
       queue.bull.on("failed", (job, err) => {
         console.log("📙job failed", err);
+        job.discard()
       });
 
       queue.bull.on("completed", (job, result) => {
