@@ -35,7 +35,7 @@ export const socketServiceController: ISocketServiceController = {
       }
     });
 
-    socket.on("connect_error", (error) => {
+    socket.on("connect_error", (error: any) => {
       console.log("Sem conexão com o socket server");
       if (webhook) {
         webhookTrigger({

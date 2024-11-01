@@ -151,7 +151,7 @@ export interface IMessengerServiceController {
 export interface ISocketServiceController {
   sockets: ISocketService[];
   start: (credentials: ISocketCredentials, webhook?: IWebhook) => Socket;
-  // stop: (credentials: ISocketCredentials) => void;
+  stop?: (credentials: ISocketCredentials) => void;
 }
 
 export type RegisterClient = {
@@ -231,6 +231,13 @@ export interface UserInfo {
 
 export interface OnlineUser {
   userId: string;
+  socketId: string;
+  platform?: string;
+}
+
+export interface AgentConnection {
+  userId: string;
+  companyId: string;
   socketId: string;
   platform?: string;
 }

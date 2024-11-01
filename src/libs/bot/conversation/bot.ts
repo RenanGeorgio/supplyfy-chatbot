@@ -3,6 +3,7 @@ import { TurnContext, ConversationReference } from "botbuilder-core";
 import { Dialog, DialogState } from "botbuilder-dialogs";
 import { CONVERSATION_DATA_PROPERTY, USER_PROFILE_PROPERTY } from "../dialogs/constants";
 import { NlpService } from "../nlp/manager";
+import { agentServiceController } from "../../../services/agent";
 
 
 async function logMessageText(storage, context: TurnContext) { // This function stores new user messages. Creates new utterance log if none exists.
@@ -55,6 +56,7 @@ export class ConversationBot extends ActivityHandler {
   private userProfileAccessor: StatePropertyAccessor<UserState>;
   private currentManager: NlpService
   private botRecognizer: any
+  private sockets: any
   /**
    *
    * @param {ConversationState} conversationState
@@ -84,6 +86,8 @@ export class ConversationBot extends ActivityHandler {
 
     this.conversationDataAccessor = conversationState.createProperty<DialogState>(CONVERSATION_DATA_PROPERTY);
     this.userProfileAccessor = userState.createProperty<UserState>(USER_PROFILE_PROPERTY);
+
+    this.sockets = new Map();
 
     this.onMessage(async (context: TurnContext, next) => {
       this.addConversationReference(context.activity);
@@ -126,6 +130,24 @@ export class ConversationBot extends ActivityHandler {
 
         const answer = await this.currentManager.executeConversation(id, text);
 
+        if (this.sockets.has(conversationId)) {
+          const socket = this.sockets.get(conversationId);
+
+          if (socket) {
+            socket.emit("sendMessage", 
+              { 
+                input: answer,
+                message: text, 
+                company: useData.company,
+                conversation: conversationId,
+                user: id
+              },
+              (response) => {
+                
+              }
+            );
+          }
+        }
         // enviar 'answer' para o LLM
         // TO-DO: recever valor
         const llm =""
@@ -175,7 +197,21 @@ export class ConversationBot extends ActivityHandler {
       // console.log(context.activity)
       for (const idx in membersAdded) {
         if (membersAdded[idx].id !== context.activity.recipient.id) {
-          await currentManager.createConversation(context.activity.conversation.id, membersAdded[idx].id);
+          const id = context.activity.conversation.id;
+
+          const socket = agentServiceController.start({
+            _id: id,
+            url: process.env.AGENT_SERVER,
+            auth: {
+              token: "1234567890",
+            },
+          });
+
+          if (socket) {
+            this.sockets.set(id, socket);
+          }
+
+          await currentManager.createConversation(id, membersAdded[idx].id);
 
           // await context.sendActivity('Welcome');
           // await (dialog as MainDialog).run(context, conversationState.createProperty<DialogState>('DialogState'));
@@ -189,7 +225,16 @@ export class ConversationBot extends ActivityHandler {
       const membersRemoved = context.activity.membersRemoved;
       for (const idx in membersRemoved) {
         if (membersRemoved[idx].id !== context.activity.recipient.id) {
-          await currentManager.deleteConversation(context.activity.conversation.id, membersRemoved[idx].id);
+          const id = context.activity.conversation.id;
+
+          if (this.sockets.has(id)) {
+            const socket = this.sockets.get(id);
+            socket.emit("removeUserById", id);
+
+            this.sockets.delete(id);
+          }
+
+          await currentManager.deleteConversation(id, membersRemoved[idx].id);
           await this.userState.clear(context);
         }
       }
