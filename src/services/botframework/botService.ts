@@ -3,56 +3,69 @@ import { INSTAGRAM_MSG_TYPE } from "../../controllers/com/instagram/consumer";
 import { sendInstagramTextMessage } from "../../controllers/com/instagram/instagramController/data";
 import { sendInstagramMessage } from "../../controllers/com/service";
 import { sendWaTextMessage } from "../../controllers/com/whatsapp/whatsappController";
+import Queue from "../../libs/Queue";
 import { WaMsgMetaData } from "../../types";
 import { Platforms } from "../../types/enums";
 
 export default async function botService(data: any) {
-    try {
-        const { result } = data;
-        
-        const channel = result.value.channel;
+  try {
+    const { result } = data;
 
-        switch (channel) {
-            case Platforms.WHATSAPP:
-                const whatsappData: WaMsgMetaData = {
-                    senderPhoneNumberId: result.value.phoneNumberId,
-                    senderPhoneNumber: result.value.phoneNumber,
-                    recipientName: result.value.name,
-                    recipientPhoneNumberId: result.value.to,
-                    accessToken: result.value.token,
-                }
+    const channel = result.value.channel;
 
-                sendWaTextMessage(result.text, whatsappData);
-                break;
-            case Platforms.INSTAGRAM:
-                if (result.value.type === INSTAGRAM_MSG_TYPE.PRIVATEREPLY) {
-                    const type = result.value.key;
+    switch (channel) {
+      case Platforms.WHATSAPP:
+        const whatsappData: WaMsgMetaData = {
+          senderPhoneNumberId: result.value.phoneNumberId,
+          senderPhoneNumber: result.value.phoneNumber,
+          recipientName: result.value.name,
+          recipientPhoneNumberId: result.value.to,
+          accessToken: result.value.token,
+        };
 
-                    const requestBody = {
-                        recipient: {
-                          [type]: result.value.objectId,
-                        },
-                        message: result.text,
-                        tag: "HUMAN_AGENT",
-                    };
+        sendWaTextMessage(result.text, whatsappData);
+        break;
+      case Platforms.INSTAGRAM:
+        if (result.value.type === INSTAGRAM_MSG_TYPE.PRIVATEREPLY) {
+          const type = result.value.key;
 
-                    sendInstagramMessage(requestBody);
-                } else {
-                    const responses = sendInstagramTextMessage(result.value.senderID, result.text);
+          const requestBody = {
+            recipient: {
+              [type]: result.value.objectId,
+            },
+            message: result.text,
+            tag: "HUMAN_AGENT",
+          };
 
-                    sendInstagramMessage(responses);
-                }
-                break;
-            case Platforms.FACEBOOK:
-                sendFacebookTextMessage(result.value.senderID, result.text)
-                break;
-            default:
-                console.log('Tipo de atendimento desconhecido.');
-                break;
+          sendInstagramMessage(requestBody);
+        } else {
+          const responses = sendInstagramTextMessage(
+            result.value.senderID,
+            result.text
+          );
+
+          sendInstagramMessage(responses);
         }
+        break;
+      case Platforms.FACEBOOK:
+        sendFacebookTextMessage(result.value.senderID, result.text);
+        break;
 
-        return result
-    } catch (error: any) {
-        throw new Error("Error sending message");
+      case Platforms.TELEGRAM:
+        const telegramData: any = {
+          id: result.chat.origin.chatId,
+          message: result.message,
+          webhookUrl: result.webhook.url,
+        };
+
+        // Queue.add("TelegramService", telegramData, result.credentials._id);
+      default:
+        console.log("Tipo de atendimento desconhecido.");
+        break;
     }
+
+    return result;
+  } catch (error: any) {
+    throw new Error("Error sending message");
+  }
 }

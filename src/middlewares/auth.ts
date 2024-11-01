@@ -12,9 +12,9 @@ const JWT = async (req: CustomRequest, res: Response, next: NextFunction) => {
             return res.status(401).send();
         }
 
+        const env_token = process.env.TOKEN_SECRET as string;
         const user = <IUser>(
-            const env_token = process.env.TOKEN_SECRET as string;
-            jsonwebtoken.verify(token, env_token.replace(/[\\"]/g, ''));
+            jsonwebtoken.verify(token, env_token.replace(/[\\"]/g, ''))
         );
 
         if (!user) {
@@ -42,7 +42,7 @@ const apiMiddleware = async(req: CustomRequest, res: Response, next: NextFunctio
     }
 
     const user = <IUser>(
-      jsonwebtoken.verify(token, process.env.API_TOKEN_SECRET as string);
+      jsonwebtoken.verify(token, process.env.API_TOKEN_SECRET as string)
     );
 
     if (!user) {
