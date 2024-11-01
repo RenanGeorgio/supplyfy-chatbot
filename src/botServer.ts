@@ -4,11 +4,12 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import bodyParser from "body-parser";
 import RedisStore from "connect-redis";
+
 import { redisClient } from "./core/redis";
-import { CustomRequest } from "./types/types";
 import { adapter } from "./libs/bot/adapter";
-import { BotService } from "./libs/bot/init";
 import { ContainerService } from "./libs/bot/container";
+import { CustomRequest } from "./types/types";
+
 
 const store = new RedisStore({ client: redisClient, prefix: "bot:" });
 

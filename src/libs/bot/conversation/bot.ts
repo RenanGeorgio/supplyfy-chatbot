@@ -1,9 +1,9 @@
 import { ActivityHandler, StatePropertyAccessor, UserState, ConversationState, BotState, ActivityTypes } from "botbuilder";
 import { TurnContext, ConversationReference } from "botbuilder-core";
 import { Dialog, DialogState } from "botbuilder-dialogs";
-import { CONVERSATION_DATA_PROPERTY, USER_PROFILE_PROPERTY } from "../dialogs/constants";
 import { NlpService } from "../nlp/manager";
 import { agentServiceController } from "../../../services/agent";
+import { CONVERSATION_DATA_PROPERTY, USER_PROFILE_PROPERTY } from "../dialogs/constants";
 import { AGENT_MSG_TYPE, AgentMessage } from "../types";
 
 
@@ -12,14 +12,14 @@ async function logMessageText(storage, context: TurnContext) { // This function 
 
   try {
     let storeItems = await storage.read(["UtteranceLogJS"]);
-    var UtteranceLogJS = storeItems["UtteranceLogJS"];
+    const UtteranceLogJS = storeItems["UtteranceLogJS"];
 
     if ((typeof (UtteranceLogJS)) != 'undefined') { // The log exists so we can write to it.
       storeItems["UtteranceLogJS"].turnNumber++;
       storeItems["UtteranceLogJS"].UtteranceList.push(utterance);
 
-      var storedString = storeItems.UtteranceLogJS.UtteranceList.toString(); // Gather info for user message.
-      var numStored = storeItems.UtteranceLogJS.turnNumber;
+      const storedString = storeItems.UtteranceLogJS.UtteranceList.toString(); // Gather info for user message.
+      const numStored = storeItems.UtteranceLogJS.turnNumber;
 
       try {
         await storage.write(storeItems);
@@ -30,14 +30,13 @@ async function logMessageText(storage, context: TurnContext) { // This function 
     } else {
       await context.sendActivity(`Creating and saving new utterance log`);
 
-      var turnNumber = 1;
+      const turnNumber = 1;
       storeItems["UtteranceLogJS"] = { UtteranceList: [`${utterance}`], "eTag": "*", turnNumber }
 
-      var storedString = storeItems.UtteranceLogJS.UtteranceList.toString(); // Gather info for user message.
-      var numStored = storeItems.UtteranceLogJS.turnNumber;
+      const storedString = storeItems.UtteranceLogJS.UtteranceList.toString(); // Gather info for user message.
+      const numStored = storeItems.UtteranceLogJS.turnNumber;
 
-      try {
-        // Redirecionar mensagens de log
+      try { // Redirecionar mensagens de log
         await storage.write(storeItems);
       } catch (err: any) {
         console.log(`Write failed: ${err}`);
@@ -120,7 +119,7 @@ export class ConversationBot extends ActivityHandler {
           const socket = this.sockets.get(conversationId);
 
           if (socket) {
-            socket.emit("sendMessage", 
+            socket.emit('sendMessage', 
               { 
                 input: answer,
                 message: text, 
@@ -195,7 +194,7 @@ export class ConversationBot extends ActivityHandler {
 
     this.onMembersAdded(async (context, next) => {
       const membersAdded = context.activity.membersAdded;
-      // console.log(context.activity)
+      
       for (const idx in membersAdded) {
         if (membersAdded[idx].id !== context.activity.recipient.id) {
           const id = context.activity.conversation.id;

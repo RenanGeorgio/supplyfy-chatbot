@@ -20,9 +20,10 @@ bot_io.on('connection', (socket) => {
   );
 
   // ACHO QUE NAO É NECESSARIO - VERIFICAR E APAGAR
-  socket.on('message', (message) => {
-    agentSocket.emit('message', message); // Forward to FastAPI server
-  });
+  //socket.on('message', (message) => {
+    // Forward to FastAPI server
+  //  agentSocket.emit('message', message);
+  //});
 
   socket.on('disconnect', () => {
     agentsConnection.removeUser(socket);
