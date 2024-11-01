@@ -3,32 +3,30 @@ import { Platforms } from "../../types/enums";
 import { BotMsgValue } from "../../types/types";
 
 interface TelegramMessage {
-    id: string
+    senderChatId: string
     senderId: string
-    message: {
-        text: string
-    }
+    text: string
     origin: {
         chatId: string
+    }
+    credentials: {
+        _id: string
     }
 }
 
 export function sendTelegramText(info: TelegramMessage) {
-    const value: BotMsgValue = {
+    const value: any = {
         service: Platforms.TELEGRAM,
-        to: info.origin.chatId,
-        messageId: info.id,
-        phoneNumber: "undefined",
-        phoneNumberId: "undefined",
-        name: undefined,
+        ...info
     } 
     
     const data: MsgToBot = {
-        text: info.message.text,
-        id: info.senderId,
+        text: info.text,
+        id: info.senderChatId,
         value
     };
 
+    console.log("MESSAGE INFO: ", data)
     const directLineService = DirectlineService.getInstance();
 
     directLineService.sendMessageToBot(data);
