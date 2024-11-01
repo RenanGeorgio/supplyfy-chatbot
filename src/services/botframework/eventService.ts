@@ -1,9 +1,10 @@
+import { queueApi } from "../../api";
 import { sendFacebookTextMessage } from "../../controllers/com/facebook/facebookController";
 import { sendInstagramMessage } from "../../controllers/com/service";
 import { sendWaTextMessage } from "../../controllers/com/whatsapp/whatsappController";
+import { enqueue } from "../enqueue";
 import { Obj, WaMsgMetaData } from "../../types";
 import { Platforms } from "../../types/enums";
-import { enqueue } from "../enqueue";
 import { ENQUEUE_STATUS } from "../enqueue/constants/enqueue.enums";
 import { EventdataType, QueueAgentDTO } from "../enqueue/constants/enqueue.types";
 
@@ -46,6 +47,15 @@ export default async function eventService(data: any) {
 
         const currentEvent = new CurrentEvent();
 
+        const company = result.value.company;
+        const queue = result.value.queue;
+
+        const response = await queueApi(`/queue-info?company=${company}&queueId=${queue}`);
+
+        const { queueId, size } = response;
+
+        const currentSize = size + 1;
+
         switch (channel) {
             case Platforms.WHATSAPP:
                 const whatsappData: WaMsgMetaData = {
@@ -61,9 +71,9 @@ export default async function eventService(data: any) {
                     Caller: result.from.name, 
                     From: result.from.id, 
                     To: result.value.to, 
-                    QueuePosition: -1, 
-                    QueueSid: "", 
-                    CurrentQueueSize: -1, 
+                    QueuePosition: currentSize, 
+                    QueueSid: queueId, 
+                    CurrentQueueSize: currentSize, 
                     channel: Platforms.WHATSAPP
                  }
 
@@ -79,9 +89,9 @@ export default async function eventService(data: any) {
                     Caller: result.from.name, 
                     From: result.from.id, 
                     To: result.value.to, 
-                    QueuePosition: -1, 
-                    QueueSid: "", 
-                    CurrentQueueSize: -1, 
+                    QueuePosition: currentSize, 
+                    QueueSid: queueId, 
+                    CurrentQueueSize: currentSize, 
                     channel: Platforms.WHATSAPP
                  }
 
@@ -108,9 +118,9 @@ export default async function eventService(data: any) {
                     Caller: result.from.name, 
                     From: result.from.id, 
                     To: result.value.to, 
-                    QueuePosition: -1, 
-                    QueueSid: "", 
-                    CurrentQueueSize: -1, 
+                    QueuePosition: currentSize, 
+                    QueueSid: queueId, 
+                    CurrentQueueSize: currentSize, 
                     channel: Platforms.WHATSAPP
                  }
 
@@ -130,8 +140,8 @@ export default async function eventService(data: any) {
 
         const newData: QueueAgentDTO = {
             eventData: eventToSend as any,
-            filterCompanyId: result.value.company,
-            filterQueueId: result.value.queue,
+            filterCompanyId: company,
+            filterQueueId: queue,
             status: ENQUEUE_STATUS.QUEUED,
             deQueuedTime: undefined,
             queuedTime: new Date().toString()
