@@ -7,6 +7,12 @@ import { Dialog } from "botbuilder-dialogs";
 import { ContextKey, CurrentContext } from "./data";
 import { Obj } from "../../types";
 
+export enum AGENT_MSG_TYPE {
+  ANSWER = 'answer',
+  TRANSFER = 'transfer',
+  FINISH = 'finish',
+  CANCEL = 'cancel'
+}
 
 export type ContainerType = typeof containerBootstrap;
 
@@ -35,6 +41,13 @@ export type ContextMap = {
   conversationContext?: ExtendedConversationContextType | null
   contextValue?: CurrentContext | null
   contextKey?: ContextKey | null
+}
+
+export type AgentMessage = {
+  id: string
+  conversationId: string
+  text: string
+  type: AGENT_MSG_TYPE
 }
  
 export interface IActivity {

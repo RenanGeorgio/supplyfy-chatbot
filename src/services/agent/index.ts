@@ -4,7 +4,7 @@ import { ISocketServiceController } from "../../types";
 
 export const agentServiceController: ISocketServiceController = {
   sockets: [],
-  // os dados do socket vão ficar dentro do modelo do bot
+  
   start(credentials) {
     const id = credentials._id.toString();
 

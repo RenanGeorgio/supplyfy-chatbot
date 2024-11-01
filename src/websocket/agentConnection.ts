@@ -1,5 +1,6 @@
 import { AgentConnection } from "../types";
 
+
 export default {
   agentsConnections: [] as AgentConnection[],
   

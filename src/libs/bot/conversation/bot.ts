@@ -4,6 +4,7 @@ import { Dialog, DialogState } from "botbuilder-dialogs";
 import { CONVERSATION_DATA_PROPERTY, USER_PROFILE_PROPERTY } from "../dialogs/constants";
 import { NlpService } from "../nlp/manager";
 import { agentServiceController } from "../../../services/agent";
+import { AGENT_MSG_TYPE, AgentMessage } from "../types";
 
 
 async function logMessageText(storage, context: TurnContext) { // This function stores new user messages. Creates new utterance log if none exists.
@@ -95,17 +96,6 @@ export class ConversationBot extends ActivityHandler {
       const userProfile = await this.userProfileAccessor.get(context);
       const conversationData = await this.conversationDataAccessor.get(context);
 
-      // COMO PODEMOS MANDAR A MENSAGEM QUANDO O USUARIO ENTRA NO CHAT, ESTA MENSAGEM PODE NAO SER NECESSARIA
-      /*if (didBotWelcomedUser === false) {
-        const userName = context.activity.from.name;
-        await context.sendActivity('You are seeing this message because this was your first message ever sent to this bot.');
-        await context.sendActivity(`It is a good practice to welcome the user and provide personal greeting. For example, welcome ${ userName }.`);
-
-        await this.welcomedUserProperty.set(context, true);
-      } else {
-        
-      }*/
-
       conversationData.timestamp = context.activity.timestamp.toLocaleString();
       conversationData.locale = context.activity.locale;
       conversationData.channelId = context.activity.channelId;
@@ -124,10 +114,6 @@ export class ConversationBot extends ActivityHandler {
           userProfile.info = useData;
         }
 
-        // executar intend recognition
-        //const result = await this.botRecognizer.executeLuisQuery(text);
-        //const intent = result.intent;
-
         const answer = await this.currentManager.executeConversation(id, text);
 
         if (this.sockets.has(conversationId)) {
@@ -142,40 +128,55 @@ export class ConversationBot extends ActivityHandler {
                 conversation: conversationId,
                 user: id
               },
-              (response) => {
-                
+              async (response) => {
+                if (response) {
+                  const value: AgentMessage = JSON.parse(response);
+
+                  const type = value.type;
+
+                  if (type === AGENT_MSG_TYPE.ANSWER) {
+                    const activity = { 
+                      type: ActivityTypes.Message, 
+                      text: value.text,
+                      value: {
+                        ...useData,
+                        company: useData.company,
+                        channel: useData.service
+                      }
+                    }
+                    
+                    //Promise<ResourceResponse | undefined>
+                    await context.sendActivity(activity);
+                  } else {
+                    const activity = { 
+                      type: 'transfer',
+                      value: {
+                        ...useData,
+                        company: useData.company,
+                        channel: useData.service
+                      }
+                    }
+                    
+                    //Promise<ResourceResponse | undefined>
+                    await context.sendActivity(activity);
+                  }
+                } else {
+                  const activity = { 
+                    type: ActivityTypes.Message, 
+                    text: answer,
+                    value: {
+                      ...useData,
+                      company: useData.company,
+                      channel: useData.service
+                    }
+                  }
+                  
+                  //Promise<ResourceResponse | undefined>
+                  await context.sendActivity(activity);
+                }
               }
             );
           }
-        }
-        // enviar 'answer' para o LLM
-        // TO-DO: recever valor
-        const llm =""
-        if (llm) {
-          const activity = { 
-            type: ActivityTypes.Message, 
-            text: answer,
-            value: {
-              ...useData,
-              company: useData.company,
-              channel: useData.service
-            }
-          }
-          
-          //Promise<ResourceResponse | undefined>
-          await context.sendActivity(activity);
-        } else {
-          const activity = { 
-            type: 'transfer',
-            value: {
-              ...useData,
-              company: useData.company,
-              channel: useData.service
-            }
-          }
-          
-          //Promise<ResourceResponse | undefined>
-          await context.sendActivity(activity);
         }
       }
 
