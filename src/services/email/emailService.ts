@@ -1,6 +1,6 @@
 import Queue from "../../libs/Queue";
 import { produceMessage } from "../../core/kafka/producer";
-// import { processQuestion } from "../../libs/bot/nlp/manager";
+import { processQuestion } from "../../libs/bot/nlp/manager";
 import { botExist } from "../../repositories/bot";
 import { IEmailCredentials, IWebhook } from "../../types";
 import { Events } from "../../types/enums";
@@ -135,10 +135,9 @@ const emailService = async (
         ...kafkaMessage,
       });
 
-      // const responseMessage = await processQuestion(
-      //   sanitizedEmailText as string
-      // );
-      const responseMessage = "Não implementado" // TO-DO: incluir no fluxo do bot
+      const responseMessage = await processQuestion(
+        sanitizedEmailText as string
+      );
      
       if (!responseMessage) return;
 
