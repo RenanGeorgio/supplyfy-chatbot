@@ -1,4 +1,4 @@
-FROM node:22.8.0-alpine3.20 AS build
+FROM node:18.20.4-alpine3.20 AS build
 ARG ARG_SESSION_TOKEN
 ARG ARG_NODE_ENV
 ARG ARG_USER_CONTROL
@@ -58,7 +58,7 @@ RUN yarn install && yarn cache clean
 RUN yarn run build
 RUN apk del .gyp
 
-FROM node:22.8.0-alpine3.20 AS run
+FROM node:18.20.4-alpine3.20 AS run
 ARG ARG_SESSION_TOKEN
 ARG ARG_NODE_ENV
 ARG ARG_USER_CONTROL
