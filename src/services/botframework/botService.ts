@@ -6,6 +6,7 @@ import { sendWaTextMessage } from "../../controllers/com/whatsapp/whatsappContro
 import { WaMsgMetaData } from "../../types";
 import { Platforms } from "../../types/enums";
 
+
 export default async function botService(data: any) {
     try {
         const channel = data.value.channel;
