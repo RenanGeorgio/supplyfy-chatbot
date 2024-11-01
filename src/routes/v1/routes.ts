@@ -40,7 +40,7 @@ routes
 
   // whatsapp plugin
   .post("/whatsapp/set-status", whatsappController.markMessageAsRead)
-  .post("/whatsapp/send-msg", whatsappController.sendTextMessage)
+  .post("/whatsapp/send-msg", whatsappController.sendWaTextMessage)
   .post("/whatsapp/inte-btn", whatsappController.sendButtonsMessage)
   .post("/whatsapp/send-contact", whatsappController.sendContacts)
   .post("/whatsapp/inte-list", whatsappController.sendRadioButtons)

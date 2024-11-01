@@ -8,13 +8,13 @@ export const create = async (
   next: NextFunction
 ) => {
   try {
-    const { typebotId, workspaceId, companyId } = req.body;
+    const { typebotId, workspaceId, companyId, token } = req.body;
 
-    if (!typebotId || !workspaceId) {
+    if (!typebotId || !workspaceId || token) {
       return res.status(400).json({ message: "Campos obrigatórios ausentes" });
     }
 
-    const typebot = await createTypebot(typebotId, workspaceId, companyId);
+    const typebot = await createTypebot({companyId, typebotId, workspaceId,  token});
 
     if (!typebot) {
       return res.status(400).json({ message: "Erro ao criar Ignai bot" });

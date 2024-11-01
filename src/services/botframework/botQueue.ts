@@ -10,9 +10,9 @@ export const botServiceController: any = {
 
 export default {
     key: "BotService",
-    async handle(data: any) {
-        const result = data;
-        await botService({ result });
+    async handle({ data }) {
+       const message = data.result
+        await botService(message);
     },
     options: {
         attempts: 3,
