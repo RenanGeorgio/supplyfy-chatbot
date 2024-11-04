@@ -8,7 +8,8 @@ export default async function messengerService(data) {
     const senderPsid = webhookEvent.sender.id;
 
     if (webhookEvent.message) {
-      const responseMessage = await processQuestion(webhookEvent.message.text);
+      // const responseMessage = await processQuestion(webhookEvent.message.text);
+      const responseMessage = "Não implementado" // TO-DO: incluir no fluxo do bot
       try {
         const send = await callSendApi({
           message: { senderId: senderPsid, text: responseMessage },
@@ -20,7 +21,7 @@ export default async function messengerService(data) {
         throw new Error("Error sending message");
       }
     } else if (webhookEvent.postback) {
-      handlePostback(senderPsid, webhookEvent.postback);
+      // handlePostback(senderPsid, webhookEvent.postback);
     }
   }
 }

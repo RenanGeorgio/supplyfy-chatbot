@@ -20,6 +20,7 @@ import { produceMessage } from "../../core/kafka/producer";
 import { socketServiceController } from "../socket";
 import { ClientFlow, Events } from "../../types/enums";
 import { enqueue } from "../enqueue";
+import { sendTelegramText } from "./processMessage";
 
 const sendMessage = async (
   bot: TelegramBot,
@@ -212,34 +213,46 @@ const telegramService = async (
       client.flow === ClientFlow.CHABOT &&
       !ignoredMessages(msg.text as string)
     ) {
-      const responseMessage = await processQuestion(msg.text as string);
+      console.log(client)
+      // const responseMessage = await processQuestion(msg.text as string);
+      const responseMessage = sendTelegramText({
+        senderChatId: client.chatId,
+        senderId: client.clientId,
+        text: msg.text as string,
+        origin:{
+          chatId: String(chatId),
+        },
+        credentials:{
+          _id: credentials._id
+        }
+      }) // TO-DO: incluir no fluxo do bot
       
-      if (responseMessage === "Desculpe, não tenho uma resposta para isso.") {
-        await sendMessage(telegram, chatId, responseMessage, undefined, {
-          ...kafkaMessage,
-          from: botId.toString(),
-        });
-        return await sendMessage(
-          telegram,
-          chatId,
-          "Deseja falar com um atendente?",
-          {
-            reply_markup: {
-              keyboard: [[{ text: "/suporte" }]],
-              resize_keyboard: true,
-            },
-          },
-          {
-            ...kafkaMessage,
-            from: botId.toString(),
-          }
-        );
-      }
+      // if (responseMessage === "Desculpe, não tenho uma resposta para isso.") {
+      //   await sendMessage(telegram, chatId, responseMessage, undefined, {
+      //     ...kafkaMessage,
+      //     from: botId.toString(),
+      //   });
+      //   return await sendMessage(
+      //     telegram,
+      //     chatId,
+      //     "Deseja falar com um atendente?",
+      //     {
+      //       reply_markup: {
+      //         keyboard: [[{ text: "/suporte" }]],
+      //         resize_keyboard: true,
+      //       },
+      //     },
+      //     {
+      //       ...kafkaMessage,
+      //       from: botId.toString(),
+      //     }
+      //   );
+      // }
       
-      await sendMessage(telegram, chatId, responseMessage, undefined, {
-        ...kafkaMessage,
-        from: botId.toString(),
-      });
+      // await sendMessage(telegram, chatId, responseMessage, undefined, {
+      //   ...kafkaMessage,
+      //   from: botId.toString(),
+      // });
     } else if (client && client.flow === ClientFlow.HUMAN) {
       const recipientId = bot?.companyId;
     

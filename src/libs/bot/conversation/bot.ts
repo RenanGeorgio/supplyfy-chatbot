@@ -102,9 +102,9 @@ export class ConversationBot extends ActivityHandler {
         
       }*/
 
-      conversationData.timestamp = context.activity.timestamp.toLocaleString();
-      conversationData.locale = context.activity.locale;
-      conversationData.channelId = context.activity.channelId;
+      // conversationData.timestamp = context.activity.timestamp.toLocaleString();
+      // conversationData.locale = context.activity.locale;
+      // conversationData.channelId = context.activity.channelId;
 
       const text = context.activity.text.trim().toLocaleLowerCase();
       
@@ -114,11 +114,11 @@ export class ConversationBot extends ActivityHandler {
         
         const useData = context.activity?.value;
 
-        if (userProfile) {
-          userProfile.userId = id;
-          userProfile.userName = context.activity.from.name;
-          userProfile.info = useData;
-        }
+        // if (userProfile) {
+        //   userProfile.userId = id;
+        //   userProfile.userName = context.activity.from.name;
+        //   userProfile.info = useData;
+        // }
 
         // executar intend recognition
         const result = await this.botRecognizer.executeLuisQuery(text);
@@ -181,7 +181,7 @@ export class ConversationBot extends ActivityHandler {
       }
 
       // Save updated utterance inputs.
-      await logMessageText(this.userState, context);
+      // await logMessageText(this.userState, context);
 
       // By calling next() you ensure that the next BotHandler is run.
       await next();

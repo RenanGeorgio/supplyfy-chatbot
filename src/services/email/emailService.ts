@@ -135,9 +135,10 @@ const emailService = async (
         ...kafkaMessage,
       });
 
-      const responseMessage = await processQuestion(
-        sanitizedEmailText as string
-      );
+      // const responseMessage = await processQuestion(
+      //   sanitizedEmailText as string
+      // );
+      const responseMessage = "Não implementado" // TO-DO: incluir no fluxo do bot
      
       if (!responseMessage) return;
 

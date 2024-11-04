@@ -112,7 +112,6 @@ export function processMessage(event: WebhookEventBase): void {
         receive.handleAttachmentMessage();
       } else if (("text" in message) && (message?.text != undefined)) {
         const messageText: string | Obj = message.text;
-        
         /*switch (messageText.replace(/[^\w\s]/gi, '').trim().toLowerCase()) {
           case 'image':
             responses = sendInstagramImageMessage(receive.user.igsid, process.env.SERVER_URL + "/assets/rift.png");

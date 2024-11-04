@@ -1,24 +1,33 @@
-import { DirectlineService } from "../../libs/bot/connector/directLine";
+import { DirectlineService, MsgToBot } from "../../libs/bot/connector/directLine";
+import { Platforms } from "../../types/enums";
+import { BotMsgValue } from "../../types/types";
 
 interface TelegramMessage {
-  id: string;
-  message: {
-    text: string;
-  };
-  origin: {
-    chatId: string;
-  };
+    senderChatId: string
+    senderId: string
+    text: string
+    origin: {
+        chatId: string
+    }
+    credentials: {
+        _id: string
+    }
 }
 
-export function sendTelegramText(info: TelegramMessage , messageText: string) {
-  const data = {
-    id: info.id,
-    recipientId: info.origin.chatId,
-    text: messageText,
-  };
+export function sendTelegramText(info: TelegramMessage) {
+    const value: any = {
+        service: Platforms.TELEGRAM,
+        ...info
+    } 
+    
+    const data: MsgToBot = {
+        text: info.text,
+        id: info.senderChatId,
+        value
+    };
 
-  const directLineService = DirectlineService.getInstance();
+    console.log("MESSAGE INFO: ", data)
+    const directLineService = DirectlineService.getInstance();
 
-  
-  directLineService.sendMessageToBot(data); 
+    directLineService.sendMessageToBot(data);
 }

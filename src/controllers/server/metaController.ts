@@ -36,6 +36,7 @@ export const save = async (req: CustomRequest, res: Response, next: NextFunction
 };
 
 export const chageCode = async (req: CustomRequest, res: Response, next: NextFunction) => {
+  const { companyId } = req.query as { companyId: string };
   const { appId, redirectUri, code } = req.body;
 
   try {
@@ -47,13 +48,14 @@ export const chageCode = async (req: CustomRequest, res: Response, next: NextFun
             &code=${code}`);
 
     if (changeResponse) {
-      const changResData: Obj = await changeResponse.json(); // SALVAR
+      const changeResData: any = await changeResponse.json(); // SALVAR
+
       const response =
         await fetch(`https://graph.facebook.com/v20.0/oauth/access_token?
                 grant_type=fb_exchange_token
                 &client_id=${appId}
                 &client_secret=${process.env.APP_SECRET}
-                &fb_exchange_token=${changResData.access_token}`);
+                &fb_exchange_token=${changeResData.access_token}`);
 
       const { access_token, token_type, expires_in }: any = await response.json(); // SALVAR
 
@@ -72,7 +74,7 @@ export const chageCode = async (req: CustomRequest, res: Response, next: NextFun
 
       const { data, paging }: any = await pageResponse.json(); // SALVAR
 
-      return res.status(200).send({ access_token: changResData.access_token });
+      return res.status(200).send({ access_token: changeResData.access_token });
     }
 
     return res.status(400).send({ message: "Problem to obtain token" });
