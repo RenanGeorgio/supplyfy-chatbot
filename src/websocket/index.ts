@@ -5,40 +5,49 @@ import { Platforms } from "../types/enums";
 import socketUsers from "./socketUsers";
 // let onlineUsers: OnlineUser[] = [];
 
-io.on("connection", (socket) => {
+export enum SocketEvents {
+  CONNECTION = "connection",
+  ADD_NEW_USER = "addNewUser",
+  SEND_MESSAGE = "sendMessage",
+  DISCONNECT = "disconnect",
+  NEW_CLIENT_CHAT = "newClientChat",
+  DISCONNECT_CLIENT = "disconnectClient",
+  ONLINE_USERS = "onlineUsers",
+  GET_MESSAGE = "getMessage",
+  NEW_USER_CHAT = "newUserChat"
+}
+
+io.on(SocketEvents.CONNECTION, (socket) => {
   socket.on(
-    "addNewUser",
+    SocketEvents.ADD_NEW_USER,
     ({ userId, platform }: { userId: string; platform: Platforms }) => {
-      // console.log("addNewUser 123", socket.id, userId, platform);
       socketUsers.addNewUser({ userId, platform, socket });
-      io.emit("onlineUsers", socketUsers.onlineUsers);
-      console.log("onlineUsers", socketUsers.onlineUsers);
+      io.emit(SocketEvents.ONLINE_USERS, socketUsers.onlineUsers);
+      console.log(SocketEvents.ONLINE_USERS, socketUsers.onlineUsers);
     }
   );
 
-  socket.on("sendMessage", (message: any) => {
-    // console.log("messagem recebida: ", message);
+  socket.on(SocketEvents.SEND_MESSAGE, (message: any) => {
     const receiver = socketUsers.onlineUsers.find(
       (user: any) => user.userId === message.recipientId
-      // user.platform === message.platform // acrescentar plataforma na msg
+       // user.platform === message.platform // acrescentar plataforma na msg
     );
     if (receiver) {
-      io.to(receiver.socketId).emit("getMessage", message);
+      io.to(receiver.socketId).emit(SocketEvents.GET_MESSAGE, message);
     }
   });
 
-  socket.on("disconnect", () => {
+  socket.on(SocketEvents.DISCONNECT, () => {
     socketUsers.removeUser(socket);
-    io.emit("onlineUsers", socketUsers.onlineUsers);
+    io.emit(SocketEvents.ONLINE_USERS, socketUsers.onlineUsers);
   });
 
-  socket.on("newClientChat", (data: any) => {
-    // avisar o front que um novo chat foi criado
-    io.emit("newUserChat", data);
+  socket.on(SocketEvents.NEW_CLIENT_CHAT, (data: any) => {
+    io.emit(SocketEvents.NEW_USER_CHAT, data);
   });
 
-  socket.on("disconnectClient", (userId: string) => {
+  socket.on(SocketEvents.DISCONNECT_CLIENT, (userId: string) => {
     socketUsers.removeUserById(userId);
-    io.emit("onlineUsers", socketUsers.onlineUsers);
+    io.emit(SocketEvents.ONLINE_USERS, socketUsers.onlineUsers);
   });
 });

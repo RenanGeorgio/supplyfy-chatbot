@@ -74,18 +74,9 @@ export default async function botService(data: any) {
                 console.log('Tipo de atendimento desconhecido.');
                 break;
         }
-        break;
-      case Platforms.FACEBOOK:
-        sendFacebookTextMessage(result.value.senderID, result.text);
-        break;
 
         return data
     } catch (error: any) {
         throw new Error("Error sending message");
     }
-
-    return result;
-  } catch (error: any) {
-    throw new Error("Error sending message");
-  }
 }

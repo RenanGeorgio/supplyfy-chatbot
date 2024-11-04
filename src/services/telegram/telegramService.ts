@@ -14,13 +14,15 @@ import {
 import { ignoredMessages } from "./helpers/ignoredMessages";
 import { createMessage } from "../../repositories/message";
 import { webhookTrigger } from "../../webhooks/custom/webhookTrigger";
-import { IChat, IMessage, ITelegramCredentials, IWebhook } from "../../types/types";
+import { IMessage, ITelegramCredentials, IWebhook } from "../../types/types";
 import Queue from "../../libs/Queue";
 import { produceMessage } from "../../core/kafka/producer";
 import { socketServiceController } from "../socket";
 import { ClientFlow, Events } from "../../types/enums";
 import { enqueue } from "../enqueue";
 import { sendTelegramText } from "./processMessage";
+import { emitMessageToCompany } from "../socket/socketMessage";
+import { SocketEvents } from "../../websocket";
 
 const sendMessage = async (
   bot: TelegramBot,
@@ -122,18 +124,18 @@ const telegramService = async (
           message: { text: msg.text },
         },
         data: {
-          eventData: { 
+          eventData: {
             CallSid: chatId.toString(),
             Caller: msg.chat.first_name,
             From: chatId.toString(),
             To: botId.toString(),
-            queuePosition: '1', // posição na fila
-            QueueSid: '1', // ida na fila
+            queuePosition: "1", // posição na fila
+            QueueSid: "1", // ida na fila
             queueTime: new Date().toString(),
-            avgQueueTime: '0', // tempo medio na fila
-            currentQueueSize: '1', // tamanho atual da fila
-            maxQueueSize: '100'
-           },
+            avgQueueTime: "0", // tempo medio na fila
+            currentQueueSize: "1", // tamanho atual da fila
+            maxQueueSize: "100",
+          },
           filterCompanyId: bot!.companyId,
         },
       });
@@ -180,8 +182,8 @@ const telegramService = async (
               },
             });
 
-            socket.emit("newClientChat", chatRepo);
-            socket.emit("addNewUser", {
+            socket.emit(SocketEvents.NEW_CLIENT_CHAT, chatRepo);
+            socket.emit(SocketEvents.ADD_NEW_USER, {
               userId: clientId,
               platform: "telegram",
             });
@@ -213,20 +215,19 @@ const telegramService = async (
       client.flow === ClientFlow.CHABOT &&
       !ignoredMessages(msg.text as string)
     ) {
-      console.log(client)
       // const responseMessage = await processQuestion(msg.text as string);
       const responseMessage = sendTelegramText({
         senderChatId: client.chatId,
         senderId: client.clientId,
         text: msg.text as string,
-        origin:{
+        origin: {
           chatId: String(chatId),
         },
-        credentials:{
-          _id: credentials._id
-        }
-      }) // TO-DO: incluir no fluxo do bot
-      
+        credentials: {
+          _id: credentials._id,
+        },
+      }); // TO-DO: incluir no fluxo do bot
+
       // if (responseMessage === "Desculpe, não tenho uma resposta para isso.") {
       //   await sendMessage(telegram, chatId, responseMessage, undefined, {
       //     ...kafkaMessage,
@@ -248,14 +249,14 @@ const telegramService = async (
       //     }
       //   );
       // }
-      
+
       // await sendMessage(telegram, chatId, responseMessage, undefined, {
       //   ...kafkaMessage,
       //   from: botId.toString(),
       // });
     } else if (client && client.flow === ClientFlow.HUMAN) {
       const recipientId = bot?.companyId;
-    
+
       if (msg.text === "/sair") {
         await sendMessage(telegram, chatId, "Suporte finalizado", undefined, {
           ...kafkaMessage,
@@ -268,19 +269,32 @@ const telegramService = async (
           "Atendimento finalizado!"
         );
 
-        socket.emit("sendMessage", { ...message, recipientId });
-        socket.emit("disconnectClient", client.clientId);
+        // socket.emit("sendMessage", { ...message, recipientId });
+        if ("success" in message && !message.success) {
+          if (bot?.companyId) {
+            emitMessageToCompany(socket, {
+              ...message,
+              recipientId: bot.companyId,
+              senderId: client.clientId,
+              text: msg.text as string,
+              chatId: client.chatId,
+              service: "telegram",
+            });
+          }
+        }
+
+        socket.emit(SocketEvents.DISCONNECT_CLIENT, client.clientId);
         clients.get(chatId).flow = ClientFlow.CHABOT;
-        
+
         const chat = await updateChatStatus(client.chatId, {
           status: "finished",
         });
 
-        if('success' in chat && !chat.success) {
+        if ("success" in chat && !chat.success) {
           return;
         }
-        
-        if (webhook && 'members' in chat) {
+
+        if (webhook && "members" in chat) {
           webhookTrigger({
             url: webhook.url,
             event: Events.CHAT_ENDED,
@@ -314,7 +328,8 @@ const telegramService = async (
         });
       }
 
-      socket.emit("sendMessage", newMessage);
+      // socket.emit("sendMessage", newMessage);
+      emitMessageToCompany(socket, newMessage);
     } else {
     }
   }
@@ -333,7 +348,7 @@ const telegramService = async (
     }
   });
 
-  socket.on("getMessage", async (message: IMessage) => {
+  socket.on(SocketEvents.GET_MESSAGE, async (message: IMessage) => {
     if (message?.chatId) {
       const chat = await findChatById(message.chatId);
       if (chat && "origin" in chat) {
@@ -341,7 +356,7 @@ const telegramService = async (
           "TelegramService",
           { id: chat.origin?.chatId, message: { text: message.text } },
           credentials._id
-        ); 
+        );
       }
       console.log(
         `📗 Telegram: \x1b[4m${botName}\x1b[0m received message from socket`
@@ -351,6 +366,6 @@ const telegramService = async (
 
   console.log(`📘 Telegram: serviço iniciado \x1b[4m${botName}\x1b[0m`);
   return telegram;
-}
+};
 
 export default telegramService;

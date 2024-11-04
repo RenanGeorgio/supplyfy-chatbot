@@ -17,6 +17,7 @@ interface TelegramMessage {
 export function sendTelegramText(info: TelegramMessage) {
     const value: any = {
         service: Platforms.TELEGRAM,
+        companyId: info.credentials._id,
         ...info
     } 
     
@@ -26,7 +27,6 @@ export function sendTelegramText(info: TelegramMessage) {
         value
     };
 
-    console.log("MESSAGE INFO: ", data)
     const directLineService = DirectlineService.getInstance();
 
     directLineService.sendMessageToBot(data);
