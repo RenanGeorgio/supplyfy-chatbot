@@ -85,18 +85,22 @@ const socketSchema = new Schema({
 });
 
 const messengerSchema = new Schema({
-  pageId: {
+  accessToken: {
     type: String,
     required: true,
   },
-  pageToken: {
+  number: {
+    type: String,
+    required: true
+  },
+  numberId: {
     type: String,
     required: true,
   },
-  verifyToken: {
+  businessId: {
     type: String,
     required: true,
-  },
+  }
 });
 
 const whatsappSchema = new Schema({

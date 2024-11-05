@@ -22,7 +22,7 @@ import { ClientFlow, Events } from "../../types/enums";
 import { enqueue } from "../enqueue";
 import { sendTelegramText } from "./processMessage";
 import { emitMessageToCompany } from "../socket/socketMessage";
-import { SocketEvents } from "../../websocket";
+import { SocketEvents } from "../../websocket/enum";
 
 const sendMessage = async (
   bot: TelegramBot,

@@ -1,21 +1,11 @@
+
 import { io } from "../core/http";
 import { authMiddleware } from "../middlewares";
 import { OnlineUser } from "../types";
 import { Platforms } from "../types/enums";
+import { SocketEvents } from "./enum";
 import socketUsers from "./socketUsers";
 // let onlineUsers: OnlineUser[] = [];
-
-export enum SocketEvents {
-  CONNECTION = "connection",
-  ADD_NEW_USER = "addNewUser",
-  SEND_MESSAGE = "sendMessage",
-  DISCONNECT = "disconnect",
-  NEW_CLIENT_CHAT = "newClientChat",
-  DISCONNECT_CLIENT = "disconnectClient",
-  ONLINE_USERS = "onlineUsers",
-  GET_MESSAGE = "getMessage",
-  NEW_USER_CHAT = "newUserChat"
-}
 
 io.on(SocketEvents.CONNECTION, (socket) => {
   socket.on(

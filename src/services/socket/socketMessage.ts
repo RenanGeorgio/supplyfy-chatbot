@@ -1,6 +1,6 @@
 import type { Socket } from "socket.io-client";
 import type { IMessage } from "../../types/types";
-import { SocketEvents } from "../../websocket";
+import { SocketEvents } from "../../websocket/enum";
 
 export const emitMessageToCompany = async (
   socket: Socket,
