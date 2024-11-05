@@ -47,7 +47,7 @@ export class DirectlineService {
     
     public sendMessageToBot({ text, id, name = "Anonymous", conversation, value }: MsgToBot) {
         const activity: Activity = {
-            from: { id, name, role: "user" },
+            from: { id: String(id), name, role: "user" },
             type: ActivityTypes.Message,
             // eTag?: string,
             text: text,
@@ -69,7 +69,6 @@ export class DirectlineService {
             .subscribe(
                 (result) => {
                     console.log("Activity added to BotService queue.")
-                    console.log(result)
                     queue.add("BotService", { result });
                 }
             );

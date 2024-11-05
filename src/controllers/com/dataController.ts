@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import crypto from "crypto";
 import { v6 as uuidv6 } from "uuid";
 import { ignaiApi } from "../../api";
@@ -43,51 +43,55 @@ function parseSignedRequest(signedRequest) {
   return data;
 }
 
-export const disAllow = async (req: Request, res: Response) => {
-  const { signed_request } = req.body;
-
-  const data = parseSignedRequest(signed_request);
-
-  if (!data) {
-    return res.status(400).json({ error: "Invalid signed request" });
-  }
-
-  const userId = data ? data.user_id : null;
-
-  // Consultar usuario no banco de dados + obter workspace id apartir do mesmo
-  const user = await userExist(userId);
-
-  if (!user) {
-    return res.status(404).json({ error: "User not found" });
-  }
-
-  const typebot = await findTypebot("companyId", user.companyId);
-
-  if (typebot) {
-    const response = await ignaiApi(
-      `/api/delete?workspaceId=${typebot?.workspaceId}`,
-      {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${typebot?.token}`, // TO-DO: criar este valor no model
-        },
-      }
-    );
-
-    if (response) {
-      typebot.deleteOne();
+export const disAllow = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { signed_request } = req.body;
+  
+    const data = parseSignedRequest(signed_request);
+  
+    if (!data) {
+      return res.status(400).json({ error: "Invalid signed request" });
     }
+  
+    const userId = data ? data.user_id : null;
+  
+    // Consultar usuario no banco de dados + obter workspace id apartir do mesmo
+    const user = await userExist(userId);
+  
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+  
+    const typebot = await findTypebot("companyId", user.companyId);
+  
+    if (typebot) {
+      const response = await ignaiApi(
+        `/api/delete?workspaceId=${typebot.workspaceId}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${typebot.token}`,
+          },
+        }
+      );
+  
+      if (response) {
+        typebot.deleteOne();
+      }
+    }
+  
+    const currentCode = uuidv6();
+    const statusUrl = `${process.env.IGNAI_BOT}/${user.companyId}/delete?id=${currentCode}`; // URL to track the deletion
+  
+    // await removeUser(userId); // Remover usuario do banco de dados?
+    const responseData = {
+      url: statusUrl,
+      confirmation_code: currentCode,
+    };
+  
+    return res.status(200).json(responseData);
+  } catch(error: any) {
+    next(error);
   }
-
-  const currentCode = uuidv6();
-  const statusUrl = `${process.env.IGNAI_BOT}/${user.companyId}/delete?id=${currentCode}`; // URL to track the deletion
-
-  // await removeUser(userId); // Remover usuario do banco de dados?
-  const responseData = {
-    url: statusUrl,
-    confirmation_code: currentCode,
-  };
-
-  return res.status(200).json(responseData);
 };

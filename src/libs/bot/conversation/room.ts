@@ -11,7 +11,7 @@ export class BotRoom extends ConversationBot {
       const membersAdded = context.activity.membersAdded;
       for (const idx in membersAdded) {
         if (membersAdded[idx].id !== context.activity.recipient.id) {
-          await currentManager.createConversation("id da conversa");
+          await currentManager.createConversation(context.activity.conversation.id, membersAdded[idx].id);
 
           await context.sendActivity('Welcome');
           await (dialog as MainDialog).run(context, conversationState.createProperty<DialogState>('DialogState'));
@@ -24,13 +24,13 @@ export class BotRoom extends ConversationBot {
     this.onMembersRemoved(async (context, next) => {
       const membersRemoved = context.activity.membersRemoved;
       for (const idx in membersRemoved) {
-          if (membersRemoved[idx].id !== context.activity.recipient.id) {
-            await currentManager.deleteConversation("id da conversa");
-            //await this._userState.ClearStateAsync(turnContext, cancellationToken);
-          }
+        if (membersRemoved[idx].id !== context.activity.recipient.id) {
+          await currentManager.deleteConversation(context.activity.conversation.id, membersRemoved[idx].id);
+          await userState.clear(context);
+        }
       }
 
       await next();
-  });
+    });
   }
 }

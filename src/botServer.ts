@@ -44,10 +44,10 @@ bot.use(cookieParser());
 bot.use(customSession);
 
 const containerPromise = ContainerService.getInstance();
-const conversationBot = containerPromise.then((container) => { return container.getConversationBot()})
+const conversationBot = containerPromise.then((container) => { return container.getConversationBot() })
 
 bot.post('/api/messages', async (req: Request, res: Response) => {
-  return await adapter.process(req, res, (context: any) => conversationBot.run(context));
+  return await adapter.process(req, res, async (context: any) => (await conversationBot).run(context));
 });
 
 // Listen for incoming notifications and send proactive messages to users.

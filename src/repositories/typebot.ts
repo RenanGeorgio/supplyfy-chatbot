@@ -6,14 +6,15 @@ interface Typebot {
   companyId: string;
   typebotId: string;
   workspaceId: string;
+  token: string
 }
 
 export async function findTypebot(path: string, value: string) {
   try {
-    const typebot = await typebotModel.findOne({ [path]: value }).exec();
+    const typebot = await typebotModel.findOne({ [path]: value });
     return typebot;
   } catch (error) {
-    return mongoErrorHandler(error);
+    throw mongoErrorHandler(error);
   }
 }
 
@@ -21,16 +22,18 @@ export async function createTypebot({
   companyId,
   typebotId,
   workspaceId,
+  token
 }: Typebot) {
   try {
     const typebot = await typebotModel.create({
       companyId,
       typebotId,
       workspaceId,
+      token
     });
     return typebot;
   } catch (error) {
-    return mongoErrorHandler(error);
+    throw mongoErrorHandler(error);
   }
 }
 
@@ -40,6 +43,6 @@ export async function removeTypebot(typebotId: string) {
     
     return { success: true, message: "Typebot removido com sucesso" };
   } catch (error) {
-    return mongoErrorHandler(error);
+    throw mongoErrorHandler(error);
   }
 }

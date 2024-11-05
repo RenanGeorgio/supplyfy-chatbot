@@ -1,16 +1,24 @@
 import mongoose from "../../database";
 
 const { Schema } = mongoose;
-
+// ajustar modelo ig, fb e instagram
 const instagramSchema = new Schema({
-  username: {
+  accessToken: {
     type: String,
     required: true,
   },
-  password: {
+  number: {
+    type: String,
+    required: true
+  },
+  numberId: {
     type: String,
     required: true,
   },
+  businessId: {
+    type: String,
+    required: true,
+  }
 });
 
 const telegramSchema = new Schema({
@@ -77,18 +85,22 @@ const socketSchema = new Schema({
 });
 
 const messengerSchema = new Schema({
-  pageId: {
+  accessToken: {
     type: String,
     required: true,
   },
-  pageToken: {
+  number: {
+    type: String,
+    required: true
+  },
+  numberId: {
     type: String,
     required: true,
   },
-  verifyToken: {
+  businessId: {
     type: String,
     required: true,
-  },
+  }
 });
 
 const whatsappSchema = new Schema({
