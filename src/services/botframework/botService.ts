@@ -1,8 +1,10 @@
+import { create } from "domain";
 import { sendFacebookTextMessage } from "../../controllers/com/facebook/facebookController";
 import { INSTAGRAM_MSG_TYPE } from "../../controllers/com/instagram/consumer";
 import { sendInstagramTextMessage } from "../../controllers/com/instagram/instagramController/data";
 import { sendInstagramMessage } from "../../controllers/com/service";
 import { sendWaTextMessage } from "../../controllers/com/whatsapp/whatsappController";
+import Queue from "../../libs/Queue";
 import { WaMsgMetaData } from "../../types";
 import { Platforms } from "../../types/enums";
 
@@ -45,6 +47,28 @@ export default async function botService(data: any) {
                 break;
             case Platforms.FACEBOOK:
                 sendFacebookTextMessage(data.value.senderID, data.text)
+                break;
+            case Platforms.TELEGRAM:
+                Queue.add(
+                    "TelegramService",
+                    {
+                        id: data.value.origin.chatId,
+                        message: {
+                            chatId: data.value.chatId,
+                            senderId: data.value.senderId,
+                            text: data.text,
+                            createdAt: Date.now,
+                            updatedAt: Date.now,
+                        }
+                    },
+                    data.value.credentials._id
+                );
+                break;
+            case Platforms.WEB:
+                const webData: any = {
+
+                };
+
                 break;
             default:
                 console.log('Tipo de atendimento desconhecido.');
