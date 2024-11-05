@@ -1,3 +1,4 @@
+import { Platforms } from "../../../types/enums";
 import { ENQUEUE_STATUS } from "./enqueue.enums";
 
 type DisconnectDataType = {
@@ -9,17 +10,18 @@ type DisconnectDataType = {
   QueueTime: string
 };
 
-type EventdataType = {
+export type EventdataType = {
   CallSid: string // id do chat
   Caller: string | undefined // quem está ligando
   From: string | undefined // de onde está ligando
   To: string | undefined // para quem está ligando
   QueuePosition: number | string // posição na fila
   QueueSid: string // id da fila
-  QueueTime: string // tempo na fila
+  QueueTime?: string // tempo na fila
   AvgQueueTime?: string  // tempo medio na fila
   CurrentQueueSize: number | string  // tamanho atual da fila
-  MaxQueueSize: number | string // 100
+  MaxQueueSize?: number | string // 100
+  channel?: Platforms
 }
 
 export interface NotifyAgentDTO {

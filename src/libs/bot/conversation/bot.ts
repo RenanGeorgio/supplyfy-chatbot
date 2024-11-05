@@ -1,8 +1,10 @@
-import { ActivityHandler, StatePropertyAccessor, UserState, ConversationState, BotState, ActivityTypes, InputHints } from "botbuilder";
+import { ActivityHandler, StatePropertyAccessor, UserState, ConversationState, BotState, ActivityTypes } from "botbuilder";
 import { TurnContext, ConversationReference } from "botbuilder-core";
 import { Dialog, DialogState } from "botbuilder-dialogs";
-import { CONVERSATION_DATA_PROPERTY, USER_PROFILE_PROPERTY } from "../dialogs/constants";
 import { NlpService } from "../nlp/manager";
+import { agentServiceController } from "../../../services/agent";
+import { CONVERSATION_DATA_PROPERTY, USER_PROFILE_PROPERTY } from "../dialogs/constants";
+import { AGENT_MSG_TYPE, AgentMessage } from "../types";
 
 
 async function logMessageText(storage, context: TurnContext) { // This function stores new user messages. Creates new utterance log if none exists.
@@ -10,14 +12,14 @@ async function logMessageText(storage, context: TurnContext) { // This function 
 
   try {
     let storeItems = await storage.read(["UtteranceLogJS"]);
-    var UtteranceLogJS = storeItems["UtteranceLogJS"];
+    const UtteranceLogJS = storeItems["UtteranceLogJS"];
 
     if ((typeof (UtteranceLogJS)) != 'undefined') { // The log exists so we can write to it.
       storeItems["UtteranceLogJS"].turnNumber++;
       storeItems["UtteranceLogJS"].UtteranceList.push(utterance);
 
-      var storedString = storeItems.UtteranceLogJS.UtteranceList.toString(); // Gather info for user message.
-      var numStored = storeItems.UtteranceLogJS.turnNumber;
+      const storedString = storeItems.UtteranceLogJS.UtteranceList.toString(); // Gather info for user message.
+      const numStored = storeItems.UtteranceLogJS.turnNumber;
 
       try {
         await storage.write(storeItems);
@@ -28,14 +30,13 @@ async function logMessageText(storage, context: TurnContext) { // This function 
     } else {
       await context.sendActivity(`Creating and saving new utterance log`);
 
-      var turnNumber = 1;
+      const turnNumber = 1;
       storeItems["UtteranceLogJS"] = { UtteranceList: [`${utterance}`], "eTag": "*", turnNumber }
 
-      var storedString = storeItems.UtteranceLogJS.UtteranceList.toString(); // Gather info for user message.
-      var numStored = storeItems.UtteranceLogJS.turnNumber;
+      const storedString = storeItems.UtteranceLogJS.UtteranceList.toString(); // Gather info for user message.
+      const numStored = storeItems.UtteranceLogJS.turnNumber;
 
-      try {
-        // Redirecionar mensagens de log
+      try { // Redirecionar mensagens de log
         await storage.write(storeItems);
       } catch (err: any) {
         console.log(`Write failed: ${err}`);
@@ -55,6 +56,7 @@ export class ConversationBot extends ActivityHandler {
   private userProfileAccessor: StatePropertyAccessor<UserState>;
   private currentManager: NlpService
   private botRecognizer: any
+  private sockets: any
   /**
    *
    * @param {ConversationState} conversationState
@@ -85,22 +87,13 @@ export class ConversationBot extends ActivityHandler {
     this.conversationDataAccessor = conversationState.createProperty<DialogState>(CONVERSATION_DATA_PROPERTY);
     this.userProfileAccessor = userState.createProperty<UserState>(USER_PROFILE_PROPERTY);
 
+    this.sockets = new Map();
+
     this.onMessage(async (context: TurnContext, next) => {
       this.addConversationReference(context.activity);
 
       const userProfile = await this.userProfileAccessor.get(context);
       const conversationData = await this.conversationDataAccessor.get(context);
-
-      // COMO PODEMOS MANDAR A MENSAGEM QUANDO O USUARIO ENTRA NO CHAT, ESTA MENSAGEM PODE NAO SER NECESSARIA
-      /*if (didBotWelcomedUser === false) {
-        const userName = context.activity.from.name;
-        await context.sendActivity('You are seeing this message because this was your first message ever sent to this bot.');
-        await context.sendActivity(`It is a good practice to welcome the user and provide personal greeting. For example, welcome ${ userName }.`);
-
-        await this.welcomedUserProperty.set(context, true);
-      } else {
-        
-      }*/
 
       conversationData.timestamp = context.activity.timestamp.toLocaleString();
       conversationData.locale = context.activity.locale;
@@ -120,63 +113,69 @@ export class ConversationBot extends ActivityHandler {
           userProfile.info = useData;
         }
 
-        // executar intend recognition
-        const result = await this.botRecognizer.executeLuisQuery(text);
-        const intent = result.intent;
+        const answer = await this.currentManager.executeConversation(id, text);
 
-        if (intent) {
-          const action = intent.toLowerCase();
-          switch (action) {
-            case 'agent':
-              const agentAnswer = await this.currentManager.executeConversation(id, text); // TO-DO: TROCAR 
+        if (this.sockets.has(conversationId)) {
+          const socket = this.sockets.get(conversationId);
 
-              const agentActivity = { 
-                type: ActivityTypes.Message, 
-                text: agentAnswer,
-                value: {
-                  ...useData,
-                  channel: useData.service
+          if (socket) {
+            socket.emit('sendMessage', 
+              { 
+                input: answer,
+                message: text, 
+                company: useData.company,
+                conversation: conversationId,
+                user: id
+              },
+              async (response) => {
+                if (response) {
+                  const value: AgentMessage = JSON.parse(response);
+
+                  const type = value.type;
+
+                  if (type === AGENT_MSG_TYPE.ANSWER) {
+                    const activity = { 
+                      type: ActivityTypes.Message, 
+                      text: value.text,
+                      value: {
+                        ...useData,
+                        company: useData.company,
+                        channel: useData.service
+                      }
+                    }
+                    
+                    //Promise<ResourceResponse | undefined>
+                    await context.sendActivity(activity);
+                  } else {
+                    const activity = { 
+                      type: 'transfer',
+                      value: {
+                        ...useData,
+                        company: useData.company,
+                        channel: useData.service
+                      }
+                    }
+                    
+                    //Promise<ResourceResponse | undefined>
+                    await context.sendActivity(activity);
+                  }
+                } else {
+                  const activity = { 
+                    type: ActivityTypes.Message, 
+                    text: answer,
+                    value: {
+                      ...useData,
+                      company: useData.company,
+                      channel: useData.service
+                    }
+                  }
+                  
+                  //Promise<ResourceResponse | undefined>
+                  await context.sendActivity(activity);
                 }
               }
-              
-              //Promise<ResourceResponse | undefined>
-              await context.sendActivity(agentActivity);
-            case 'cancel':
-              const cancelMessageText = 'Cancelling...'; // TO-DO: colocar mensagem de finalização apropriada
-              await context.sendActivity(cancelMessageText, cancelMessageText, InputHints.IgnoringInput);
-              break;
-            case 'quit':
-              const quitMessageText = 'Cancelling...'; // TO-DO: colocar mensagem de finalização apropriada
-              await context.sendActivity(quitMessageText, quitMessageText, InputHints.IgnoringInput);
-              break;
-            default:
-              const answer = await this.currentManager.executeConversation(id, text);
-
-              const activity = { 
-                type: ActivityTypes.Message, 
-                text: answer,
-                value: {
-                  ...useData,
-                  channel: useData.service
-                }
-              }
-              
-              await context.sendActivity(activity);
+            );
           }
-        } else { // Catch all for unhandled intents
-          const answer = await this.currentManager.executeConversation(id, text);
-
-          const activity = { 
-            type: ActivityTypes.Message, 
-            text: answer,
-            value: {
-              ...useData,
-              channel: useData.service
-            }
-          }
-          
-          //Promise<ResourceResponse | undefined>
-          await context.sendActivity(activity);
         }
       }
 
@@ -195,10 +194,24 @@ export class ConversationBot extends ActivityHandler {
 
     this.onMembersAdded(async (context, next) => {
       const membersAdded = context.activity.membersAdded;
-      // console.log(context.activity)
+      
       for (const idx in membersAdded) {
         if (membersAdded[idx].id !== context.activity.recipient.id) {
-          await currentManager.createConversation(context.activity.conversation.id, membersAdded[idx].id);
+          const id = context.activity.conversation.id;
+
+          const socket = agentServiceController.start({
+            _id: id,
+            url: process.env.AGENT_SERVER,
+            auth: {
+              token: "1234567890",
+            },
+          });
+
+          if (socket) {
+            this.sockets.set(id, socket);
+          }
+
+          await currentManager.createConversation(id, membersAdded[idx].id);
 
           // await context.sendActivity('Welcome');
           // await (dialog as MainDialog).run(context, conversationState.createProperty<DialogState>('DialogState'));
@@ -212,7 +225,16 @@ export class ConversationBot extends ActivityHandler {
       const membersRemoved = context.activity.membersRemoved;
       for (const idx in membersRemoved) {
         if (membersRemoved[idx].id !== context.activity.recipient.id) {
-          await currentManager.deleteConversation(context.activity.conversation.id, membersRemoved[idx].id);
+          const id = context.activity.conversation.id;
+
+          if (this.sockets.has(id)) {
+            const socket = this.sockets.get(id);
+            socket.emit("removeUserById", id);
+
+            this.sockets.delete(id);
+          }
+
+          await currentManager.deleteConversation(id, membersRemoved[idx].id);
           await this.userState.clear(context);
         }
       }

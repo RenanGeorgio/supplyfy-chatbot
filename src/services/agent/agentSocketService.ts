@@ -2,15 +2,14 @@ import { io } from "socket.io-client";
 import { ISocketCredentials } from "../../types/types";
 
 
-export const socketService = (credentials: ISocketCredentials) => {
+export const agentSocketService = (credentials: ISocketCredentials) => {
   const { url, auth } = credentials;
   
-  const socketClient = io(url, {
+  const agentClient = io(url, {
     auth: auth,
     reconnection: true,
     reconnectionDelay: 5000,
-    // reconnectionAttempts: 10,
   });
   
-  return socketClient;
+  return agentClient;
 };

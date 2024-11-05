@@ -16,6 +16,12 @@ const io = new Server(httpServer, {
   },
 });
 
+const bot_io = new Server(botServer, {
+  cors: {
+    origin: "*",
+  },
+});
+
 botServer.on('upgrade', async (req, socket, head) => {
   // Create an adapter scoped to this WebSocket connection to allow storing session data.
   const streamingAdapter = new CloudAdapter(botFrameworkAuthentication);
@@ -26,4 +32,4 @@ botServer.on('upgrade', async (req, socket, head) => {
   await streamingAdapter.process(req, socket as unknown as INodeSocket, head, async (context) => (await conversationBot).run(context));
 });
 
-export { httpServer, botServer, io };
+export { httpServer, botServer, io, bot_io };

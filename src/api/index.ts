@@ -4,6 +4,7 @@ import whatsappCloudApi from "./whatsapp";
 import transporter from "./email";
 import instagramApi from "./instagram";
 import ignaiApi from "./ignai-bot";
+import queueApi from "./queue";
 
 export {
     authApi,
@@ -11,5 +12,6 @@ export {
     whatsappCloudApi,
     transporter as transporterApi,
     instagramApi,
-    ignaiApi
+    ignaiApi,
+    queueApi
 }

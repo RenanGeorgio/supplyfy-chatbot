@@ -21,7 +21,8 @@ import {
   ISocketServiceController,
   IEvents,
   IWebhook,
-  OnlineUser
+  OnlineUser,
+  AgentConnection
 } from "./types";
 
 import {
@@ -99,6 +100,7 @@ export {
   WebhookEventBase,
   EntryProps,
   OnlineUser,
+  AgentConnection,
   FaceMsgData, 
   SendFaceMsgBody, 
   FaceMessagingEvent, 

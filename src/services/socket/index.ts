@@ -1,9 +1,9 @@
-import { io } from "../../core/http";
+import { socketService } from "./socketService";
+import { webhookTrigger } from "../../webhooks/custom/webhookTrigger";
 import { findBot } from "../../helpers/findBot";
 import { ISocketServiceController } from "../../types";
 import { Events } from "../../types/enums";
-import { webhookTrigger } from "../../webhooks/custom/webhookTrigger";
-import { socketService } from "./socketService";
+
 
 export const socketServiceController: ISocketServiceController = {
   sockets: [],
@@ -35,7 +35,7 @@ export const socketServiceController: ISocketServiceController = {
       }
     });
 
-    socket.on("connect_error", (error) => {
+    socket.on("connect_error", (error: any) => {
       console.log("Sem conexão com o socket server");
       if (webhook) {
         webhookTrigger({

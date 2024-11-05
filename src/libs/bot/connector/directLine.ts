@@ -71,7 +71,16 @@ export class DirectlineService {
                     console.log("Activity added to BotService queue.")
                     queue.add("BotService", { result });
                 }
-            )
+            );
+
+        directLine.activity$
+            .filter(activity => activity.type === 'transfer' && activity.from.id === botName)
+            .subscribe(
+                (eventActivity) => {
+                    console.log("Received event activity: ", eventActivity);
+                    queue.add("EventService", { eventActivity });
+                }
+            );
     }
 
     static getInstance(): DirectlineService {
