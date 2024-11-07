@@ -12,6 +12,8 @@ interface TelegramMessage {
     credentials: {
         _id: string
     }
+    createdAt: number,
+    updatedAt: number,
 }
 
 export function sendTelegramText(info: TelegramMessage) {

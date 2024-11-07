@@ -222,6 +222,8 @@ const telegramService = async (
         senderChatId: client.chatId,
         senderId: client.clientId,
         text: msg.text as string,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
         origin: {
           chatId: String(chatId),
         },
@@ -354,13 +356,13 @@ const telegramService = async (
     if (message?.chatId) {
       const chat = await findChatById(message.chatId);
       const chatId = message.chatId;
-      const client = clients.get(chatId);
-
       if (chat && "origin" in chat) {
         sendTelegramText({
-          senderChatId: client.chatId,
-          senderId: client.clientId,
+          senderChatId: chatId,
+          senderId: String(message.recipientId),
           text: message.text,
+          createdAt: Date.now(),
+          updatedAt: Date.now(),
           origin: {
             chatId: String(chatId),
           },
