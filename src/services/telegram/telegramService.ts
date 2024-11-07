@@ -23,6 +23,8 @@ import { enqueue } from "../enqueue";
 import { sendTelegramText } from "./processMessage";
 import { emitMessageToCompany } from "../socket/socketMessage";
 import { SocketEvents } from "../../websocket/enum";
+import { directLineService } from "../../libs/bot/connector";
+import type { MsgToBot } from "../../libs/bot/connector/directLine";
 
 const sendMessage = async (
   bot: TelegramBot,
@@ -351,12 +353,26 @@ const telegramService = async (
   socket.on(SocketEvents.GET_MESSAGE, async (message: IMessage) => {
     if (message?.chatId) {
       const chat = await findChatById(message.chatId);
+      const chatId = message.chatId;
+      const client = clients.get(chatId);
+
       if (chat && "origin" in chat) {
-        Queue.add(
-          "TelegramService",
-          { id: chat.origin?.chatId, message: { text: message.text } },
-          credentials._id
-        );
+        sendTelegramText({
+          senderChatId: client.chatId,
+          senderId: client.clientId,
+          text: message.text,
+          origin: {
+            chatId: String(chatId),
+          },
+          credentials: {
+            _id: credentials._id,
+          },
+        });
+        // Queue.add(
+        //   "TelegramService",
+        //   { id: chat.origin?.chatId, message: { text: message.text } },
+        //   credentials._id
+        // );
       }
       console.log(
         `📗 Telegram: \x1b[4m${botName}\x1b[0m received message from socket`
